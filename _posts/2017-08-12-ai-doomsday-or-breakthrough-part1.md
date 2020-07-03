@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Artificial Intelligence: Doomsday or Breakthrough - Part 1"
-date:   2017-08-15
+date:   2017-08-12
 image:  images/blog1/cover.png
 tags:  Artificial Intelligence AI doomsday breakthrough singularity reinforcement learning openai go dota2
 ---

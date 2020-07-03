@@ -1,33 +1,39 @@
-title: Reked
-logo: "images/logo.svg" # You can add own logo image.
-description: Minimalistic Theme for Jekyll
+title: Narendiran Chembu
+# logo: "images/logo.svg" # You can add own logo image.
+logo: images/cg_logo.png
+description: Personal Website
 baseurl: "" # The subpath of your site, e.g. /blog
 url: "" # The base hostname & protocol for your site, e.g. http://example.com
 
 # Author Settings
 author:
-  name: Sasha Levi
-  bio: Hi, my name is Sasha Levi. I like being at the center of events, being free and enjoying every moment. Thank you for visiting my blog.
+  name: Narendiran Chembu
+  # bio: Hi, my name is Narendiran Chembu. 
 
 # Contact links
-twitter: https://twitter.com/ # Add your Twitter handle
-facebook: https://facebook.com/ # Add your Facebook handle
-dribbble: https://dribbble.com/ # Add your Dribbble handle
-instagram: https://instagram.com/ # Add your Instagram handle
-pinterest: https://pinterest.com/ # Add your Pinterest handle
-email: forexample@website.com # Add your Email address
+# twitter: https://twitter.com/ # Add your Twitter handle
+facebook: https://facebook.com/cgnarendiran/ # Add your Facebook handle
+# dribbble: https://dribbble.com/ # Add your Dribbble handle
+instagram: https://instagram.com/cgnarendiran/ # Add your Instagram handle
+# pinterest: https://pinterest.com/ # Add your Pinterest handle
+email: cgnarendiran@gmail.com # Add your Email address
+linkedin: https://linkedin.com/in/cgnarendiran/
 
 # Hero Section
 hero: true # To enable the section hero, use the value true. To turn off use the value false.
-hero-title: Raked Minimalistic Theme # Add your hero title
-hero-subtitle: For those who love simplicity # Add your hero subtitle
-hero-image: images/14.jpg # Add background image in section hero
+hero-title: Narendiran Chembu # Add your hero title
+hero-subtitle: |
+  Hi, I'm a masters student from UvA finishing up my thesis in AI. 
+  I like coding, geeking out on AI tech and enjoy playing ukulele.
+  You can read more about me <a style="color:teal" href="/about/">here</a> or read one of my blogs <a style="color:teal"  href="/blog/">here</a> 
+# Add your hero subtitle
+hero-image: images/ml_bb_6.jpg # Add background image in section hero
 
 # Footer
-footer-image: images/14.jpg # Add background image in footer
+footer-image: images/ml_bb_6.jpg # Add background image in footer
 
 # Comment Section (Disqus)
-disqus-identifier: mr-brown # Add your shortname for Disqus Comment. For example mr-brown
+# disqus-identifier: cgnarendiran # Add your shortname for Disqus Comment. For example mr-brown
 
 # Google Analytics
 google-analytics: "" # Add your identifier. For example UA-99631805-1.
@@ -43,18 +49,36 @@ plugins:
   - jekyll-sitemap
   - jekyll/tagging
 
-paginate: 4
-paginate_path: "/page/:num"
+paginate: 3
+# paginate_path: "/page/:num"
+paginate_path: "/blog/page:num/"
 
 # Pages Path
-defaults:
-  - scope:
-      path: '_pages'
-    values:
-      permalink: /:basename:output_ext
-
+# defaults:
+#   - scope:
+#       path: '_pages'
+#     values:
+#       permalink: /:basename:output_ext
 include:
   - _pages
+
+collections:
+  projects:
+    output: true
+
+
+defaults:
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
 
 # Tags
 tag_page_dir:         tag

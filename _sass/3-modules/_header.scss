@@ -88,8 +88,12 @@
         height: 0;
         width: 100%;
         z-index: -1;
-        background-color: $dark;
+        background-color: $brand-color;
         transition: all .3s ease;
+      }
+      &:active {
+        background-color: $dark;
+        color: #fff;
       }
     }
   }
@@ -158,6 +162,7 @@
         &.is-active {
           margin: 20px 0;
           padding: 10px 15px;
+          color: $dark
         }
       }
     }

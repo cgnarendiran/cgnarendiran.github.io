@@ -11,7 +11,7 @@
 
   a {
     &:hover {
-      color: $brand-color;
+      color: $dark;
     }
   }
 }
@@ -21,6 +21,7 @@
   font-size: 15px;
   line-height: 25px;
   color: $gray;
+  display: inline-block;
 }
 
 .article-info {

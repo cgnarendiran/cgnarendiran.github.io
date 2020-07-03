@@ -1,0 +1,15 @@
+---
+layout: default
+title: Projects
+permalink: /projects/
+---
+<div class="container">
+	<div class="row">
+		{% if site.projects.size > 0 %}
+		{% assign sortedProjects = site.projects | sort: 'date'  | reverse %}
+			{% for post in sortedProjects %}
+				{% include article-content.html %}
+			{% endfor %}
+		{% endif %}
+	</div>
+</div>

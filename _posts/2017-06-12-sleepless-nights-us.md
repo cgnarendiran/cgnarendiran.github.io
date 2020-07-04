@@ -15,21 +15,28 @@ The trip to US seemed like an another episode of Breaking Bad to be honest. From
 
 "Where is Alan key number 4?", this was all the screaming I heard through the first two days of stay at Comfort Suites. Who knew that the assembly of the robot would take two full days even after holding facetime with the mechanical team back in India! We were frustrated that two days went by and that we were just working on screwing and bolting and turning and juggling with the aluminium extrusion channels. It was a miracle that we put on those gears on place. This is how we made it look after two and half days of slaving away.
 
-Once the bot was assembled, the worst cases scenarios started sprouting one by one. There was no Differential GPS satellites in our arena. We reset the entire configuration to somehow get 19cm accuracy in latitude. We qualified the simple course on day 3! That was simple we thought, while the bigger problems were swallowing us whole. The transform between UTM[^1]  (Universal Transverse Mercator) and the bot specific map frame was now trembling like a blistered lightning in the sky. This problem kept us awake dawn and dusk, we couldn't tell the difference. The theme of night-out was just set for us in those dim-lit yellow striped tents in the campus. We slaved away for three full days trying to figure out a solution. The cold nights were just too cruel. The hot solder rod now had dew drops on it. We used the heat gun to keep our hands from freezing and becoming numb. My overheating laptop running Ubuntu, finally had relief in those cold crazy nights. 
+Once the bot was assembled, the worst cases scenarios started sprouting one by one. There was no Differential GPS satellites in our arena. We reset the entire configuration to somehow get 19cm accuracy in latitude. We qualified the simple course on day 3! That was simple we thought, while the bigger problems were swallowing us whole. The transform between UTM[^1]  (Universal Transverse Mercator) and the bot specific map frame was now trembling like a blistered lightning in the sky. This problem kept us awake dawn and dusk, we couldn't tell the difference. The theme of night-out was just set for us in those dim-lit yellow striped tents in the campus (cover of the blog). We slaved away for three full days trying to figure out a solution. The cold nights were just too cruel. The hot solder rod now had dew drops on it. We used the heat gun to keep our hands from freezing and becoming numb. My overheating laptop running Ubuntu, finally had relief in those cold crazy nights. 
 
-The solution finally dawned upon us on the fourth night when we everyone was sitting on the grass grounds, having lost all the hope. The team lead came up with a code that takes the IMU[^2]  (Inertial Measurement Unit) generated Quaternions and origin with respect to UTM frame and transformed the GPS waypoints into the simple bot specific map co-ordinates. Our code was more robust than the default package which did the job! (navsat_mapping).
+The solution finally dawned upon us on the fourth night when we everyone was sitting on the grass grounds, having lost all the hope. The team lead came up with a code that takes the IMU[^2]  (Inertial Measurement Unit) generated Quaternions and origin with respect to UTM frame and transformed the GPS waypoints into the simple bot specific map co-ordinates. Our code for localization and mapping was more robust than the default package which did the job! (navsat_mapping).
 
 You'd think we'd had it enough right? But no, that's where you're wrong my sweet summer child! The Computer Vision code for lane detection was.. well, computationally expensive. Because of that, our costmap update was at snail's pace. We had a 7th Gen Intel NUC[^3]  (Next Unit of Computing) burning its transistors for processing the camera feed. We had to tune a lot of parameters to decrease the computational load including compromising on the costmap dimensions, adopting the less expensive path planning algorithms and decreasing the speed of the robot. With all that jugaad work, we did enter into the heat but that was the last day for AutoNav challenge, we either run this heat or we lose it.
 
-There it was, our bot ready in the arena, gloriously with the backdrop of all the effort, making it stand where it is right now. The judges took the remote from us. At the press of the start button we ran the code, out spit the error info by the bot on the terminal: 
+![team](/images/blog4/3.jpeg)
+*Kernel 1.0 running the heats*
 
+There it was, our bot ready in the arena, gloriously with the backdrop of all the effort, making it stand where it is right now. The judges took the remote from us. At the press of the start button we ran the code, out spit the error info by the bot on the terminal: 
+```
 [INFO]: LIDAR failed
 [INFO]: Sparton IMU died
-[INFO]: Camera feed not found.
-
+[INFO]: Camera feed not found
+```
+\
 We all had our eyes welled up. We retrieved the bot immediately from the arena. We found the loose connection in the internal circuitry and fixed it instantly. Damn! That was one good show you freaking robot, we thought. We ran it again and this time the bot had a blind spot on the field and it started turning right since it detected no lane to its immediate right. That's it. We didn't qualify the minimum speed requirement. But we figured the problem just by looking at the costmap. It was the camera; it's position was aligned at a higher angle which paved way for the blind spot.
 
 Alas we didn't get another chance to run, since it was the end of heats. If only we had been given one more chance!  We ran the bot by turning the camera down and pushing it one meter initially, after the heats and it ran perfectly. However, it was too late by then; the competition had ended. But the relief that, we did actually solve one of the most challenging problems of the century prevailed with us till we left the States. This is us with the bot, standing proud next to the tricolor.
+
+![team](/images/blog4/2.jpg)
+*The team with the robot in front of the tricolor*
 
 
 [^1]: UTM - The Universal Transverse Mercator (UTM) conformal projection uses a 2-dimensional Cartesian coordinate system to give locations on the surface of the Earth. 

@@ -73,11 +73,13 @@ defaults:
       type: "projects"
     values:
       layout: "project"
+      permalink: "/projects/:title/"
   - scope:
       path: ""
       type: "posts"
     values:
       layout: "post"
+      permalink: "/blog/:title/"
 
 
 # Tags

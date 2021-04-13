@@ -21,7 +21,7 @@ We explore two main capabilities of the robot using ROS framework and build the 
 ![alt](/images/project5/1.png)
 *Control flow diagram for planning, affordance learning and action model learning*
 
-Simulation using Gazebo: ​Constructed URDF and Xacro files as robot descriptors importing all the designed meshes of robotic components. Transmission tags are included to make the robot a differential drive. In-built gazebo plugins are added to specify the function of on-board sensors: LiDAR, IMU, encoders and camera. Lane detection by OpenCV is assisted by providing white lanes over ground for easy processing. Other capabilities such as teleop and controller interfaces are included while building the robot on the simulator.
+Simulation using Gazebo: ​Constructed Xacro files (converted to URDF) as robot descriptors importing all the designed meshes of robotic components. Gazebo ROS Differential drive plugin is included to make the robot a differential drive. In-built gazebo plugins are added to specify the function of on-board sensors: LiDAR, IMU, encoders and camera. Other capabilities such as teleop and controller interfaces are included while building the robot on the simulator.
 
 This includes the RL part of the project:
 

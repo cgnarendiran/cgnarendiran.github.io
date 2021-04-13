@@ -29,7 +29,7 @@ Data labeling is a huge bottleneck. Several open-source online annotation tools 
 
 Two datasets were available for the project:
 1. Target data: TOGBeanField images (propreitary, aerial view, 72 images, no labels)
-2. For proof of concept: ![Weedmap](https://www.mdpi.com/2072-4292/10/9/1423) An open source data of a maize field (aerial view, 176 images, labels available)
+2. For proof of concept: [Weedmap](https://www.mdpi.com/2072-4292/10/9/1423) An open source data of a maize field (aerial view, 176 images, labels available)
 
 ![alt](/images/project9/2.png)
 *Segmentation result of SegNet on Weedmap data*

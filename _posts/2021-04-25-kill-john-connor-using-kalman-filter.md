@@ -7,7 +7,7 @@ tags:  kalman filter gaussian ai state estimate bayesian
 ---
 *On the cover: T-X Terminator from Terminator3: Rise of the Machines (2003)*
 
-Let's say you are the super hot T-X Terminator sent from the future by Skynet. Your mission is to destroy a young John Connor who later on becomes the leader of the Resistance (booooo). You started your mission, took some damage, but fought off a relentless and annoying T-850 (Arnold Schwaznegger) and disabled it. However you see John Connor and his girlfriend Katherine trying to escape in a motorcycle. You are at the top of a bridge and see them getting away from you. Your long range weapons are damaged, hence you grab a shoulder-fired missile from the scene that has one missile left. You are now weapons hot and ready to engage but only with one shot. Ready to make it count? Let's do it!
+Let's say you are the super hot T-X Terminator sent from the future by Skynet. Your mission is to destroy a young John Connor who later on becomes the leader of the Resistance (booooo). You started your mission, took some damage, but fought off a relentless and annoying T-850 (Arnold Schwaznegger) and disabled it. However you see John Connor ad Katherine (his girlfriend) trying to escape in a motorcycle. You are at the top of a bridge and see them getting away from you. Your long range weapons are damaged, hence you grab a shoulder-fired missile from the scene that has one missile left. You are now weapons hot and ready to engage but only with one shot. Ready to make it count? Let's do it!
 
 The problem here is to track the motorcycle. Once tracked, it is fairly easy for you to aim and shoot. For tracking, let's say that you have to estimate the motorcycle's position $p_t$ and velocity $v_t$ at a given point of time $t$. You can also estimate other variables like acceleration of the motorcycle but let's keep it simple. Let's call this the **state** $\mathbf{x}_t$ of the system. You also need to track the **uncertainity** of your state $\mathbf{P}_t$ which is nothing but the covariance matrix.
 
@@ -187,4 +187,4 @@ A few seconds of tracking using Kalman filter and you got yourself a target lock
 
 
 ![alt](/images/blog6/close.jpg)
-*Skynet is pretty kinky for an AI :3*
+*SkyNet knows what's what, lol*

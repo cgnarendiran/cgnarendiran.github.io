@@ -73,7 +73,7 @@ layout: default
 					<h5 class="widget__title">Recent posts</h5>
 					<div class="recent-box">
                         {% assign posts = site.posts | where_exp:"post","post.url != page.url" %}
-						{% for post in posts offset:0 limit:3 %}
+						{% for post in posts offset:0 limit:4 %}
 						<div class="recent-posts">
 							<div class="recent-posts__content">			
 								{% if post.image and post.image != "" %}

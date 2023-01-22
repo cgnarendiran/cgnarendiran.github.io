@@ -32,13 +32,13 @@ However, it is possible to model this irreversible process through a neural netw
 
 ## What's underneath?
 - During the forward diffusion process $q$, we take a good image $x_0$, destroy and add noise to it sequentially little by little to get an isotropic gaussian noise image $x_T$ ($t=0,1,2,...,T$). Here isotropic means that it looks same in all directions (mathematically, $\boldsymbol{\Sigma} = \sigma^2 \boldsymbol{I}$)
-- During the reverse diffusion process $p_\theta$ we use a neural network to transform from noise $x_T$ back to the original image $x_0$, sequentially.
-
-We can see that the forward diffusion is defined below as a Gaussian process (information destruction and noise addition). Since we know that the forward and reverse process look the same under micro conditions, we can model the reverse process by a Gaussian as well! How neat. The mean and variance of this Gaussian is obtained by transforming the input image $x_t$ by a neural network with learnable parameters $\theta$. Why Gaussian though? Why not Uniform, Laplace, Poisson or other distributions? That's because Gaussian noise is [quite common](https://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/VELDHUIZEN/node11.html) in imaging systems. Also, in these equations below, $\{\beta_t \in (0,1) \}^T_{t=1}$ is diffusion scheduling parameter that determines how much noise is added and how much destruction is happening.
+- During the reverse diffusion process $p_\theta$ we use a neural network to transform from noise $x_T$ back to the original image $x_0$, sequentially
 
 ![alt](/images/blog10/inner_working.png){: .center-image }
 ![alt](/images/blog10/inner_working1.png){: .center-image }
 *Figure 3: Forward and reverse diffusion processes.*
+
+We can see that in the forward diffusion, each successive image is sampled from a Gaussian distribution which is dependent on the previous image and noise (information destruction and noise addition). Since we know that the forward and reverse process look the same under micro conditions, we can model the reverse diffusion by a Gaussian as well! How neat. The mean and variance of this reverse Gaussian distribution is obtained by transforming the input image $x_t$ by a neural network with learnable parameters $\theta$. Why Gaussian though? Why not Uniform, Laplace, Poisson or other distributions? That's because Gaussian noise is [quite common](https://homepages.inf.ed.ac.uk/rbf/CVonline/LOCAL_COPIES/VELDHUIZEN/node11.html) in imaging systems. Also, in these equations below, $\{\beta_t \in (0,1) \}^T_{t=1}$ is diffusion scheduling parameter that determines how much noise is added and how much destruction is happening.
 
 ## Tricks
 There are couple of tricks to make the training and sampling of these models easier. Some of these are as follows:
@@ -49,9 +49,9 @@ There are couple of tricks to make the training and sampling of these models eas
 ![alt](/images/blog10/beta_schedule1.png){: .center-image }
 *Figure 4: Beta schedule comparison for linear and cosine schedule*
 
-- Predict the noise instead of the mean directly; they are equivalent. From the DDPM paper, “We have shown that the $\epsilon$-prediction parameterization both resembles Langevin dynamics and simplifies the diffusion model variational bound to an objective that resembles denoising score matching”. The relation between $\mu_\theta(x_t, t)$ and $\epsilon_\theta(x_t, t)$ is given as, $\mu_\theta(x_t, t) = \frac{1}{\sqrt{\alpha_t}} \Big(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha_t}}} \epsilon_\theta(x_t, t) \Big)$. Thus images can be sampled as follows by using the predicted noise: $x_{t-1} = \mathcal{N}(x_{t-1}; \frac{1}{\sqrt{\alpha_t}} \Big(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha_t}}} \epsilon_\theta(x_t, t) \Big), \Sigma_\theta(x_t, t))$
+- Predict the noise instead of the mean directly; they are equivalent. From the [DDPM paper](https://arxiv.org/abs/2006.11239), “We have shown that the $\epsilon$-prediction parameterization both resembles Langevin dynamics and simplifies the diffusion model variational bound to an objective that resembles denoising score matching”. The relation between $\mu_\theta(x_t, t)$ and $\epsilon_\theta(x_t, t)$ is given as, $\mu_\theta(x_t, t) = \frac{1}{\sqrt{\alpha_t}} \Big(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha_t}}} \epsilon_\theta(x_t, t) \Big)$. Thus images can be sampled as follows by using the predicted noise: $x_{t-1} = \mathcal{N}(x_{t-1}; \frac{1}{\sqrt{\alpha_t}} \Big(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha_t}}} \epsilon_\theta(x_t, t) \Big), \Sigma_\theta(x_t, t))$
 
-- Variance can be either fixed or learned; learned variance reduces number of timesteps during sampling. Improved DDPM propose to have a learned variance as follows by the model predicting a mixing vector $\mathbf{v}$: $\Sigma_\theta(x_t, t) = \exp(\mathbf{v} \log \beta_t + (1-\mathbf{v}) \log \tilde{\beta_t})$ where $\tilde{\beta_t} = \frac{1 - \bar{\alpha_{t-1}}}{1 - \bar{\alpha_t}} \cdot \beta_t$
+- Variance can be either fixed or learned; learned variance reduces number of timesteps during sampling. [Improved DDPM](https://arxiv.org/abs/2102.09672) propose to have a learned variance as follows by the model predicting a mixing vector $\mathbf{v}$: $\Sigma_\theta(x_t, t) = \exp(\mathbf{v} \log \beta_t + (1-\mathbf{v}) \log \tilde{\beta_t})$ where $\tilde{\beta_t} = \frac{1 - \bar{\alpha_{t-1}}}{1 - \bar{\alpha_t}} \cdot \beta_t$
 
 ## Training and Sampling
 ### Training
@@ -71,7 +71,7 @@ There are couple of tricks to make the training and sampling of these models eas
 ![alt](/images/blog10/algos.png){: .center-image }
 *Figure 3: Training and sampling algorithms for diffusion models from DDPM*
 
-The algorithms diagram above shows this process nicely. Alright, so far we have seen how to train a diffusion model and sample from it. If we sample from this trained model it will give use random samples. How do we get the model to give us say a picture of a Cute Cat Cthulu with tentacles instead of arms? In the next post we will look at guidance for diffusion models to achieve this. Stay tuned! :)
+The algorithms diagram above shows this process nicely. Alright, so far we have seen how to train a diffusion model and sample from it. If we sample from this trained model it will give us random samples. How do we get the model to give us say a picture of a Cute Cat Cthulu with tentacles instead of arms? In the next post we will look at guidance for diffusion models to achieve this. Stay tuned! :)
 
 ![alt](/images/blog10/cat_cthulu.webp){: .center-image }
 *Figure 3: Cute Cat Cthulu generated from Midjourney*

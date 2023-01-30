@@ -9,7 +9,7 @@ tags:  reciprocal velocity obstacle collision avoidance robotics multi agents
 
 Have you seen the horrifying episode of **Black Mirror: Hated in the Nation** ([trailer](https://www.youtube.com/watch?v=IpCfEwQJ9Xo))? You know, the one with an artificial bee swarm meant originally for pollination, but someone hacks it and the swarm starts killing 3 most hated people by the end of each day? Setting aside the dystopian future, it's quite amazing how the artificial bee swarm works to solve a mission (killing people in this case). Quite recently, the company I work for, [signed a $15 million contract for 100 drones](https://www.livefistdefence.com/army-orders-100-swarm-drones-from-indian-startup/) with the Indian army. This agreement was made under emergency procurement powers given to the army last year, when the India-China standoff in eastern Ladakh began. The drone swarms will be used for foraging, reconnaisance, surveillance and coordinated attacks. All this is possible because of inter drone collision avoidance. 
 
-And the best part is, you already know the basics of commonly used collision avoidance algorithms, ie., *Velocity Obstacle* from the [part 1][part1] of this post ;)
+And the best part is, you already know the basics of commonly used collision avoidance algorithms, ie., *Velocity Obstacle* from the [part 1](/blog/personal-space-for-drones-part1/) of this post ;)
 
 The Velocity Obstacle ($VO$) for a robot A induced by robot B augemented by velocity set of B in the environment is given by 
 $VO_{A\|B}^{\tau} \oplus V_B$ ie., ( $\oplus$ being the Minkowski sum; refer to part 1 for more details). To avoid collision, robot A can pick a velocity that doesn't belong to the above set: ie., $\mathbf{v_A} \notin VO_{A\|B}^{\tau} \oplus V_B$ . But hold on, robot B also thinks the same right now. It will try to pick a velocity that's outside $VO_{B\|A}^{\tau} \oplus V_A$ ie., the Velocity Obstacle of B induced by A augmented by the velocity set of A. 
@@ -60,5 +60,3 @@ The goal for each agent is to start from their current position and move to thei
 *Figure 5: ORCA demo with 10 agents avoiding collision while navigating to their goal points* 
 
 So now you're fully equiped to launch your own drone swarm with collision avoidance. Just add Augmented Reality and you're on your way to become the next Mysterio. Until next time.
-
-[part1]: /blog/personal-space-for-drones-part1/

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Guided Diffusion Models - Part 2"
-date:   2022-12-10
+date:   2022-12-01
 image:  images/blog11/cover.jpg
 tags:  diffusion dalle midjourney imagen generation guidance ai vision
 ---

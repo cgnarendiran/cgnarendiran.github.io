@@ -49,7 +49,7 @@ plugins:
   - jekyll-sitemap
   - jekyll/tagging
 
-paginate: 3
+paginate: 4
 # paginate_path: "/page/:num"
 paginate_path: "/blog/page:num/"
 

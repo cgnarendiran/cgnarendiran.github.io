@@ -61,10 +61,10 @@ One of the ways to mitigate this is Inverse Reinforcement Learning (IRL) where t
 This is where RLHF comes into the picture for ChatGPT/InstructGPT. We generate multiple responses from the model (say $A, B, C, D$) and ask the human labelers to rank them (say the ranking was $B>C>D>A$). Among this ranking, we choose two at a time as input for the model to compare. For $K$ responses, we'd get ${K \choose 2}$ inputs to the model. For InstructGPT, $K$ was anywhere between 4 and 9 responses. The model will yield a reward for both responses and then we use the cross-entropy loss to maximize the likelihood of the chosen response:
 
 $$
-L = - \sum_{A,B \in SFT} (\mu(A) \log(p_\phi(A)) + \mu(B) \log(p_\phi(B)))
+L = - \frac{1}{K \choose 2} E_{(A,B) \in \mathcal{D}} \log(r_\theta(A) - r_\theta(B))
 $$
 
-where $\mu=1$ for the preferred response and $\mu=0$ for the rejected response. And $A,B$ are the responses that the SFT model has generated. The reward model trained by OpenAI was initialized from the SFT model, however, they used the smaller version of SFT with 6B parameters instead of the 175B. This is because the reward model will be used in the next step as a value function (critic in PPO) and hence stability and quicker computation are important.
+where $A$ is the preferred response and $B$ is the rejected response that the SFT model has generated. $(A,B) \in \mathcal{D}$ is the tuple of compared responses. The reward model trained by OpenAI was initialized from the SFT model, however, they used the smaller version of SFT with 6B parameters instead of the 175B. This is because the reward model will be used in the next step as a value function (critic in PPO) and hence stability and quicker computation are important.
 
 ![alt](/images/blog12/training_ppo.png){: .center-image }
 *Figure 4: Final model training with PPO and feedback from RM*

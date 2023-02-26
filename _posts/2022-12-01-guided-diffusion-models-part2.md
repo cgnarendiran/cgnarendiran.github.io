@@ -7,7 +7,7 @@ tags:  diffusion dalle midjourney imagen generation guidance ai vision
 ---
 *On the cover: Midjourney's creation for the prompt "Sun Goddess artful"*
 
-We saw how we could train a generative diffusion model in the [previous post]( /blog/guided-diffusion-models-part1/). But what fun is it if you can't generate something of your choice. Welcome to guidance for diffusion models. There are several variants of guidance to diffusion models and these have evolved and improved over time. In this post I will take you through these variants chronologically. Towards the end we will also discuss the idea behind some of the popular diffusion models.
+We saw how we could train a generative diffusion model in the [previous post](/blog/guided-diffusion-models-part1/). But what fun is it if you can't generate something of your choice. Welcome to guidance for diffusion models. There are several variants of guidance to diffusion models and these have evolved and improved over time. In this post I will take you through these variants chronologically. Towards the end we will also discuss the idea behind some of the popular diffusion models.
 
 ### Class conditional models
 This concept was introduced in 2021 by OpenAI authors in the paper [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233). Let's say we trained our diffusion model with images from a traditional dataset like ImageNet. We can essentially provide the class label embedding as an additional input to the our model. This makes our mean distribution of samples conditional on class labels: $\mu(x_t, t)$ into $\mu(x_t, t | y)$. In this paper, they use what they called the Adaptive Group Normalization layer:

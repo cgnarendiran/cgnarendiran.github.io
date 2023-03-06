@@ -25,14 +25,14 @@ The vanilla Imitation Learning described above is called **Behavior Cloning**, b
 ![alt](/images/blog13/state_distribution.png){: .center-image }
 *Figure 1: State distribution of expert in teal and agent in brown*
 
-Because of the IID assumption and the novel state distribution, errors in the model's prediction start compounding, leading to critical failure! Let's say you trained an agent to drive a car using Behavior Cloning, with the state being the image feed and actions being the steering/acceleration of the car. When the agent starts driving, it might come across an obstacle that makes it take a sharp turn and now it faces the railroad. The agent might not have seen this before, because humans are unlikely to make this mistake. So now it doesn't know what to do and it meets with an accident.
+Because of the IID assumption and the novel state distribution, errors in the model's prediction start compounding, leading to critical failure! Let's say you trained an agent to drive a car using Behavior Cloning. The state being the image feed and actions being the steering/acceleration of the car. When the agent starts driving, it might come across an obstacle that makes it take a sharp turn and now it faces the road railing. The agent might not have seen this before, because humans are unlikely to make this mistake. So now it doesn't know what to do and meets with an accident.
 
 In the case of conversational models trained with Behavior Cloning, they start generating garbage or overconfident stuff to our queries because of these problems. How can we mitigate this? Well, we can query the expert during training to give us the best action for the current policy. We can then iterate the training until the agent policy looks similar to the expert policy. This helps in taking into account the novel states and learning recovery behavior for the agent. In the above example, the agent can avoid accidents if it queries the expert for the right actions to take when it is about to collide.
 
-This method of taking an expert’s guidance during training is called **Direct Policy Learning (via Interactive Demonstrator)** and it is an improvement on Behavior Cloning. Famous papers in this method are [DAgger](https://arxiv.org/abs/1011.0686) and [SMILe](https://www.ri.cmu.edu/pub_files/2010/5/Ross-AIStats10-paper.pdf). The problem with this approach is that you need the expert to give explicit actions, ie., the labelers in OpenAI have to work overtime writing correct responses for every generation from the model. Not ideal.
+This method of taking an expert’s guidance during training is called **Direct Policy Learning (via Interactive Demonstrator)** and it is an improvement on Behavior Cloning. Famous papers in this method are [DAgger](https://arxiv.org/abs/1011.0686) where all the previous data is collected into one big dataset (data aggregation) and [SMILe](https://www.ri.cmu.edu/pub_files/2010/5/Ross-AIStats10-paper.pdf) where the previous policies are combined using a geometric blending (policy aggregation). But here again, you need the expert to give explicit actions during inference many times over, ie., the labelers in OpenAI have to work overtime writing correct responses for every generation from the model. Not ideal.
 
 ### Inverse Reinforcement Learning
-Another way to do Imitation Learning is through **Inverse RL**. Here, the expert's intention is captured in a Reward Model (RM). As the name suggests, the rewards model is trained to predict a scalar reward for a given state-action pair from the expert demonstration data. The reason for calling this [Inverse RL](https://towardsdatascience.com/inverse-reinforcement-learning-6453b7cdc90d#:~:text=Inverse%20reinforcement%20learning%20is%20a,rewards%20by%20observing%20its%20behavior) is pretty clear: instead of learning a policy from rewards, learn the reward from policy (state-action pairs). The agent uses these generated rewards from the RM to learn the optimal policy using any known RL algorithm.
+Another way to do Imitation Learning is through **Inverse RL**. Here, the expert's intention is captured in a Reward Model (RM). The reward model is essentially trained to predict a scalar reward for a given state-action pair from the expert demonstration data. The reason for calling this [Inverse RL](https://towardsdatascience.com/inverse-reinforcement-learning-6453b7cdc90d#:~:text=Inverse%20reinforcement%20learning%20is%20a,rewards%20by%20observing%20its%20behavior) is pretty clear: instead of learning an optimal policy from rewards like normal RL, learn the reward first from an expert/optimal policy (state-action pairs). The agent uses these generated rewards from the RM to learn the optimal policy using any known RL algorithm.
 
 Two approaches that took off in this method are the [Maximum Entropy IRL](https://www.ri.cmu.edu/pub_files/pub4/ziebart_brian_d_2008_1/ziebart_brian_d_2008_1.pdf) where the reward function is estimated by maximizing the entropy of expert policy. And [Generative Adversarial Imitation Learning (GAIL)](https://arxiv.org/abs/1606.03476) where the generator tries to generate a policy close to the expert and the discriminator evaluates the policy with a reward function (here the discriminator becomes the RM).
 
@@ -56,13 +56,13 @@ P(A>B) &= \frac{\exp(r_\theta(A))}{\exp(r_\theta(A))+\exp(r_\theta(B))}\\
 \end{aligned}
 $$
 
-where $\sigma(x) = \frac{1}{1+e^{-x}}$ is the sigmoid function. The paper says that this follows from the [Bradley-Terry model](https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model) for estimating score functions from pairwise preferences. This can also be understood in terms of Elo ratings in chess. If you know the Elo ratings of two players A and B, the probability of player A winning over player B is given by,
+where $\sigma(x) = \frac{1}{1+e^{-x}}$ is the sigmoid function. The paper says that this follows from the [Bradley-Terry model](https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model) for estimating score functions from pairwise preferences. This can also be understood in terms of [Elo ratings](https://www.omnicalculator.com/sports/elo) in chess. If you know the Elo ratings of two players A and B, the probability of player A winning over player B is given by,
 
 $$
-P(A>B) = \sigma\Big(\frac{Elo(A) - Elo(B)}{400}\Big)
+P(A>B) = \sigma_{10}\Big(\frac{Elo(A) - Elo(B)}{400}\Big)
 $$
 
-If say $A$ and $B$ are the responses from the model (augmented with the query $Q$), and we prefer $A$ over $B$, then $\mu(A)=1; \mu(B)=0$. We can use the following cross-entropy loss function to train our reward model:
+where $\sigma_{10}$ is the sigmoid function with base $10$ instead of $e$. This is neat isn't it? Can you guess what the distribution of Elo ratings of all the players in the system? (Hint: think sigmoid). If say $A$ and $B$ are the responses from the model (augmented with the query $Q$), and we prefer $A$ over $B$, then $\mu(A)=1; \mu(B)=0$. We can use the following cross-entropy loss function to train our reward model:
 
 $$
 \begin{aligned}
@@ -72,7 +72,7 @@ L &= - \sum_{(A,B) \in \mathcal{D}} \mu(A) \log(P(A>B)) + \mu(B) \log(P(B>A))\\
 \end{aligned}
 $$
 
-In conversational AI models (InstructGPT in particular), the model is made to generate $K$ responses. So we can have $K\choose2$ pairs of comparisons that we can make. Example if the model generates four responses, $A, B, C, D$ and our ranking is $B>C>D>A$, then there are ${4\choose2}=6$ comparisons possible: $B>C$, $B>D$, $B>A$, $C>D$, $C>A$ and $D>A$. The loss function in this case reduces to,
+In conversational AI models (InstructGPT in particular), the model is made to generate $K$ responses. So we can have $K\choose2$ pairs of comparisons that we can make. Example if the model generates four responses, $A, B, C, D$ and our ranking is $B>C>D>A$, then there are ${4\choose2}=6$ comparisons possible: $B>C$, $B>D$, $B>A$, $C>D$, $C>A$ and $D>A$. The loss function in this case becomes,
 
 $$
 L = - \frac{1}{K\choose2} E_{(A,B) \in \mathcal{D}} \Big[\log\sigma(r_\theta(A)-r_\theta(B))\Big]

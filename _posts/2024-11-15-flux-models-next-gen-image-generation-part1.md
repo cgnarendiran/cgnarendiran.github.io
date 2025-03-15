@@ -71,8 +71,6 @@ Now that we understand the basics, let's pit these two generative heavyweights a
 
 ### The Tale of the Tape: Flux vs. Diffusion
 | Aspect | Diffusion Models | Flux Models | Winner |
-|:-------|:----------------|:------------|:--------|
-{: .table-bordered style="border: 2px solid black"}
 | **Mathematical Foundation** | Gradually adding and removing noise; predicting the noise that was added (score function) | Direct transformation between distributions; predicting the velocity field | Flux (for simplicity) |
 | **Process Nature** | Stochastic process with curved paths from noise to data | Deterministic process with straighter paths | Flux (for efficiency) |
 | **Sampling Steps** | 20-50 steps typically needed | 1-20 steps depending on variant | Flux (by a mile) |

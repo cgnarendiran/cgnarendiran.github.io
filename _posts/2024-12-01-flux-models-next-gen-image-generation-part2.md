@@ -7,7 +7,7 @@ tags:  flux generative-ai diffusion flow-matching transformers image-generation
 ---
 *On the cover: An AI-generated image showcasing the capabilities of Flux models*
 
-In [Part 1](/blog/flux-models-next-gen-image-generation/) of this series, we explored the basics of Flux models, their mathematical foundations, and how they compare to traditional diffusion models. Now, let's dive deeper into the architecture, training process, and practical applications of these powerful new models.
+In [Part 1](/blog/flux-models-next-gen-image-generation-part1/) of this series, we explored the basics of Flux models, their mathematical foundations, and how they compare to traditional diffusion models. Now, let's dive deeper into the architecture, training process, and practical applications of these powerful new models.
 
 ## The Flux Architecture: Transformers Meet Flow
 

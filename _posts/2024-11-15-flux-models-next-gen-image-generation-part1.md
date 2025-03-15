@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Flux Models: The New Kid on the Generative Block (Part 1)"
+title:  "Flux Models: The New Kid on the Generative Block - Part 1"
 date:   2024-11-15
 image:  images/blog14/cover.jpg
 tags:  flux generative-ai diffusion flow-matching transformers image-generation

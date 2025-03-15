@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Flux Models: The New Kid on the Generative Block (Part 2)"
+title:  "Flux Models: The New Kid on the Generative Block - Part 2"
 date:   2024-12-01
 image:  images/blog14/cover2.jpg
 tags:  flux generative-ai diffusion flow-matching transformers image-generation
@@ -117,7 +117,8 @@ To further understand the differences, let's compare the sampling processes of d
 
 | Aspect | Diffusion Models | Flux Models |
 |--------|------------------|-------------|
-| **Sampling equation** | $x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t, t)\right) + \sigma_t z$ | $z_{t-\Delta t} = z_t + \hat{u}(z_t, t) \cdot (-\Delta t)$ |
+| **Sampling equation** | 
+$x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t, t)\right) + \sigma_t z$ | $z_{t-\Delta t} = z_t + \hat{u}(z_t, t) \cdot (-\Delta t)$ |
 | **Complexity** | More complex, involves multiple terms | Simpler, direct update |
 | **Stochasticity** | Can be stochastic or deterministic | Typically deterministic |
 | **Path nature** | Curved paths between noise and data | Straighter paths |

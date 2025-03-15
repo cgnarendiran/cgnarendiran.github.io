@@ -1,7 +1,7 @@
 ---
 layout: project
 title:  AI-Driven Quantitative Risk Analysis
-date:   2023-06-01
+date:   2025-02-16
 image:  images/project12/cover.png
 tags:   QRA P&ID PFD digitization computer-vision deep-learning oil-gas Aramco graph-algorithms
 ---

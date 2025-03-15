@@ -70,9 +70,9 @@ $$
 Now that we understand the basics, let's pit these two generative heavyweights against each other in a no-holds-barred comparison. Think of it as a mathematical cage match where only one approach can claim the generative crown (though in reality, they're more like cousins than enemies).
 
 ### The Tale of the Tape: Flux vs. Diffusion
-
 | Aspect | Diffusion Models | Flux Models | Winner |
-|--------|------------------|-------------|--------|
+|:-------|:----------------|:------------|:--------|
+{: .table-bordered style="border: 2px solid black"}
 | **Mathematical Foundation** | Gradually adding and removing noise; predicting the noise that was added (score function) | Direct transformation between distributions; predicting the velocity field | Flux (for simplicity) |
 | **Process Nature** | Stochastic process with curved paths from noise to data | Deterministic process with straighter paths | Flux (for efficiency) |
 | **Sampling Steps** | 20-50 steps typically needed | 1-20 steps depending on variant | Flux (by a mile) |
@@ -113,19 +113,7 @@ $$
 \min_{p(x, \epsilon)} \mathbb{E}_{(x, \epsilon) \sim p(x, \epsilon)}\left[\int_0^1 \left\|\frac{d}{dt}z_t\right\|^2 dt\right]
 $$
 
-This is equivalent to finding the optimal transport map between the two distributions, which happens to be a straight line in the Euclidean space!
-
-## Coming Up in Part 2
-
-In the second part of this blog post, we'll dive deeper into:
-
-1. The Flux architecture and how it implements these theoretical ideas
-2. The training and sampling processes
-3. Practical applications and future directions
-4. A detailed look at why flow matching works better mathematically
-5. Real-world examples and use cases
-
-Stay tuned for Part 2, where we'll continue our exploration of these fascinating models and their potential to reshape the generative AI landscape!
+This is equivalent to finding the optimal transport map between the two distributions, which happens to be a straight line in the Euclidean space! Stay tuned for Part 2, where we'll continue our exploration of these fascinating models and their potential to reshape the generative AI landscape!
 
 ## References
 

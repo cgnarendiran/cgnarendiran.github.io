@@ -139,16 +139,28 @@ This is a simple mean squared error between the predicted velocity and the targe
 Once trained, we can generate samples by solving the ODE:
 
 $$
-\frac{dx_t}{dt} = v_\theta(x_t, t), \quad x_1 \sim \mathcal{N}(0, \mathbf{I})
+\frac{dx_t}{dt} = v_\theta(x_t, t)
 $$
 
-starting from a noise sample $x_1$ and integrating backward in time to $t=0$. This can be done using standard ODE solvers like Euler, Heun, or Runge-Kutta methods:
+To generate an image $x_0$, we:
+1. Sample noise $x_1 \sim \mathcal{N}(0, \mathbf{I})$
+2. Solve the ODE from $t=1$ to $t=0$ to get:
+   $$x_0 = x_1 - \int_0^1 v_\theta(x_t, t)dt$$
 
-$$
-x_{t-\Delta t} = x_t - v_\theta(x_t, t) \cdot \Delta t
-$$
+In practice, we solve this integral numerically by dividing the time interval $[0,1]$ into $N$ steps (e.g., $N=4$ for Flux.1 Schnell). Using Euler's method:
 
-for Euler's method, or more sophisticated solvers for better accuracy. The key advantage over diffusion models is that this is a deterministic process that often requires fewer function evaluations to generate high-quality samples.
+1. Set step size $\Delta t = 1/N$
+2. Initialize $x_1$ as random noise
+3. For $i = 1$ to $N$:
+   $$x_{t_i-\Delta t} = x_{t_i} - v_\theta(x_{t_i}, t_i) \cdot \Delta t$$
+4. The final $x_0$ is our generated image
+
+More accurate methods like Heun's or Runge-Kutta can be used, but Flux models are designed to work well even with simple Euler steps. The key advantage over diffusion models is that this process:
+- Is deterministic (no added noise during sampling)
+- Uses straight paths (fewer steps needed)
+- Can use larger step sizes (faster generation)
+
+This is why Flux.1 Schnell can generate high-quality images in as few as 4 steps, while diffusion models typically need 20-50 steps.
 
 #### Relationship to Diffusion Models
 

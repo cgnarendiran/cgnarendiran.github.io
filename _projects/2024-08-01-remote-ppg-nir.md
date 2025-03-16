@@ -2,7 +2,7 @@
 layout: project
 title:  Remote Photoplethysmography using NIR Images
 date:   2024-08-01
-image:  images/project11/cover.png
+image:  images/project12/cover.png
 tags:   rPPG NIR heart-rate monitoring computer-vision deep-learning automotive Mercedes-Benz
 ---
 *On the cover: (a) NIR images to signal, (b) Principles of remote PhotoPlythesmoGraphy (rPPG)*

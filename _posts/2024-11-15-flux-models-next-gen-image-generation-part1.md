@@ -31,35 +31,52 @@ $$
 q(x_t|x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t\mathbf{I})
 $$
 
-where $\beta_t \in (0,1)$ is a variance schedule that controls the noise level at each step. This process can be reparameterized to sample $x_t$ directly from $x_0$ using:
+where $\beta_t \in (0,1)$ is a variance schedule that controls the noise level at each step. Due to the Markov property and Gaussian nature of the transitions, we can directly write:
 
 $$
-x_t = \sqrt{\alpha_t}x_0 + \sqrt{1-\alpha_t}\epsilon
+q(x_t|x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})
 $$
 
-where $\alpha_t = \prod_{i=1}^{t}(1-\beta_i)$ and $\epsilon \sim \mathcal{N}(0, \mathbf{I})$.
+This process can be reparameterized to sample $x_t$ directly from $x_0$ using:
+
+$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon
+$$
+
+where $\alpha_t = 1-\beta_t$, $\bar{\alpha_t} = \prod_{s=0}^t \alpha_s$ and $\epsilon \sim \mathcal{N}(0, \mathbf{I})$.
 
 In the continuous limit as $T \rightarrow \infty$, this discrete process converges to a stochastic differential equation (SDE):
 
 $$
-dx_t = f(t)x_t dt + g(t) dw
+\frac{dx}{dt} = f(t)x_t + g(t) \frac{dw}{dt}
 $$
 
 where $f(t)$ and $g(t)$ are scalar functions of time, and $dw$ is a Wiener process (fancy term for Brownian motion). For the standard diffusion process, $f(t) = -\frac{1}{2}\beta(t)$ and $g(t) = \sqrt{\beta(t)}$.
 
+The beauty of this formulation is that it gives us a continuous view of the diffusion process. Instead of thinking about discrete steps of noise addition, we can view it as a smooth, continuous transformation where our data simultaneously fades and becomes more noisy until it eventually turns into pure Gaussian noise.
+
 The reverse process, which is what we use for generation, is given by:
 
 $$
-dx_t = \left[f(t)x_t - \frac{g^2(t)}{2}\nabla_{x_t}\log p_t(x_t)\right]dt + g(t)d\bar{w}
+\frac{dx}{dt} = f(t)x_t - \frac{g^2(t)}{2}\nabla_{x_t}\log p_t(x_t) + g(t)\frac{d\bar{w}}{dt}
 $$
 
 Here, $\nabla_{x_t}\log p_t(x_t)$ is the score function and $d\bar{w}$ is a reverse-time Wiener process.
+
+This equation might look intimidating, but it comes from a fundamental result in stochastic calculus called "time reversal of SDEs". The score function $\nabla_{x_t}\log p_t(x_t)$ points towards regions of high probability. Think of it like this: if the forward process is like slowly stirring cream into coffee, the reverse process needs to know both how to "unstir" (the drift term) and where the cream originally was (the score term).
 
 #### The Score Function: The Heart of Diffusion Models
 
 The score function $\nabla_{x}\log p(x)$ is the gradient of the log probability density with respect to the input. Intuitively, it points in the direction of increasing probability density - telling us which way to move to reach more likely data points. It's a fundamental concept in score-based generative models.
 
 For diffusion models, we need to estimate $\nabla_{x_t}\log p_t(x_t)$ for all timesteps $t$. Since we don't have direct access to $p_t(x_t)$, we train a neural network $s_\theta(x_t, t)$ to approximate this score function.
+
+The score function has this relation with the noise:
+
+$$
+\nabla_{x_t}\log p_t(x_t) = \mathbb{E}_{x_0|x_t}[\nabla{x_t}\log q(x_t|x_0)] = -\frac{\epsilon}{\sqrt{1-\bar{\alpha}t}}
+$$
+
 
 The training objective is derived from score matching and can be simplified to:
 
@@ -83,7 +100,7 @@ Flow matching takes a different approach. Instead of thinking about adding and r
 
 Flow matching builds on the theory of continuous normalizing flows (CNFs), which model the transformation between probability distributions using deterministic flows governed by ordinary differential equations (ODEs). 
 
-Let's denote our data distribution as $p_{\text{data}}(x_0)$ and our noise distribution as $p_{\text{noise}}(x_1)$, where $x_1 \sim \mathcal{N}(0, \mathbf{I})$. The goal is to find a continuous path $\{p_t(x_t)\}_{t \in [0,1]}$ that smoothly interpolates between these distributions.
+Let's denote our data distribution as $p_{\text{data}}(x_0)$ and our noise distribution as $p_{\text{noise}}(x_1)$, where $x_1 \sim \mathcal{N}(0, \mathbf{I})$ (it was $\epsilon$ in diffusion theory above, it's the same thing). The goal is to find a continuous path $\{p_t(x_t)\}_{t \in [0,1]}$ that smoothly interpolates between these distributions.
 
 In flow matching, we define a deterministic path between a data point $x_0$ and a noise sample $x_1$ as:
 
@@ -91,7 +108,11 @@ $$
 x_t = (1-t)x_0 + tx_1
 $$
 
-where $t \in [0,1]$ is the time parameter. This is a simple linear interpolation, but it defines a valid transport plan between the distributions.
+where $t \in [0,1]$ is the time parameter. This is a simple linear interpolation, but it defines a valid transport plan between the distributions. Note that in diffusion models (DDPM) this was:
+
+$$
+x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}x_1
+$$
 
 The velocity or "flow" along this path is given by the time derivative:
 
@@ -152,9 +173,12 @@ While flow matching provides a framework for learning deterministic paths betwee
 
 From the theory of optimal transport, we know that the most efficient path between two points in Euclidean space is a straight line. Rectified flow extends this intuition to the space of probability distributions.
 
+![alt](/images/blog14/lemme-get-this-straight.gif){: .center-image }
+*Figure 1: Lemme get this straight - meme from Joker*
+
 #### Mathematical Formulation
 
-Formally, rectified flow seeks to find a coupling between the data distribution $p_{\text{data}}(x_0)$ and the noise distribution $p_{\text{noise}}(x_1)$ that minimizes the expected path length:
+Formally, rectified flow seeks to find a coupling between the data distribution $p_{\text{data}}(x_0)$ and the noise distribution $p_{\text{noise}}(x_1)$ that minimizes the expected path length. The key idea is to find the best way to pair data points ($x_0$) with noise points ($x_1$) so that the path between them is as efficient as possible. $p(x_0, x_1)$ is called a "coupling"
 
 $$
 \min_{p(x_0, x_1)} \mathbb{E}_{(x_0, x_1) \sim p(x_0, x_1)}\left[\int_0^1 \left\|\frac{d}{dt}x_t\right\|^2 dt\right]
@@ -194,9 +218,6 @@ x_{t-\Delta t} = x_t - v_\theta(x_t, t) \cdot \Delta t
 $$
 
 where $\Delta t$ can be much larger than in traditional flow matching or diffusion models.
-
-![alt](/images/blog14/flow_paths.png){: .center-image }
-*Figure 1: Comparison of curved paths in diffusion models (left) vs. straighter paths in rectified flow (right)*
 
 This dramatic reduction in sampling steps is what enables Flux models, particularly the Schnell variant, to generate images so quickly while maintaining high quality. It's the mathematical equivalent of finding a shortcut through a complex landscape - why follow a winding path when you can go straight from A to B?
 

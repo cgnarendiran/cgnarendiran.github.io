@@ -65,6 +65,8 @@ There are couple of tricks to make the training and sampling of these models eas
 - Convert the predicted noise $\epsilon_\theta(x_t, t)$ to mean $\mu_\theta(x_t, t)$
 - Sample the previous image $x_{t-1}$ from the distribution $p_\theta(x_{t-1} \vert x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))$
 - Repeat from $t=T$ till $t=0$
+- In practice however, instead of sampling from the distribution $p_\theta(x_{t-1} \vert x_t)$, we compute the $x_0 = \frac{1}{\sqrt{\alpha_t}} \Big(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha_t}}} \epsilon_\theta(x_t, t) \Big)$ and add a noise $z \tilde \mathcal{N}(0,\boldsymbol{I})$ to it to get $x_{t-1}$.
+- Now you might ask, hey I already got $x_0$ here, why do I need to go and add noise and make it $x_{t-1}$ and repeat the whole thing again? The computed $x_0& at each step is a prediction based on the current noisy input, but it isn’t perfect. Repeating the process over many steps gradually refines the image, allowing the model to correct errors incrementally rather than relying on one single leap from noise to a clean image.
 ![alt](/images/blog10/sampling.png){: .center-image }
 *Figure 3: Sampling process depiction*
 

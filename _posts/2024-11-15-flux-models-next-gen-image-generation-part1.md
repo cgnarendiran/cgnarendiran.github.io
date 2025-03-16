@@ -7,7 +7,7 @@ tags:  flux generative-ai diffusion flow-matching transformers image-generation
 ---
 *On the cover: An AI-generated image of flowing light streams representing the concept of Flux models*
 
-Remember when we were all amazed by diffusion models like DALL-E, Midjourney, and Stable Diffusion? Well, there's a new kid on the block that's making waves in the generative AI community - Flux models. Developed by Black Forest Labs (founded by the original creators of Stable Diffusion), these models represent a significant leap forward in image generation capabilities. In this two-part post, I'll dive into what makes Flux models special, how they work under the hood, and why they might just be the future of generative AI.
+Remember when we were all amazed by diffusion models like DALL-E, Midjourney, and Stable Diffusion? Well, there's a new kid on the block that's making waves in the generative AI community - Flux models. Developed by [Black Forest Labs](https://blackforestlabs.ai/) (founded by the original creators of Stable Diffusion), these models represent a significant leap forward in image generation capabilities. In this two-part post, I'll dive into what makes Flux models special, how they work under the hood, and why they might just be the future of generative AI.
 
 ## What are Flux Models?
 

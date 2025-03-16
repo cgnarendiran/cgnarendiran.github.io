@@ -145,8 +145,6 @@ This connection helps explain why flow matching models can be more efficient - t
 
 One of the key innovations in Flux models is the use of "rectified flow," which aims to make the paths from noise to data as straight as possible. This is achieved through a process called "path straightening" or "rectification."
 
-#### The Optimal Transport Perspective
-
 While flow matching provides a framework for learning deterministic paths between distributions, rectified flow specifically focuses on finding the *optimal* paths. In the context of generative modeling, we want paths that:
 
 1. Accurately transform between the noise and data distributions

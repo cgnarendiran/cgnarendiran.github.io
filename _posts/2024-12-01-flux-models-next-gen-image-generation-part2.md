@@ -11,11 +11,7 @@ In [Part 1](/blog/flux-models-next-gen-image-generation-part1/) of this series, 
 
 ## The Flux Architecture: Transformers Meet Flow
 
-Now that we understand the theoretical foundations, let's look at how Flux models implement these ideas in practice.
-
-### Multimodal Diffusion Transformers (MM-DiT)
-
-Flux models use a novel architecture called Multimodal Diffusion Transformers (MM-DiT) that takes into account the multi-modal nature of the text-to-image task. Unlike previous transformer-based diffusion models, MM-DiT allows for bidirectional flow of information between image and text tokens, improving text comprehension and typography.
+Now that we understand the theoretical foundations, let's look at how Flux models implement these ideas in practice. Flux models use a novel architecture called *Multimodal Diffusion Transformers (MM-DiT)* that takes into account the multi-modal nature of the text-to-image task. Unlike previous transformer-based diffusion models, MM-DiT allows for bidirectional flow of information between image and text tokens, improving text comprehension and typography.
 
 The architecture consists of:
 
@@ -46,9 +42,8 @@ where $N$ is the number of parameters, and $a$ and $b$ are constants.
 
 This predictable scaling allowed the researchers to confidently build a 12 billion parameter model, knowing it would outperform smaller models.
 
-## Training and Sampling
 
-### Training Process
+## Training Process
 
 Training a Flux model involves several sophisticated steps:
 
@@ -60,14 +55,9 @@ Training a Flux model involves several sophisticated steps:
 
 4. **Rectification**: Applying path straightening techniques to improve sampling efficiency. This involves finding the optimal transport map between the noise and data distributions.
 
-The training process can be visualized as follows:
-
-![alt](/images/blog14/training_process.png){: .center-image }
-*Figure 2: Simplified visualization of the Flux model training process*
-
 One interesting aspect of Flux training is the use of a technique called "Reflow." After initial training, the model can be further refined by iteratively applying the flow matching process. Each iteration makes the paths between noise and data straighter, leading to more efficient sampling.
 
-### Sampling Process
+## Sampling Process
 
 The sampling process in Flux is remarkably simple:
 
@@ -111,7 +101,7 @@ $$
 
 The key difference is that in flow matching, we learn $u_t$ directly, rather than learning the score function $\nabla_{x_t}\log p_t(x_t)$.
 
-### A Deeper Comparison with Diffusion Models
+## A Deeper Comparison with Diffusion Models
 
 To further understand the differences, let's compare the sampling processes of diffusion models and Flux models:
 
@@ -124,12 +114,8 @@ $x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\
 | **Path nature** | Curved paths between noise and data | Straighter paths |
 | **Step count** | 20-50 steps typically needed | 1-20 steps depending on variant |
 
-The simplicity of the Flux sampling equation is striking. It's essentially just following the predicted velocity field backward in time, which is both conceptually simpler and computationally more efficient.
+The simplicity of the Flux sampling equation is striking. It's essentially just following the predicted velocity field backward in time, which is both conceptually simpler and computationally more efficient. Now that we understand the basics, let's pit these two generative heavyweights against each other in a no-holds-barred comparison. Think of it as a mathematical cage match where only one approach can claim the generative crown (though in reality, they're more like cousins than enemies).
 
-
-## Flux vs. Diffusion: The Ultimate Showdown
-
-Now that we understand the basics, let's pit these two generative heavyweights against each other in a no-holds-barred comparison. Think of it as a mathematical cage match where only one approach can claim the generative crown (though in reality, they're more like cousins than enemies).
 ### The Tale of the Tape: Flux vs. Diffusion
 
 | Aspect | Diffusion Models | Flux Models | Winner |
@@ -142,17 +128,7 @@ Now that we understand the basics, let's pit these two generative heavyweights a
 
 If diffusion models are the reliable family sedan that gets you where you need to go, Flux models are the sleek sports car that turns heads while doing it faster. The trade-off? That sports car needs premium fuel (read: expensive GPUs). Diffusion models have been the workhorses of generative AI for good reason - they're accessible, well-understood, and produce great results. But Flux models are showing us what happens when you take the mathematical scenic route and optimize for a straighter path between noise and data.
 
-### The Quality Spectrum
-
-When it comes to image quality, the progression from older to newer models shows a clear trend. Stable Diffusion 1.5 established a solid baseline but sometimes struggled with complex scenes (like that one time it gave your portrait subject six fingers). SDXL brought notable improvements in composition and details, while SD 3 further refined things, especially in typography (finally, text that doesn't look like it was written by a caffeinated toddler).
-
-Flux models, however, seem to have leapfrogged this progression. Flux.1 Pro delivers exceptional photorealism and fine details that make even SD 3 images look slightly dated in comparison. Flux.1 Dev maintains similar quality with better efficiency, while Flux.1 Schnell performs the magic trick of generating impressive images in fewer steps than it takes to say "diffusion model."
-
-### The Speed Demon
-
 If there's one area where Flux truly shines, it's speed. While diffusion models typically need 20-50 sampling steps (with SDXL Turbo being the exception that proves the rule), Flux models - especially the aptly named Schnell variant - can generate high-quality images in as few as 1-4 steps. That's not just an incremental improvement; it's a paradigm shift that could make real-time generation a practical reality.
-
-### The Hardware Hurdle
 
 The biggest obstacle to Flux world domination? Hardware requirements. While you can run Stable Diffusion 1.5 on a modest gaming GPU with 8GB of VRAM, Flux models are resource-hungry beasts that typically demand A100 or H100 GPUs for optimal performance. It's like comparing the computing requirements of a calculator to those of a space shuttle. This hardware barrier means that for many hobbyists and smaller studios, diffusion models will remain the practical choice for the foreseeable future.
 
@@ -160,52 +136,16 @@ The biggest obstacle to Flux world domination? Hardware requirements. While you 
 *Figure 3: Comparison of images generated by Stable Diffusion XL (left) and Flux.1 (right)*
 
 
-## Practical Applications and Future Directions
 
-Flux models are still in their early days, but they're already showing promise in various applications:
+## Fine-tuning Capabilities
 
-### Current Applications
-
-1. **Professional image generation**: For designers, artists, and marketers
-2. **Video generation**: When combined with video models like CogVideo or Gen3
-3. **ControlNet applications**: For precise control over image composition
-4. **Creative tools**: For digital artists and content creators
-
-### Fine-tuning Capabilities
-
-One particularly exciting aspect of Flux models is their fine-tuning capability. Using techniques like LoRA (Low-Rank Adaptation), users can fine-tune Flux models on specific styles or concepts with relatively few examples.
-
-![alt](/images/blog14/fine_tuned_examples.png){: .center-image }
-*Figure 3: Examples of fine-tuned Flux models showing different artistic styles*
-
-Fine-tuning a Flux model typically involves:
+One particularly exciting aspect of Flux models is their fine-tuning capability. Using techniques like LoRA (Low-Rank Adaptation), users can fine-tune Flux models on specific styles or concepts with relatively few examples. Fine-tuning a Flux model typically involves:
 
 1. Collecting 10-20 high-quality examples of the target style or concept
 2. Training a LoRA adapter on these examples (which modifies only a small subset of the model's parameters)
 3. Using the fine-tuned model to generate new images in the target style
 
 This process is much more efficient than full model fine-tuning and allows for rapid adaptation to new domains.
-
-### Future Directions
-
-As for the future of Flux models, we can expect:
-
-1. **Larger models**: Following the scaling laws, even larger models should perform better
-2. **More efficient architectures**: Further optimizations to reduce computational requirements
-3. **Multimodal extensions**: Beyond text-to-image to include audio, video, and 3D
-4. **Specialized variants**: Models fine-tuned for specific domains or applications
-
-One particularly interesting direction is the integration of Flux with other generative models. For example, combining Flux with video generation models could lead to high-quality text-to-video systems that maintain consistency across frames.
-
-## Licensing and Accessibility
-
-It's worth noting the different licensing models for the Flux variants:
-
-- **Flux.1 Pro**: Commercial license, available through API access
-- **Flux.1 Dev**: Non-commercial license, open weights
-- **Flux.1 Schnell**: Apache 2.0 license, fully open for commercial use
-
-This tiered approach allows for both commercial applications and open research, which is a thoughtful balance in the current AI landscape.
 
 ## Conclusion: The Flow of Progress
 

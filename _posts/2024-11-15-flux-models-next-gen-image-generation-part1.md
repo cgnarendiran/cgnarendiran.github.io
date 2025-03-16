@@ -19,11 +19,9 @@ Flux models are a new class of generative AI models that combine transformer arc
 
 What sets Flux apart from its predecessors is its hybrid architecture that combines multimodal and parallel diffusion transformer blocks, scaled up to a massive 12 billion parameters. For comparison, Stable Diffusion XL has about 3.5 billion parameters, and the original SD 1.5 has less than 1 billion. In the world of generative AI, size does matter!
 
-## From Diffusion to Flow Matching: A Mathematical Journey
-
 To understand Flux models, we need to take a step back and look at the evolution from diffusion models to flow matching. Don't worry, I'll try to make the math as painless as possible (though a little pain is necessary for growth, isn't it?).
 
-### The Diffusion Process Revisited
+## The Diffusion Process Revisited
 
 Diffusion models are rooted in non-equilibrium thermodynamics and can be understood through the lens of probability theory. At their core, they define a Markov chain that gradually transforms a complex data distribution into a simple, tractable one (typically Gaussian noise).
 
@@ -66,7 +64,7 @@ For diffusion models, we need to estimate $\nabla_{x_t}\log p_t(x_t)$ for all ti
 The training objective is derived from score matching and can be simplified to:
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}_{t \sim \mathcal{U}(0,1), x_0 \sim p_{\text{data}}, \epsilon \sim \mathcal{N}(0,\mathbf{I})}\left[\left\|s_\theta(x_t, t) - \left(-\frac{\epsilon}{\sqrt{1-\alpha_t}}\right)\right\|^2\right]
+\mathcal{L}_{DM}(\theta) = \mathbb{E}_{t \sim \mathcal{U}(0,1), x_0 \sim p_{\text{data}}, \epsilon \sim \mathcal{N}(0,\mathbf{I})}\left[\left\|s_\theta(x_t, t) - \left(-\frac{\epsilon}{\sqrt{1-\alpha_t}}\right)\right\|^2\right]
 $$
 
 This is equivalent to predicting the noise $\epsilon$ that was added to create $x_t$ from $x_0$. In practice, most diffusion models are trained to predict this noise directly, which is mathematically equivalent to score matching.
@@ -79,11 +77,9 @@ $$
 
 where $z \sim \mathcal{N}(0, \mathbf{I})$ and $\sigma_t$ controls the stochasticity of the reverse process. This gradually transforms noise into a sample from the data distribution.
 
-### Enter Flow Matching
+## Enter Flow Matching
 
 Flow matching takes a different approach. Instead of thinking about adding and removing noise, it views the process as a continuous transformation from a simple distribution (like Gaussian noise) to the complex data distribution. The key insight is that we can define a deterministic path between noise and data.
-
-#### Probability Flow and Continuous Normalizing Flows
 
 Flow matching builds on the theory of continuous normalizing flows (CNFs), which model the transformation between probability distributions using deterministic flows governed by ordinary differential equations (ODEs). 
 
@@ -149,7 +145,7 @@ This connection helps explain why flow matching models can be more efficient - t
 
 One of the key innovations in Flux models is the use of "rectified flow," which aims to make the paths from noise to data as straight as possible. This is achieved through a process called "path straightening" or "rectification."
 
-### The Optimal Transport Perspective
+#### The Optimal Transport Perspective
 
 While flow matching provides a framework for learning deterministic paths between distributions, rectified flow specifically focuses on finding the *optimal* paths. In the context of generative modeling, we want paths that:
 
@@ -158,7 +154,7 @@ While flow matching provides a framework for learning deterministic paths betwee
 
 From the theory of optimal transport, we know that the most efficient path between two points in Euclidean space is a straight line. Rectified flow extends this intuition to the space of probability distributions.
 
-### Mathematical Formulation
+#### Mathematical Formulation
 
 Formally, rectified flow seeks to find a coupling between the data distribution $p_{\text{data}}(x_0)$ and the noise distribution $p_{\text{noise}}(x_1)$ that minimizes the expected path length:
 
@@ -168,7 +164,7 @@ $$
 
 where $x_t = (1-t)x_0 + tx_1$ is the linear interpolation path. This optimization problem has a beautiful solution: the optimal coupling is the one that makes the paths as straight as possible in the probability space.
 
-### Training with Rectified Flow
+#### Training with Rectified Flow
 
 To train a model with rectified flow, we use an iterative process:
 
@@ -185,7 +181,7 @@ $$
 
 The key difference is that the coupling $p(x_0, x_1)$ is iteratively refined to make the paths straighter.
 
-### Sampling Efficiency
+#### Sampling Efficiency
 
 The primary benefit of rectified flow is sampling efficiency. Because the paths are optimized to be as straight as possible, we can use much larger step sizes when solving the ODE:
 
@@ -202,7 +198,7 @@ $$
 where $\Delta t$ can be much larger than in traditional flow matching or diffusion models.
 
 ![alt](/images/blog14/flow_paths.png){: .center-image }
-*Figure 2: Comparison of curved paths in diffusion models (left) vs. straighter paths in rectified flow (right)*
+*Figure 1: Comparison of curved paths in diffusion models (left) vs. straighter paths in rectified flow (right)*
 
 This dramatic reduction in sampling steps is what enables Flux models, particularly the Schnell variant, to generate images so quickly while maintaining high quality. It's the mathematical equivalent of finding a shortcut through a complex landscape - why follow a winding path when you can go straight from A to B?
 

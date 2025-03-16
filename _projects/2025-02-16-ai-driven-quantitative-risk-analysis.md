@@ -20,9 +20,7 @@ The challenges with traditional manual approaches include:
 
 Automating this process through AI and computer vision offers significant advantages in terms of speed, consistency, and accuracy, ultimately enhancing facility safety and operational efficiency.
 
-## Methodology:
-The AutoQRA project was structured in five main phases:
-
+## Methodology
 #### 1. Document Detection and Recognition:
 I developed a comprehensive detection system that included:
 

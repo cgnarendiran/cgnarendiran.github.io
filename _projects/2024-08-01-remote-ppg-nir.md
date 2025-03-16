@@ -20,10 +20,8 @@ Most existing rPPG methods rely on RGB cameras and operate on the principle that
 
 NIR imaging (wavelengths 700-1000nm) offers a promising alternative as it penetrates deeper into skin tissue, is less affected by ambient light variations, and can operate effectively in low-light conditions. Additionally, many modern vehicles already incorporate NIR cameras for driver monitoring systems, making integration more feasible. However, the signal-to-noise ratio in NIR is 1/10th compared to RGB making it a non-trvial and challenging problem.
 
-## Methodology:
-The project was structured in three main phases:
-
-### 1. Data Collection and Ground Truth:
+## Methodology
+#### 1. Data Collection and Ground Truth:
 I designed a comprehensive data collection protocol that included:
 
 - Custom NIR camera setup (940nm) installed in test vehicles
@@ -34,7 +32,7 @@ I designed a comprehensive data collection protocol that included:
 
 The final dataset comprised of synchronized NIR video and ECG recordings from 500+ subjects across various driving conditions.
 
-### 2. Model Building Approach:
+#### 2. Model Building Approach:
 Initially, we attempted an end-to-end deep learning approach that directly regressed from NIR images to PPG signals. However, this proved challenging as the models severely overfit on the noisy automotive data. We then developed a more robust multi-stage pipeline.
 
 The preprocessing stage focused on facial landmark detection using a specialized NIR face detection model. These landmarks were then used to fit a 3D facial mesh using MediaPipe, providing dense facial geometry. To obtain more accurate landmarks and head pose information, we solved the Perspective-n-Point (PnP) problem using the 3D mesh and camera parameters. The PnP solution provided both additional landmarks and transformation vectors that helped quantify subject motion.

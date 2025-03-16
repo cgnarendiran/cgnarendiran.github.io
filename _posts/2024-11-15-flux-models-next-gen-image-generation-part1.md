@@ -184,7 +184,7 @@ $$
 \min_{p(x_0, x_1)} \mathbb{E}_{(x_0, x_1) \sim p(x_0, x_1)}\left[\int_0^1 \left\|\frac{d}{dt}x_t\right\|^2 dt\right]
 $$
 
-where $x_t = (1-t)x_0 + tx_1$ is the linear interpolation path. This optimization problem has a beautiful solution: the optimal coupling is the one that makes the paths as straight as possible in the probability space.
+where $x_t = (1-t)x_0 + tx_1$ is the linear interpolation path between the paired points. The optimal solution is the one that makes the paths as straight as possible in the probability space.
 
 #### Training with Rectified Flow
 

@@ -51,9 +51,14 @@ Training a Flux model involves several sophisticated steps:
 
 2. **Caption improvement**: Using AI to generate better captions for images (similar to DALL-E 3's approach). This technique, sometimes called "re-captioning," involves using a separate model to generate more detailed and accurate captions for training images.
 
-3. **Flow matching training**: Learning to predict the velocity field between noise and data. The model is trained to predict the vector field that transforms noise into data points.
+3. **Flow matching training**: Learning to predict the velocity field between noise and data. For each training pair $(x_0, x_1)$, where $x_0$ is from the data distribution and $x_1 \sim \mathcal{N}(0, \mathbf{I})$, we:
+   - Compute the interpolation: $x_t = (1-t)x_0 + tx_1$
+   - Calculate target velocity: $v_t = x_1 - x_0$
+   - Train with loss: $$\mathcal{L}_{FM}(\theta) = \mathbb{E}_{t,x_0,x_1}\left[\|v_\theta(x_t, t) - (x_1 - x_0)\|^2\right]$$
 
-4. **Rectification**: Applying path straightening techniques to improve sampling efficiency. This involves finding the optimal transport map between the noise and data distributions.
+4. **Rectification**: Applying path straightening techniques by minimizing the path length:
+   $$\min_{p(x_0, x_1)} \mathbb{E}_{(x_0, x_1)}\left[\int_0^1 \|v_t(x_t)\|^2 dt\right]$$
+   where $v_t(x_t)$ is the predicted velocity field.
 
 One interesting aspect of Flux training is the use of a technique called "Reflow." After initial training, the model can be further refined by iteratively applying the flow matching process. Each iteration makes the paths between noise and data straighter, leading to more efficient sampling.
 

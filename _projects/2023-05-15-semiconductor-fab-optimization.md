@@ -38,8 +38,8 @@ The RL-based setup switching agent achieved remarkable improvements:
 
 These significant improvements attracted new customers to the fab, as the reduced cycle times and increased throughput provided a competitive advantage in the market.
 
-![dashboard](/images/project11/dashboard.png)
-*Interactive dashboard showing KPI comparisons between different scheduling policies*
+
+## Dashboard
 
 A key component of the project was the development of an interactive panel-based dashboard that enabled:
 
@@ -56,3 +56,5 @@ The solution was implemented using Python for the core RL algorithms, PyTorch fo
 Several challenges were encountered during the project, including the high-dimensional state space, sparse rewards, and long-horizon dependencies typical in semiconductor manufacturing. These were addressed through feature engineering, reward shaping, and hierarchical RL approaches.
 
 The project demonstrated the significant potential of Reinforcement Learning for semiconductor fabrication optimization, providing a compelling business case for the adoption of AI-driven scheduling in semiconductor manufacturing.
+
+**Further project details and code base are not revealed since the work is under NDA** 

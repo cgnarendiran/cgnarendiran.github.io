@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "LoRA - The Diet Pill for Obese Language Models"
-date:   2024-03-20
+date:   2025-01-20
 image:  images/blog16/cover.png
 tags:  lora fine-tuning llm language-models parameter-efficient efficient-training
 ---

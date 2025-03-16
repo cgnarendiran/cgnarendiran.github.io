@@ -2,7 +2,7 @@
 layout: project
 title:  Semiconductor Fab Optimization using Reinforcement Learning
 date:   2023-05-15
-image:  images/project11/cover.jpeg
+image:  images/project11/cover.jpg
 tags:   reinforcement-learning semiconductor manufacturing optimization RL dashboard
 ---
 *On the cover: Visualization of wafer lots in a semiconductor fab*
@@ -38,7 +38,7 @@ The RL-based setup switching agent achieved remarkable improvements:
 
 These significant improvements attracted new customers to the fab, as the reduced cycle times and increased throughput provided a competitive advantage in the market.
 
-![dashboard](/images/project13/dashboard.png)
+![dashboard](/images/project11/dashboard.png)
 *Interactive dashboard showing KPI comparisons between different scheduling policies*
 
 A key component of the project was the development of an interactive panel-based dashboard that enabled:

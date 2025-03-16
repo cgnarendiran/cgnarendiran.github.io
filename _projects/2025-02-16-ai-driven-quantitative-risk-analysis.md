@@ -2,7 +2,7 @@
 layout: project
 title:  AI-Driven Quantitative Risk Analysis
 date:   2025-02-16
-image:  images/project12/cover.png
+image:  images/project12/cover.jpg
 tags:   QRA P&ID PFD digitization computer-vision deep-learning oil-gas Aramco graph-algorithms
 ---
 *On the cover: Digitized Piping and Instrumentation Diagram (P&ID) with highlighted Elementary Process Sections (EPS)*

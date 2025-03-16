@@ -2,7 +2,7 @@
 layout: post
 title:  "Flux Models: The New Kid on the Generative Block - Part 1"
 date:   2024-11-15
-image:  images/blog14/cover.jpg
+image:  images/blog14/cover.png
 tags:  flux generative-ai diffusion flow-matching transformers image-generation
 ---
 *On the cover: An AI-generated image of flowing light streams representing the concept of Flux models*

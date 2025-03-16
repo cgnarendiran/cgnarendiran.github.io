@@ -25,93 +25,188 @@ To understand Flux models, we need to take a step back and look at the evolution
 
 ### The Diffusion Process Revisited
 
-Diffusion models work by gradually adding noise to an image until it becomes pure noise, then learning to reverse this process. Mathematically, the forward diffusion process can be described by a stochastic differential equation (SDE):
+Diffusion models are rooted in non-equilibrium thermodynamics and can be understood through the lens of probability theory. At their core, they define a Markov chain that gradually transforms a complex data distribution into a simple, tractable one (typically Gaussian noise).
+
+Let's start with the basics. Given a data distribution $p_{\text{data}}(x_0)$, diffusion models define a forward process that gradually adds noise to the data over $T$ timesteps:
+
+$$
+q(x_t|x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t\mathbf{I})
+$$
+
+where $\beta_t \in (0,1)$ is a variance schedule that controls the noise level at each step. This process can be reparameterized to sample $x_t$ directly from $x_0$ using:
+
+$$
+x_t = \sqrt{\alpha_t}x_0 + \sqrt{1-\alpha_t}\epsilon
+$$
+
+where $\alpha_t = \prod_{i=1}^{t}(1-\beta_i)$ and $\epsilon \sim \mathcal{N}(0, \mathbf{I})$.
+
+In the continuous limit as $T \rightarrow \infty$, this discrete process converges to a stochastic differential equation (SDE):
 
 $$
 dx_t = f(t)x_t dt + g(t) dw
 $$
 
-where $f(t)$ and $g(t)$ are scalar functions of time, and $dw$ is a Wiener process (fancy term for Brownian motion).
+where $f(t)$ and $g(t)$ are scalar functions of time, and $dw$ is a Wiener process (fancy term for Brownian motion). For the standard diffusion process, $f(t) = -\frac{1}{2}\beta(t)$ and $g(t) = \sqrt{\beta(t)}$.
 
 The reverse process, which is what we use for generation, is given by:
 
 $$
-dx_t = \left[f(t)x_t - \frac{g^2(t)}{2}\nabla_{x_t}\log p_t(x_t)\right]dt
+dx_t = \left[f(t)x_t - \frac{g^2(t)}{2}\nabla_{x_t}\log p_t(x_t)\right]dt + g(t)d\bar{w}
 $$
 
-Here, $\nabla_{x_t}\log p_t(x_t)$ is the score function that we approximate with a neural network.
+Here, $\nabla_{x_t}\log p_t(x_t)$ is the score function and $d\bar{w}$ is a reverse-time Wiener process.
+
+#### The Score Function: The Heart of Diffusion Models
+
+The score function $\nabla_{x}\log p(x)$ is the gradient of the log probability density with respect to the input. Intuitively, it points in the direction of increasing probability density - telling us which way to move to reach more likely data points. It's a fundamental concept in score-based generative models.
+
+For diffusion models, we need to estimate $\nabla_{x_t}\log p_t(x_t)$ for all timesteps $t$. Since we don't have direct access to $p_t(x_t)$, we train a neural network $s_\theta(x_t, t)$ to approximate this score function.
+
+The training objective is derived from score matching and can be simplified to:
+
+$$
+\mathcal{L}(\theta) = \mathbb{E}_{t \sim \mathcal{U}(0,1), x_0 \sim p_{\text{data}}, \epsilon \sim \mathcal{N}(0,\mathbf{I})}\left[\left\|s_\theta(x_t, t) - \left(-\frac{\epsilon}{\sqrt{1-\alpha_t}}\right)\right\|^2\right]
+$$
+
+This is equivalent to predicting the noise $\epsilon$ that was added to create $x_t$ from $x_0$. In practice, most diffusion models are trained to predict this noise directly, which is mathematically equivalent to score matching.
+
+During sampling, we start with pure noise $x_T \sim \mathcal{N}(0, \mathbf{I})$ and iteratively apply:
+
+$$
+x_{t-1} = \frac{1}{\sqrt{1-\beta_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\alpha_t}}s_\theta(x_t, t)\right) + \sigma_t z
+$$
+
+where $z \sim \mathcal{N}(0, \mathbf{I})$ and $\sigma_t$ controls the stochasticity of the reverse process. This gradually transforms noise into a sample from the data distribution.
 
 ### Enter Flow Matching
 
 Flow matching takes a different approach. Instead of thinking about adding and removing noise, it views the process as a continuous transformation from a simple distribution (like Gaussian noise) to the complex data distribution. The key insight is that we can define a deterministic path between noise and data.
 
-In flow matching, we define:
+#### Probability Flow and Continuous Normalizing Flows
+
+Flow matching builds on the theory of continuous normalizing flows (CNFs), which model the transformation between probability distributions using deterministic flows governed by ordinary differential equations (ODEs). 
+
+Let's denote our data distribution as $p_{\text{data}}(x_0)$ and our noise distribution as $p_{\text{noise}}(x_1)$, where $x_1 \sim \mathcal{N}(0, \mathbf{I})$. The goal is to find a continuous path $\{p_t(x_t)\}_{t \in [0,1]}$ that smoothly interpolates between these distributions.
+
+In flow matching, we define a deterministic path between a data point $x_0$ and a noise sample $x_1$ as:
 
 $$
-z_t = (1-t)x + t\epsilon
+x_t = (1-t)x_0 + tx_1
 $$
 
-where $x$ is our data point, $\epsilon$ is Gaussian noise, and $t \in [0,1]$ is the time parameter.
+where $t \in [0,1]$ is the time parameter. This is a simple linear interpolation, but it defines a valid transport plan between the distributions.
 
-The velocity or "flow" along this path is given by:
-
-$$
-u = \epsilon - x
-$$
-
-During training, we learn to predict this velocity vector field, which allows us to move from noise to data by following the flow. The loss function for flow matching is elegantly simple:
+The velocity or "flow" along this path is given by the time derivative:
 
 $$
-\mathcal{L}_{FM}(\theta) = \mathbb{E}_{t, (x, \epsilon) \sim p(x, \epsilon)}\left[\left\|v_{\theta}(z_t, t) - (\epsilon - x)\right\|^2\right]
+\frac{dx_t}{dt} = v_t(x_t) = x_1 - x_0
 $$
 
-## Flux vs. Diffusion: The Ultimate Showdown
+This velocity field $v_t(x_t)$ is what we aim to learn with our neural network. Note that unlike in diffusion models where we learn the score function $\nabla_{x_t}\log p_t(x_t)$, here we directly learn the velocity field.
 
-Now that we understand the basics, let's pit these two generative heavyweights against each other in a no-holds-barred comparison. Think of it as a mathematical cage match where only one approach can claim the generative crown (though in reality, they're more like cousins than enemies).
+#### The Conditional Flow Matching Objective
 
-### The Tale of the Tape: Flux vs. Diffusion
-| Aspect | Diffusion Models | Flux Models | Winner |
-| **Mathematical Foundation** | Gradually adding and removing noise; predicting the noise that was added (score function) | Direct transformation between distributions; predicting the velocity field | Flux (for simplicity) |
-| **Process Nature** | Stochastic process with curved paths from noise to data | Deterministic process with straighter paths | Flux (for efficiency) |
-| **Sampling Steps** | 20-50 steps typically needed | 1-20 steps depending on variant | Flux (by a mile) |
-| **Image Quality** | Good to excellent, improving with each generation | Excellent, with superior prompt adherence | Flux (slightly) |
-| **Hardware Requirements** | Can run on consumer GPUs for older models | Needs high-end GPUs due to parameter count | Diffusion (for accessibility) |
+To train our model, we need pairs of $(x_0, x_1)$ where $x_0 \sim p_{\text{data}}$ and $x_1 \sim \mathcal{N}(0, \mathbf{I})$. For each pair, we can compute $x_t$ for any $t \in [0,1]$ and the corresponding target velocity $v_t(x_t) = x_1 - x_0$.
 
-If diffusion models are the reliable family sedan that gets you where you need to go, Flux models are the sleek sports car that turns heads while doing it faster. The trade-off? That sports car needs premium fuel (read: expensive GPUs). Diffusion models have been the workhorses of generative AI for good reason - they're accessible, well-understood, and produce great results. But Flux models are showing us what happens when you take the mathematical scenic route and optimize for a straighter path between noise and data.
+The loss function for flow matching is:
 
-### The Quality Spectrum
+$$
+\mathcal{L}_{FM}(\theta) = \mathbb{E}_{t \sim \mathcal{U}(0,1), x_0 \sim p_{\text{data}}, x_1 \sim \mathcal{N}(0,\mathbf{I})}\left[\left\|v_{\theta}(x_t, t) - (x_1 - x_0)\right\|^2\right]
+$$
 
-When it comes to image quality, the progression from older to newer models shows a clear trend. Stable Diffusion 1.5 established a solid baseline but sometimes struggled with complex scenes (like that one time it gave your portrait subject six fingers). SDXL brought notable improvements in composition and details, while SD 3 further refined things, especially in typography (finally, text that doesn't look like it was written by a caffeinated toddler).
+This is a simple mean squared error between the predicted velocity and the target velocity. The elegance of this approach lies in its simplicity - we're directly learning the vector field that transforms our distributions.
 
-Flux models, however, seem to have leapfrogged this progression. Flux.1 Pro delivers exceptional photorealism and fine details that make even SD 3 images look slightly dated in comparison. Flux.1 Dev maintains similar quality with better efficiency, while Flux.1 Schnell performs the magic trick of generating impressive images in fewer steps than it takes to say "diffusion model."
+#### Sampling via ODE Solving
 
-### The Speed Demon
+Once trained, we can generate samples by solving the ODE:
 
-If there's one area where Flux truly shines, it's speed. While diffusion models typically need 20-50 sampling steps (with SDXL Turbo being the exception that proves the rule), Flux models - especially the aptly named Schnell variant - can generate high-quality images in as few as 1-4 steps. That's not just an incremental improvement; it's a paradigm shift that could make real-time generation a practical reality.
+$$
+\frac{dx_t}{dt} = v_\theta(x_t, t), \quad x_1 \sim \mathcal{N}(0, \mathbf{I})
+$$
 
-### The Hardware Hurdle
+starting from a noise sample $x_1$ and integrating backward in time to $t=0$. This can be done using standard ODE solvers like Euler, Heun, or Runge-Kutta methods:
 
-The biggest obstacle to Flux world domination? Hardware requirements. While you can run Stable Diffusion 1.5 on a modest gaming GPU with 8GB of VRAM, Flux models are resource-hungry beasts that typically demand A100 or H100 GPUs for optimal performance. It's like comparing the computing requirements of a calculator to those of a space shuttle. This hardware barrier means that for many hobbyists and smaller studios, diffusion models will remain the practical choice for the foreseeable future.
+$$
+x_{t-\Delta t} = x_t - v_\theta(x_t, t) \cdot \Delta t
+$$
 
-![alt](/images/blog14/comparison.png){: .center-image }
-*Figure 1: Comparison of images generated by Stable Diffusion XL (left) and Flux.1 (right)*
+for Euler's method, or more sophisticated solvers for better accuracy. The key advantage over diffusion models is that this is a deterministic process that often requires fewer function evaluations to generate high-quality samples.
+
+#### Relationship to Diffusion Models
+
+Interestingly, there's a deep connection between flow matching and diffusion models. The probability flow ODE of a diffusion model:
+
+$$
+\frac{dx_t}{dt} = f(t)x_t - \frac{g^2(t)}{2}\nabla_{x_t}\log p_t(x_t)
+$$
+
+is a special case of the general flow matching framework. The difference is that in diffusion models, this ODE is derived from a stochastic process, while in flow matching, we directly parameterize and learn the ODE.
+
+This connection helps explain why flow matching models can be more efficient - they cut out the "middleman" of the stochastic process and directly learn the deterministic path between distributions.
 
 ## Rectified Flow: The Secret Sauce
 
 One of the key innovations in Flux models is the use of "rectified flow," which aims to make the paths from noise to data as straight as possible. This is achieved through a process called "path straightening" or "rectification."
 
-The idea is simple but powerful: if we can make the paths straighter, we can reduce the number of steps needed for sampling, making the generation process faster and more efficient.
+### The Optimal Transport Perspective
+
+While flow matching provides a framework for learning deterministic paths between distributions, rectified flow specifically focuses on finding the *optimal* paths. In the context of generative modeling, we want paths that:
+
+1. Accurately transform between the noise and data distributions
+2. Require minimal computational effort to traverse during sampling
+
+From the theory of optimal transport, we know that the most efficient path between two points in Euclidean space is a straight line. Rectified flow extends this intuition to the space of probability distributions.
+
+### Mathematical Formulation
+
+Formally, rectified flow seeks to find a coupling between the data distribution $p_{\text{data}}(x_0)$ and the noise distribution $p_{\text{noise}}(x_1)$ that minimizes the expected path length:
+
+$$
+\min_{p(x_0, x_1)} \mathbb{E}_{(x_0, x_1) \sim p(x_0, x_1)}\left[\int_0^1 \left\|\frac{d}{dt}x_t\right\|^2 dt\right]
+$$
+
+where $x_t = (1-t)x_0 + tx_1$ is the linear interpolation path. This optimization problem has a beautiful solution: the optimal coupling is the one that makes the paths as straight as possible in the probability space.
+
+### Training with Rectified Flow
+
+To train a model with rectified flow, we use an iterative process:
+
+1. Start with an initial coupling between $p_{\text{data}}(x_0)$ and $p_{\text{noise}}(x_1)$
+2. Train a velocity field model $v_\theta(x_t, t)$ to match the current coupling
+3. Use the trained model to generate new samples and update the coupling
+4. Repeat steps 2-3 until convergence
+
+The loss function for training the velocity field is similar to flow matching:
+
+$$
+\mathcal{L}_{RF}(\theta) = \mathbb{E}_{t \sim \mathcal{U}(0,1), (x_0, x_1) \sim p(x_0, x_1)}\left[\left\|v_{\theta}(x_t, t) - (x_1 - x_0)\right\|^2\right]
+$$
+
+The key difference is that the coupling $p(x_0, x_1)$ is iteratively refined to make the paths straighter.
+
+### Sampling Efficiency
+
+The primary benefit of rectified flow is sampling efficiency. Because the paths are optimized to be as straight as possible, we can use much larger step sizes when solving the ODE:
+
+$$
+\frac{dx_t}{dt} = v_\theta(x_t, t)
+$$
+
+In practice, this means we can generate high-quality samples with as few as 1-4 steps using a simple Euler solver:
+
+$$
+x_{t-\Delta t} = x_t - v_\theta(x_t, t) \cdot \Delta t
+$$
+
+where $\Delta t$ can be much larger than in traditional flow matching or diffusion models.
 
 ![alt](/images/blog14/flow_paths.png){: .center-image }
 *Figure 2: Comparison of curved paths in diffusion models (left) vs. straighter paths in rectified flow (right)*
 
-Mathematically, rectified flow can be understood as finding a coupling between the noise and data distributions that minimizes the expected path length:
+This dramatic reduction in sampling steps is what enables Flux models, particularly the Schnell variant, to generate images so quickly while maintaining high quality. It's the mathematical equivalent of finding a shortcut through a complex landscape - why follow a winding path when you can go straight from A to B?
 
-$$
-\min_{p(x, \epsilon)} \mathbb{E}_{(x, \epsilon) \sim p(x, \epsilon)}\left[\int_0^1 \left\|\frac{d}{dt}z_t\right\|^2 dt\right]
-$$
-
-This is equivalent to finding the optimal transport map between the two distributions, which happens to be a straight line in the Euclidean space! Stay tuned for Part 2, where we'll continue our exploration of these fascinating models and their potential to reshape the generative AI landscape!
+Stay tuned for Part 2, where we'll continue our exploration of these fascinating models and their potential to reshape the generative AI landscape!
 
 ## References
 

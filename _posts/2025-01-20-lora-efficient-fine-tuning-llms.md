@@ -54,7 +54,7 @@ The beauty of this approach is that we're not changing the original model at all
 2. We can switch between different LoRA adaptations by simply swapping $A$ and $B$ matrices
 3. We can even combine different LoRA adaptations by adding their effects
 
-![alt](/images/blog16/lora-diagram.png){: .center-image }
+![alt](/images/blog16/lora-diagram.jpg){: .center-image }
 *Figure 1: Schematic of LoRA applied to a transformer model*
 
 ## Initialization Magic

@@ -5,7 +5,7 @@ date:   2024-08-01
 image:  images/project11/cover.jiff
 tags:   rPPG NIR heart-rate monitoring computer-vision deep-learning automotive Mercedes-Benz
 ---
-*On the cover: NIR camera setup for remote heart rate monitoring in an automotive environment*
+*On the cover: Principles of remote PhotoPlythesmoGraphy*
 
 This work was conducted at Mercedes-Benz Research and Development. The project aimed to develop a robust, non-contact method for heart rate monitoring using Near-Infrared (NIR) imaging specifically designed for automotive environments.
 

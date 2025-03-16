@@ -5,7 +5,7 @@ date:   2025-02-16
 image:  images/project12/cover.jpg
 tags:   QRA P&ID PFD digitization computer-vision deep-learning oil-gas Aramco graph-algorithms
 ---
-*On the cover: Digitized Piping and Instrumentation Diagram (P&ID) with highlighted Elementary Process Sections (EPS)*
+*On the cover: Digitized Process Flow Diagram (PFD) with highlighted Elementary Process Sections (EPS) and graph*
 
 This work was conducted at Saudi Aramco. The project aimed to develop an automated system for digitizing Process Flow Diagrams (PFDs) and Piping and Instrumentation Diagrams (P&IDs) to enable efficient and accurate Quantitative Risk Analysis (QRA).
 

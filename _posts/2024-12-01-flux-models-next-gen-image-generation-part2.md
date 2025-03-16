@@ -11,7 +11,7 @@ In [Part 1](/blog/flux-models-next-gen-image-generation-part1/) of this series, 
 
 ## The Flux Architecture: Transformers Meet Flow
 
-Now that we understand the theoretical foundations, let's look at how Flux models implement these ideas in practice. Flux models use a novel architecture called *Multimodal Diffusion Transformers (MM-DiT)* that takes into account the multi-modal nature of the text-to-image task. Unlike previous transformer-based diffusion models, MM-DiT allows for bidirectional flow of information between image and text tokens, improving text comprehension and typography.
+Now that we understand the theoretical foundations, let's look at how Flux models implement these ideas in practice. Flux models use a novel architecture called Multimodal Diffusion Transformers [MM-DiT](https://arxiv.org/abs/2403.03206) in the same paper, that takes into account the multi-modal nature of the text-to-image task. Unlike previous transformer-based diffusion models, MM-DiT allows for bidirectional flow of information between image and text tokens, improving text comprehension and typography.
 
 The architecture consists of:
 
@@ -22,7 +22,7 @@ The architecture consists of:
 Let's break down the MM-DiT architecture a bit more:
 
 ![alt](/images/blog15/mmdit-architecture.png){: .center-image }
-*Figure 1: Simplified diagram of the MM-DiT architecture used in Flux models*
+*Figure 1: Full diagram of the MM-DiT architecture used in Flux models*
 
 In traditional transformer-based diffusion models, text and image information flow in a unidirectional manner. The text conditions the image generation, but there's limited feedback from the image back to the text representation. MM-DiT changes this by allowing bidirectional information flow, which helps the model better understand and implement complex text prompts.
 
@@ -55,6 +55,7 @@ Training a Flux model involves several sophisticated steps:
    - Compute the interpolation: $x_t = (1-t)x_0 + tx_1$
    - Calculate target velocity: $v_t = x_1 - x_0$
    - Train with loss: $$\mathcal{L}_{FM}(\theta) = \mathbb{E}_{t,x_0,x_1}\left[\|v_\theta(x_t, t) - (x_1 - x_0)\|^2\right]$$
+
 
 4. **Rectification**: Applying path straightening techniques by minimizing the path length:
    $$\min_{p(x_0, x_1)} \mathbb{E}_{(x_0, x_1)}\left[\int_0^1 \|v_t(x_t)\|^2 dt\right]$$

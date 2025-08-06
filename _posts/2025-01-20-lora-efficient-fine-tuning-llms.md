@@ -49,7 +49,7 @@ Where $x$ is the input vector and $h$ is the output. With our reparameterized up
 
 $$h = W_0 x + BAx $$
 
-When we take the derivative, we only need to worry about A and B, which are much smaller matrices compared to $W_0$. This means we're essentially computing the same thing as we would in full fine-tuning, but with far fewer trainable parameters.
+When we take the derivative, we only need to worry about A and B, i.e. $\frac{\partial L}{\partial A}$ and $\frac{\partial L}{\partial B}$, which are much smaller matrices compared to $W_0$, i.e, $\frac{\partial L}{\partial W_0}$. This means we're essentially computing the same thing as we would in full fine-tuning, but with far fewer trainable parameters.
 
 The beauty of this approach is that we're not changing the original model at all - we're just adding our low-rank adaptation matrices. This means:
 1. The original pre-trained weights stay intact

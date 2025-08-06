@@ -7,13 +7,13 @@ tags:  lora fine-tuning llm language-models parameter-efficient efficient-traini
 ---
 *On the cover: The concept of low-rank adaptation visualized as dimension reduction*
 
-If you've been paying any attention to the AI world lately, you might have noticed these large language models (LLMs) getting increasingly portly. GPT-4 is rumored to have 1.76 trillion parameters, which is approximately the same as the number of times I've contemplated whether my coffee needs another shot of espresso. The answer, by the way, is always yes.
+If you've been paying any attention to the AI world lately, you might have noticed these large language models (LLMs) getting increasingly heavy and fat. GPT-4 is rumored to have 1.76 trillion parameters, which is approximately the same as the number of times I've contemplated whether my coffee needs another shot of espresso. The answer, by the way, is always yes.
 
-But here's the problem: fine-tuning these chonky models for specific tasks requires computational resources that would make NASA blush. Enter LoRA (Low-Rank Adaptation) - the weight loss program that language models have been desperately waiting for. In this post, I'll dive into the mathematics behind LoRA and why it's causing such a ruckus in the AI community. Brace yourselves for some matrix algebra that's more exciting than it sounds, I promise :)
+But here's the problem: fine-tuning these chonky models for specific tasks requires massive computational resources. Enter LoRA (Low-Rank Adaptation) - the diet pill that language models have been desperately waiting for. In this post, I'll dive into the surprisingly simple mathematics behind LoRA. Brace yourselves for some matrix algebra that's more exciting than it sounds, I promise :)
 
 ## The Weight Problem
 
-Let's set the stage. A pre-trained language model like GPT, BERT, or LLaMA has a bunch of weight matrices $W_0 \in \mathbb{R}^{d \times k}$. During traditional fine-tuning, we update these full matrices to $W = W_0 + \Delta W$, where $\Delta W$ represents the changes we make during fine-tuning.
+Let's set the stage. A pre-trained language model like GPT-4, Gemini or LLaMA has a bunch of weight matrices $W_0 \in \mathbb{R}^{d \times k}$, where $d$ is the number of rows and $k$ is the number of columns. During traditional fine-tuning, let's say we updated these full matrices to $W = W_0 + \Delta W$, where $\Delta W$ represents all the changes we made to the weight matrix during fine-tuning (whose dimension is also $\mathbb{R}^{d \times k}$).
 
 For these massive models, the dimensions $d$ and $k$ can be in thousands, creating weight matrices with millions of parameters. For example, a weight matrix of size $4096 \times 4096$ has approximately 16.8 million parameters. Fine-tuning all these parameters means:
 1. Storing the full model weights (hundreds of GB)
@@ -21,11 +21,9 @@ For these massive models, the dimensions $d$ and $k$ can be in thousands, creati
 3. Updating all parameters (memory intensive)
 4. Storing a separate copy of the model for each fine-tuned version (storage nightmare)
 
-It's like trying to turn a cruise ship by pushing every single molecule of its hull - technically possible but wildly inefficient.
-
 ## The LoRA Insight
 
-Here's where the mathematical genius comes in. The key insight of LoRA is that the updates to the weight matrices during fine-tuning often have a low "intrinsic rank" - a fancy way of saying that despite the giant size of $\Delta W$, the actual information contained in these updates lives in a much lower-dimensional space.
+Here's where the mathematical genius of LoRA comes in. The key insight of LoRA is that $\Delta W$ often has a low "intrinsic rank" - a fancy way of saying that despite the giant size of $\Delta W$, the actual information contained in these updates lives in a much lower-dimensional space.
 
 Instead of directly learning $\Delta W$, LoRA parameterizes the update as:
 
@@ -39,15 +37,19 @@ Let's do some quick math to see why this is amazing. For our example weight matr
 - Full fine-tuning: 16.8 million trainable parameters
 - LoRA with rank $r = 8$: $(4096 \times 8) + (8 \times 4096) = 65,536$ trainable parameters
 
-That's a 256x reduction! It's like using a smart rudder instead of pushing the whole cruise ship. Elegant, isn't it?
+That's a 256x reduction! Elegant, isn't it?
 
 ## How Does LoRA Work?
 
 During the forward pass in a transformer model with LoRA, our computation looks like:
 
-$$h = W_0 x + BAx = W_0 x + \Delta W x$$
+$$h = W_0 x + \Delta W x$$
 
-Where $x$ is the input vector and $h$ is the output. We're essentially computing the same thing as we would in full fine-tuning, but with far fewer trainable parameters.
+Where $x$ is the input vector and $h$ is the output. With our reparameterized update, we can write the same things as,
+
+$$h = W_0 x + BAx $$
+
+When we take the derivative, we only need to worry about A and B, which are much smaller matrices compared to $W_0$. This means we're essentially computing the same thing as we would in full fine-tuning, but with far fewer trainable parameters.
 
 The beauty of this approach is that we're not changing the original model at all - we're just adding our low-rank adaptation matrices. This means:
 1. The original pre-trained weights stay intact
@@ -106,6 +108,6 @@ LoRA represents an elegant mathematical solution to the very practical problem o
 
 As language models continue to grow (and they show no signs of slowing down), techniques like LoRA will become increasingly important. They democratize access to fine-tuning, allowing researchers and practitioners with limited resources to adapt these powerful models to specific tasks and domains.
 
-The next time you're staring at your GPU with 8GB of VRAM and wondering how you'll ever fine-tune that shiny new 70B parameter model, remember: you don't need to diet to fit into smaller clothes if you can just get clothes that adapt to your size. In the world of language models, LoRA is that adaptable clothing.
+The next time you're staring at your GPU with 40GB of VRAM and wondering how you'll ever fine-tune that shiny new 70B parameter model, remember: you don't need to get a bigger much expensive dress, just use the magic diet pill called LoRA.
 
 Fin. 

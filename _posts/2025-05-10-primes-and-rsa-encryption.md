@@ -26,7 +26,7 @@ The magic is:
 * You never got my private key.
 * Anyone can lock a box for me, but no one else can open it.
 
-RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**. In the context of Computers, the padlock is called a **public key** and the secure key is called a **private key**. Also, this analogy is taken from the book **Fermat's Last Theorem** by **Simon Singh**. Definitely recommend!
+RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**. In the context of Computers, the padlock is called a **public key** and the secure key is called a **private key**. Also, this analogy is taken from the book (**Fermat's Last Theorem**)[https://simonsingh.net/books/fermats-last-theorem/the-whole-story/] by **Simon Singh**. Definitely recommend!
 
 
 ## The Ingredients
@@ -145,7 +145,6 @@ If $M$ is divisible by $p$ or $q$, the above “$\gcd(M,n)=1$” assumption brea
 So the decryption step is valid for **all** $M \in \{0,\dots,n-1\}$.
 
 
-
 ## **A Small Example (for us measely humans)**
 
 Let’s pick tiny numbers (not secure at all):
@@ -162,11 +161,10 @@ Private key: $(d=27, n=55)$
 Say we want to encrypt $M = 12$:
 
 * **Encrypt**: $C = 12^3 \ \text{mod} \ 55 = 1728 \ \text{mod} \ 55 = 23$
-* **Decrypt**: $M = 23^{27} \ \text{mod} \ 55 = 12$ ✅
+* **Decrypt**: $M = 23^{27} \ \text{mod} \ 55 = 12$
 
----
 
-## **Why it’s secure**
+## **Why is it secure?**
 
 If someone knows $n$ and $e$:
 
@@ -174,10 +172,6 @@ If someone knows $n$ and $e$:
 * But they can’t easily find $d$ without knowing $\varphi(n)$.
 * And to get $\varphi(n)$, they must factor $n$ into $p$ and $q$.
 * With large enough primes (hundreds of digits long), factoring is practically impossible with today’s computers.
-
----
-
-## **Final Thoughts**
 
 RSA is a beautiful mix of:
 

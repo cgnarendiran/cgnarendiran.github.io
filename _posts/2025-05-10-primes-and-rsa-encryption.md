@@ -9,20 +9,19 @@ tags:  primes rsa encryption python
 
 If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
 
-> You can tell the whole world how to lock a message for you,
-> but only you can unlock it.
+> You can tell the whole world how to lock a message for you
+
+> But only you can unlock it.
 
 This blog is a beginner-friendly walk-through of **how** that’s possible, why we don’t just share our secret key, and why a couple of prime numbers hold the entire system together.
 
----
-
-## **The Padlock Story (Simon Singh’s analogy)**
+## The Padlock Story (Simon Singh’s analogy)
 
 Imagine you want to send me a secret message by mail.
 
 1. I send you an **open padlock** — but **keep the key** with me.
 2. You put your message in a box, lock it with my padlock, and send it back.
-3. Because the box is locked, **only I** (who have the key) can open it.
+3. Because the box is locked, **only I** (who has the key) can open it.
 
 The magic is:
 
@@ -33,9 +32,9 @@ RSA works on the **same idea**, except the padlock is just a **big number** call
 
 ---
 
-## **The Ingredients**
+## The Ingredients
 
-1. **Two large prime numbers**: $p$ and $q$
+1. **Two large prime numbers**: $p$ and $q$ of the order of 100s of digits
    (We keep these secret.)
 2. **Their product**: $n = p \times q$
    (This is the “padlock” — we give this to everyone.)
@@ -48,9 +47,8 @@ RSA works on the **same idea**, except the padlock is just a **big number** call
    * We give out **both $n$ and $e$** to the world.
      This is totally safe — knowing $n$ and $e$ doesn’t help anyone find $p$ and $q$ if they’re large enough.
 
----
 
-## **Why We Give Out e (and n)**
+## Why We Give Out e (and n)
 
 If we didn’t give $e$, people wouldn’t know *how* to lock messages for us.
 
@@ -67,9 +65,10 @@ Mathematically:
   e \times d \equiv 1 \ (\text{mod} \ \varphi(n))
   $$
 
----
+> NOTE: The  $c = a \ (\text{mod} \ b)$ just means that the remainder when $a$ is divided by $b$ is $c$.
+> NOTE: This  $a \equiv b \ (\text{mod} \ n)$ just means that $a$ and $b$ have the same remainder when divided by $n$.
 
-## **The Math Magic**
+## The Core Encryption and Decryption
 
 1. **Encryption** (locking the box):
 
@@ -88,18 +87,71 @@ Mathematically:
    M \equiv C^d \ (\text{mod} \ n)
    $$
 
-   This works because of **Euler’s theorem**:
-   If $\gcd(M, n) = 1$, then:
+   So you get back your message at your end!
 
-   $$
-   M^{\varphi(n)} \equiv 1 \ (\text{mod} \ n)
-   $$
 
-   and we choose $e$ and $d$ so that $e \times d \equiv 1 \ (\text{mod} \ \varphi(n))$.
+## Mathematical Intuition
 
----
+All this is good, but why does this work? All because of a nice **Euler’s theorem**, and the way we pick the $e$ and $d$. To be more concrete, let's go over what we do step by step:
 
-## **A Small Example (for humans)**
+* pick two primes $p, q$, set $n = pq$.
+* compute $\varphi(n) = (p-1)(q-1)$.
+* choose $e$ such that $\gcd(e,\varphi(n))=1$.
+* choose $d$ as the **modular inverse** of $e$ modulo $\varphi(n)$:
+
+  $$
+  ed \equiv 1 \pmod{\varphi(n)} \quad\Longleftrightarrow\quad ed = 1 + k\,\varphi(n)\ \text{for some integer }k.
+  $$
+
+Encryption is $C \equiv M^e \pmod n$.
+Decryption claims $M \equiv C^d \pmod n$.
+
+**Why is that true?**
+
+Consider the product exponent $ed$:
+
+$$
+M^{ed} \;=\; M^{1+k\varphi(n)} \;=\; M \cdot \big(M^{\varphi(n)}\big)^k.
+$$
+
+**Euler’s theorem** says: if $\gcd(M,n)=1$, then
+
+$$
+M^{\varphi(n)} \equiv 1 \pmod n.
+$$
+
+Plug that in:
+
+$$
+M^{ed} \equiv M \cdot 1^k \equiv M \pmod n.
+$$
+
+But $C \equiv M^e \pmod n$, so
+
+$$
+C^d \equiv (M^e)^d \equiv M^{ed} \equiv M \pmod n.
+$$
+
+That’s the whole trick: picking $d$ so that $ed \equiv 1 \pmod{\varphi(n)}$ makes exponentiation “undo” itself.
+
+
+### what if $M$ shares a factor with $n$? (edge cases)
+
+If $M$ is divisible by $p$ or $q$, the above “$\gcd(M,n)=1$” assumption breaks. RSA still works, and the clean way to see it is to check the congruence **mod $p$** and **mod $q$** separately and then combine them (Chinese Remainder Theorem):
+
+* **Case mod $p$:**
+  If $p \mid M$, then $M \equiv 0 \pmod p$, so trivially $M^{ed} \equiv 0 \equiv M \pmod p$.
+  If $p \nmid M$, use **Fermat’s little theorem**: $M^{p-1} \equiv 1 \pmod p$.
+  Because $ed = 1 + k(p-1)(q-1)$, $ed \equiv 1 \pmod{p-1}$, so $M^{ed} \equiv M \pmod p$.
+
+* **Same mod $q$.**
+  Put the two congruences together → $M^{ed} \equiv M \pmod n$.
+
+So the decryption step is valid for **all** $M \in \{0,\dots,n-1\}$.
+
+
+
+## **A Small Example (for us measely humans)**
 
 Let’s pick tiny numbers (not secure at all):
 

@@ -7,13 +7,11 @@ tags:  primes rsa encryption python
 ---
 *On the cover: RSA Encryption*
 
-If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
+If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA was found by three mathematicians Rivest–Shamir–Adleman after from MIT after whom it's named. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
 
-> You can tell the whole world how to lock a message for you
+> You can tell the whole world how to lock a message for you, but only you can unlock it.
 
-> But only you can unlock it.
-
-This blog is a beginner-friendly walk-through of **how** that’s possible, why we don’t just share our secret key, and why a couple of prime numbers hold the entire system together.
+This blog is a beginner-friendly walk-through of **how** that’s possible, and why a couple of large prime numbers hold the entire system together.
 
 ## The Padlock Story (Simon Singh’s analogy)
 
@@ -28,9 +26,8 @@ The magic is:
 * You never got my private key.
 * Anyone can lock a box for me, but no one else can open it.
 
-RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**.
+RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**. In the context of Computers, the padlock is called a **public key** and the secure key is called a **private key**. Also, this analogy is taken from the book **Fermat's Last Theorem** by **Simon Singh**. Definitely recommend!
 
----
 
 ## The Ingredients
 
@@ -65,8 +62,9 @@ Mathematically:
   e \times d \equiv 1 \ (\text{mod} \ \varphi(n))
   $$
 
-> NOTE: The  $c = a \ (\text{mod} \ b)$ just means that the remainder when $a$ is divided by $b$ is $c$.
-> NOTE: This  $a \equiv b \ (\text{mod} \ n)$ just means that $a$ and $b$ have the same remainder when divided by $n$.
+**NOTE**: The  $c = a \ (\text{mod} \ b)$ just means that the remainder when $a$ is divided by $b$ is $c$.
+**NOTE**: This  $a \equiv b \ (\text{mod} \ n)$ just means that $a$ and $b$ have the same remainder when divided by $n$.
+**NOTE**: The $\gcd(a,b)$ just means the greatest common divisor of $a$ and $b$.
 
 ## The Core Encryption and Decryption
 
@@ -94,16 +92,13 @@ Mathematically:
 
 All this is good, but why does this work? All because of a nice **Euler’s theorem**, and the way we pick the $e$ and $d$. To be more concrete, let's go over what we do step by step:
 
-* pick two primes $p, q$, set $n = pq$.
-* compute $\varphi(n) = (p-1)(q-1)$.
-* choose $e$ such that $\gcd(e,\varphi(n))=1$.
-* choose $d$ as the **modular inverse** of $e$ modulo $\varphi(n)$:
-
-  $$
-  ed \equiv 1 \pmod{\varphi(n)} \quad\Longleftrightarrow\quad ed = 1 + k\,\varphi(n)\ \text{for some integer }k.
-  $$
+* Pick two primes $p, q$ and set $n = pq$.
+* Compute the Euler's totient, $\varphi(n) = (p-1)(q-1)$.
+* Choose $e$ such that $\gcd(e,\varphi(n))=1$, i.e. $e$ and $\varphi(n)$ are coprime.
+* Choose $d$ as the **modular inverse** of $e$ modulo $\varphi(n)$, i.e. $ed \equiv 1 \pmod{\varphi(n)} \quad\Longleftrightarrow\quad ed = 1 + k\,\varphi(n)\ \text{for some integer }k.$
 
 Encryption is $C \equiv M^e \pmod n$.
+
 Decryption claims $M \equiv C^d \pmod n$.
 
 **Why is that true?**
@@ -123,7 +118,7 @@ $$
 Plug that in:
 
 $$
-M^{ed} \equiv M \cdot 1^k \equiv M \pmod n.
+M^{ed} \equiv M \cdot \big(M^{\varphi(n)}\big)^k \equiv M \cdot 1^k \equiv M \pmod n.
 $$
 
 But $C \equiv M^e \pmod n$, so

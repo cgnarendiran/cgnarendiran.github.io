@@ -26,7 +26,7 @@ The magic is:
 * You never got my private key.
 * Anyone can lock a box for me, but no one else can open it.
 
-RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**. In the context of Computers, the padlock is called a **public key** and the secure key is called a **private key**. Also, this analogy is taken from the book (**Fermat's Last Theorem**)[https://simonsingh.net/books/fermats-last-theorem/the-whole-story/] by **Simon Singh**. Definitely recommend!
+RSA works on the **same idea**, except the padlock is just a **big number** called **n**, and the way to lock something is using a public number **e**. In the context of Computers, the padlock is called a **public key** and the secure key is called a **private key**. Also, this analogy is taken from the book [Fermat's Last Theorem](https://simonsingh.net/books/fermats-last-theorem/the-whole-story) by **Simon Singh**. Definitely recommend!
 
 
 ## The Ingredients
@@ -214,6 +214,96 @@ RSA is a beautiful mix of:
 
 Simon Singh’s padlock analogy nails the intuition, but the real magic is in how $e$ and $d$ are linked by $\varphi(n)$, while $n$ acts as the public padlock.
 
-Next time you see “🔒” in your browser, remember: somewhere, giant primes are keeping your secrets safe.
+## From RSA Theory to Practice: `ssh-keygen`
+
+So far, we’ve seen the math behind RSA — two primes, $n=pq$, Euler’s totient $\varphi(n)$, the exponents $e$ and $d$. But how does this translate into something real, like the SSH keys we use every day?
+
+The command you’ve probably typed before is:
+
+```bash
+ssh-keygen -t rsa -b 4096
+```
+
+Let’s break it down:
+
+
+### 1. Where do you create the keys?
+
+You should **always generate the key pair on your own computer (your client machine)**, not on the server.
+
+* **Reason:** Your private key is like your house key. You don’t want to hand it to anyone else (including the server). You create it locally and keep it safe.
+
+After you run `ssh-keygen`, you’ll usually get two files:
+
+* `~/.ssh/id_rsa` → **Private key** (keep this secret, never copy it anywhere).
+* `~/.ssh/id_rsa.pub` → **Public key** (safe to share).
+
+
+### 2. Where do the keys go?
+
+* **Private Key (your secret):**
+  Stays **only on your personal computer** (in `~/.ssh/id_rsa`).
+
+  * Never upload it to the server.
+  * Never email it.
+  * Never share it.
+
+* **Public Key (shareable):**
+  This goes to the **server you want to connect to**. Specifically, it should be added to the file:
+
+  ```
+  ~/.ssh/authorized_keys
+  ```
+
+  on the server (inside your user account).
+
+You can copy it using:
+
+```bash
+ssh-copy-id user@server
+```
+
+or manually appending the contents of `id_rsa.pub` to `~/.ssh/authorized_keys` on the server.
+
+
+### 3. What happens when you log in?
+
+When you run:
+
+```bash
+ssh user@server
+```
+
+1. The server checks your `authorized_keys` file for your public key.
+2. It encrypts a challenge using that key.
+3. Your client uses your **private key** to prove you can decrypt the challenge.
+4. If it matches, you’re in — no password needed.
+
+
+### 4. Why this design?
+
+* You can copy the **same public key** to multiple servers.
+* You keep **one private key** on your laptop.
+* This way, you carry your “identity” with you, instead of managing passwords on every server.
+
+
+### Common Mistakes
+
+* **Generating keys on the server:**
+  If you do this, your private key lives on the server. That defeats the purpose, because you won’t be able to log in from your laptop later.
+
+* **Copying the private key to the server:**
+  Never do this! Only the **public key** belongs on the server.
+
+
+So in short:
+
+* **Create keys on your computer.**
+* **Keep the private key local.**
+* **Copy only the public key to the server.**
+
+That’s how RSA moves from math (primes, exponents) into a real-world workflow you use every day when typing `ssh`.
+
+Next time you see “🔒” in your browser or you're typing `ssh` to login, remember: somewhere, giant primes are keeping your secrets safe.
 
 Fin.

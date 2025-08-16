@@ -7,7 +7,7 @@ tags:  primes rsa encryption python
 ---
 *On the cover: RSA Encryption*
 
-If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA was found by three mathematicians Rivest–Shamir–Adleman after from MIT after whom it's named. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
+If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA was found by three mathematicians Rivest–Shamir–Adleman from MIT after whom it's named. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
 
 > You can tell the whole world how to lock a message for you, but only you can unlock it.
 
@@ -62,9 +62,12 @@ Mathematically:
   e \times d \equiv 1 \ (\text{mod} \ \varphi(n))
   $$
 
-**NOTE**: The  $c = a \ (\text{mod} \ b)$ just means that the remainder when $a$ is divided by $b$ is $c$.
-**NOTE**: This  $a \equiv b \ (\text{mod} \ n)$ just means that $a$ and $b$ have the same remainder when divided by $n$.
-**NOTE**: The $\gcd(a,b)$ just means the greatest common divisor of $a$ and $b$.
+* **NOTE**: The  $c = a \ (\text{mod} \ b)$ just means that the remainder when $a$ is divided by $b$ is $c$.
+
+* **NOTE**: This  $a \equiv b \ (\text{mod} \ n)$ just means that $a$ and $b$ have the same remainder when divided by $n$.
+
+* **NOTE**: The $\gcd(a,b)$ just means the greatest common divisor of $a$ and $b$.
+
 
 ## The Core Encryption and Decryption
 
@@ -132,15 +135,44 @@ That’s the whole trick: picking $d$ so that $ed \equiv 1 \pmod{\varphi(n)}$ ma
 
 ### what if $M$ shares a factor with $n$? (edge cases)
 
-If $M$ is divisible by $p$ or $q$, the above “$\gcd(M,n)=1$” assumption breaks. RSA still works, and the clean way to see it is to check the congruence **mod $p$** and **mod $q$** separately and then combine them (Chinese Remainder Theorem):
+If $M$ is divisible by $p$ or $q$, the above Euler's theorm “$\gcd(M,n)=1$” assumption breaks. But RSA still works! The clean way to see it is to check the congruence **mod $p$** and **mod $q$** separately and then combine them (Chinese Remainder Theorem):
 
-* **Case mod $p$:**
-  If $p \mid M$, then $M \equiv 0 \pmod p$, so trivially $M^{ed} \equiv 0 \equiv M \pmod p$.
-  If $p \nmid M$, use **Fermat’s little theorem**: $M^{p-1} \equiv 1 \pmod p$.
-  Because $ed = 1 + k(p-1)(q-1)$, $ed \equiv 1 \pmod{p-1}$, so $M^{ed} \equiv M \pmod p$.
+If $p \mid M$, then $M \equiv 0 \pmod p$, so trivially $M^{ed} \equiv 0 \equiv M \pmod p$.
 
-* **Same mod $q$.**
-  Put the two congruences together → $M^{ed} \equiv M \pmod n$.
+If $p \nmid M$, we can use **Fermat’s little theorem**: $M^{p-1} \equiv 1 \pmod p$.
+
+$$
+M^{p-1} \equiv 1 \pmod p.
+$$
+
+Now raise $M$ to the power $ed$:
+
+$$
+M^{ed} = M^{1 + m(p-1)}.
+$$
+
+Split it:
+
+$$
+M^{ed} = M \cdot \big(M^{p-1}\big)^m.
+$$
+
+
+Since $M^{p-1} \equiv 1 \pmod p$:
+
+$$
+\big(M^{p-1}\big)^m \equiv 1^m \equiv 1 \pmod p.
+$$
+
+So:
+
+$$
+M^{ed} \equiv M \cdot 1 \equiv M \pmod p.
+$$
+
+Because $ed = 1 + k(p-1)(q-1)$, $ed \equiv 1 \pmod{p-1}$, so $M^{ed} \equiv M \pmod p$.
+
+Put the two congruences for $p$ and $q$ together → $M^{ed} \equiv M \pmod n$.
 
 So the decryption step is valid for **all** $M \in \{0,\dots,n-1\}$.
 
@@ -161,6 +193,7 @@ Private key: $(d=27, n=55)$
 Say we want to encrypt $M = 12$:
 
 * **Encrypt**: $C = 12^3 \ \text{mod} \ 55 = 1728 \ \text{mod} \ 55 = 23$
+
 * **Decrypt**: $M = 23^{27} \ \text{mod} \ 55 = 12$
 
 

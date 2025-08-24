@@ -2,7 +2,7 @@
 layout: post
 title:  "Hierarchical Navigable Small World (HNSW): How We Actually Find Needles in Vector Haystacks"
 date:   2025-07-13
-image:  images/blog18/cover.webp
+image:  images/blog19/cover.jpg
 tags:  vector search hnsw
 ---
 *On the cover: HNSW graph depiction*

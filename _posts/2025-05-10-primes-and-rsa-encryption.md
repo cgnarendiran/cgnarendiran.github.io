@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "Prime Numbers to Padlocks - RSA Encryption and SSH"
+title:  "Padlocks to Prime Numbers - RSA Encryption and SSH"
 date:   2025-05-10
 image:  images/blog18/cover.webp
 tags:  primes rsa encryption python
 ---
 *On the cover: RSA Encryption*
 
-If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA was found by three mathematicians Rivest–Shamir–Adleman from MIT after whom it's named. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
+If you’ve ever shopped online, sent a private message, or connected to a secure website, you’ve probably used RSA encryption without even knowing it. RSA was founded by three mathematicians Rivest–Shamir–Adleman (RSA) from MIT after whom it's named. RSA is one of the most famous cryptographic systems, and what makes it magical is this:
 
 > You can tell the whole world how to lock a message for you, but only you can unlock it.
 
@@ -35,7 +35,7 @@ RSA works on the **same idea**, except the padlock is just a **big number** call
    (We keep these secret.)
 2. **Their product**: $n = p \times q$
    (This is the “padlock” — we give this to everyone.)
-3. **Totient**: $\varphi(n) = (p-1) \times (q-1)$
+3. **Euler's Totient**: $\varphi(n) = (p-1) \times (q-1)$
    (This is used for building the key.)
 4. **Public exponent**: $e$
 
@@ -231,7 +231,7 @@ Let’s break it down:
 
 You should **always generate the key pair on your own computer (your client machine)**, not on the server.
 
-* **Reason:** Your private key is like your house key. You don’t want to hand it to anyone else (including the server). You create it locally and keep it safe.
+**Reason:** Your private key is like your house key. You don’t want to hand it to anyone else (including the server). You create it locally and keep it safe.
 
 After you run `ssh-keygen`, you’ll usually get two files:
 

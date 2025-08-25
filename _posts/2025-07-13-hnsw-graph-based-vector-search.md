@@ -1,17 +1,17 @@
-
+---
 layout: post
 title:  "HNSW - Finding Needles in Vector Haystacks"
 date:   2025-07-13
 image:  images/blog19/cover.jpg
 tags:  vector search hnsw
-
+---
 *On the cover: HNSW graph depiction*
 
 Imagine a city with **10 million coffee shops**.
 You (the customer) have a very specific taste vector: medium roast, cozy seating, quiet music. Now how do you go about finding the best coffee shop?
 
 
-## 1. Brute Force: Visiting Every Shop
+## Brute Force: Visiting Every Shop
 
 Exact Nearest Neighbor (NN) search means:
 
@@ -25,7 +25,7 @@ But brute force means **walking into all 10 million shops** to check their menu.
 
 
 
-## 2. Approximate Nearest Neighbor (ANN): Asking for Directions
+## Approximate Nearest Neighbor (ANN): Asking for Directions
 
 Instead of checking every café, you’re happy with one that’s “close enough.”
 
@@ -39,7 +39,7 @@ This is like stopping random baristas and asking: “Hey, do you know a place li
 
 
 
-## 3. Graphs: Shops That Know Each Other
+## Graphs: Shops That Know Each Other
 
 Here’s the trick: connect shops into a **graph**.
 
@@ -56,7 +56,7 @@ This is way better than blind wandering.
 
 
 
-## 4. HNSW: Networking With Layers
+## HNSW: Networking With Layers
 
 HNSW (Hierarchical Navigable Small World) makes the city **multi-layered**:
 
@@ -68,7 +68,7 @@ When a new shop opens, it randomly decides how high it reaches in the hierarchy.
 
 
 
-## 5. Building the Network (Construction)
+## Building the Network (Construction)
 
 When a café (node) joins the city:
 
@@ -88,7 +88,7 @@ When a café (node) joins the city:
 
 
 
-## 6. Finding Your Café (Search)
+## Finding Your Café (Search)
 
 For a query taste $q$:
 
@@ -114,22 +114,13 @@ Mathematically:
 
 
 
-## 7. The Tuning Knobs
+## The Tuning Knobs
 
 * **M** = max number of friends per café.
 * **efConstruction** = how much effort each café puts into networking at build time.
 * **efSearch** = how patient the customer is when asking around at query time.
 
 Together, these decide the **speed/accuracy tradeoff**.
-
-
-
-## 8. Wrap-Up
-
-* Brute force = 
-* Flat graph = asking friends until you stumble upon the right spot.
-* HNSW = a city where cafés are in **friendship layers**: famous ones guide you down fast, and local ones help refine the choice.
-
 
 
 ## Conclusion

@@ -66,6 +66,8 @@ HNSW (Hierarchical Navigable Small World) makes the city **multi-layered**:
 
 When a new shop opens, it randomly decides how high it reaches in the hierarchy. Most are only in layer 0, but some lucky cafés make it into higher networking circles. In expectation, the tallest “friendship ladder” is about $\log n$ layers.
 
+![alt](/images/blog18/map_zoom.gif){: .center-image }
+*Figure 1: Zooming on a city map, showing more details*
 
 
 ## Building the Network (Construction)

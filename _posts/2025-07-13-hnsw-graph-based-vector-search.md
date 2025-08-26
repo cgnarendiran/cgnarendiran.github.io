@@ -5,7 +5,7 @@ date:   2025-07-13
 image:  images/blog19/cover.jpg
 tags:  vector search hnsw
 ---
-*On the cover: HNSW graph depiction*
+*On the cover: HNSW graph depiction. Credits; https://www.marqo.ai/blog/understanding-recall-in-hnsw-search*
 
 Imagine a city with **10 million coffee shops**.
 You (the customer) have a very specific taste vector: medium roast, cozy seating, quiet music. Now how do you go about finding the best coffee shop?
@@ -35,7 +35,7 @@ $$
 d(q, \tilde{x}) \leq (1+\epsilon) \, d(q, x^*)
 $$
 
-This is like stopping random baristas and asking: “Hey, do you know a place like this?” They point you in a good-enough direction. Faster, and your latte doesn’t get cold.
+This is like stopping at a random coffee shops and asking the barista: “Hey, do you know a place like this?” They point you in a good-enough direction. Faster, and your latte doesn’t get cold.
 
 
 
@@ -64,10 +64,14 @@ HNSW (Hierarchical Navigable Small World) makes the city **multi-layered**:
 * **Higher layers**: Sparse networks where only a few cafés live — the “famous” ones, like landmark coffee houses everyone knows.
 * **Top layer**: Just a handful (often one) “super-networked café” that acts as the entry point.
 
-When a new shop opens, it randomly decides how high it reaches in the hierarchy. Most are only in layer 0, but some lucky cafés make it into higher networking circles. In expectation, the tallest “friendship ladder” is about $\log n$ layers.
+When a new shop opens, it randomly decides how high it reaches in the hierarchy. Most are only in layer 0, but some lucky cafés also make it into higher networking circles. They "live" in all the lower layers too. In expectation, the tallest “friendship ladder” is about $\log n$ layers.
 
 ![alt](/images/blog19/map_zoom.gif){: .center-image }
 *Figure 1: Zooming on a city map, showing more details*
+
+
+![alt](/images/blog19/hnsw_milvus.png){: .center-image }
+*Figure 2: HNSW graph as shown in Milvus*
 
 
 ## Building the Network (Construction)
@@ -88,6 +92,24 @@ When a café (node) joins the city:
 * Large: a social café hands out flyers across the city, building a rich friend circle.
 * Bigger `efConstruction` = slower to build, but better connected graph (higher recall later).
 
+Currently we say “a node randomly gets assigned a max layer $L(v)$.” Let’s formalize:
+
+Each new node $v$ samples a maximum layer level $L(v)$ from an exponential distribution:
+
+$$
+P(L(v) \geq \ell) = p^\ell, \quad \ell = 0,1,2,\dots
+$$
+
+where $p \in (0,1)$ is a parameter (usually $p = 1/e$).
+
+👉 This means:
+
+* Most nodes live only in **Layer 0**.
+* Fewer nodes appear in **Layer 1, 2, …**
+* Very rarely, a node reaches the **top layer**, acting as a hub.
+
+That’s why the top layer usually has just **1–2 nodes**.
+
 
 
 ## Finding Your Café (Search)
@@ -95,14 +117,14 @@ When a café (node) joins the city:
 For a query taste $q$:
 
 1. **Start at the top café** (the most famous one).
-2. **Greedy descent**: at each higher layer, walk through friendships until you can’t find a closer café. Then drop one level down.
+2. **Greedy descent**: at each higher layer, walk through friendships until you can’t find a closer café. Then drop one level down to that same cafe.
 3. **At layer 0**: switch gears from greedy to *exploratory search*.
 
    * Maintain a list of candidate cafés (priority queue).
    * Size of this list = **`efSearch`**.
    * Repeatedly expand the closest candidate’s friends and update the list.
    * Stop when no closer friends are found.
-   * Return the best $k$.
+   * Return the best match.
 
 **`efSearch`** = how picky the customer is.
 
@@ -111,7 +133,7 @@ For a query taste $q$:
 
 Mathematically:
 
-* Time \~ $O(efSearch \cdot \log n)$.
+* Time \~ $O(efSearch \cdot \log n)$ compared to $O(N)$ for brute force.
 * As `efSearch` grows, recall approaches 1 (exact NN), but latency grows too.
 
 
@@ -132,4 +154,3 @@ Brute force NN, visiting every café in town, is honest but slow. ANN is a flat 
 That’s why HNSW is the backbone of modern vector databases like Milvus, Weaviate, Pinecone, Vespa. When embeddings look for their “nearest neighbor café,” they don’t wander — they network.
 
 So the next time your vector database finds your nearest neighbor in milliseconds, remember: there’s a tiny greedy traveler sprinting down a small-world graph to make it happen.
-

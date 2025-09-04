@@ -50,7 +50,6 @@ This is the essence of a **discrete-time Markov chain**—the same mathematical 
 
     Here, $A_{ij} = 1$ if **page j links to page i**.
 
-    ---
 
     ### Making It Stochastic (the $S$ matrix)
 
@@ -133,7 +132,7 @@ This converges to $\pi$ efficiently—even in massive graphs—thanks to the mat
 ### 5. Worked-Out Mini Example
 
 Suppose we have 3 pages (A, B, C) like above. And these are the **Links:** A → {B, C}; B → {C}; C → {A}.
-We’ll order pages as $[A,B,C]$.
+We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochastic matrices. Let's take it from there.
 
   #### 1. Adjacency $A$ (column $j$ = links *from* page $j$)
 
@@ -146,7 +145,7 @@ We’ll order pages as $[A,B,C]$.
   \end{bmatrix}
   $$
 
-  (Entry $A_{ij}=1$ if page $j$ links to page $i$.) ([Wikipedia][1])
+  Entry $A_{ij}=1$ if page $j$ links to page $i$.
 
   #### 2. Column-stochastic $S$ (divide each column by its outdegree $k_j$)
 
@@ -161,7 +160,7 @@ We’ll order pages as $[A,B,C]$.
   \end{bmatrix}
   $$
 
-  (Columns of $S$ sum to 1; this is the Markov transition matrix for link-following.) ([Wikipedia][1])
+  Columns of $S$ sum to 1; this is the Markov transition matrix for link-following.
 
   #### 3. Google matrix $G$ with damping $\alpha=0.85$
 
@@ -198,7 +197,32 @@ We’ll order pages as $[A,B,C]$.
 
   So **C ≳ A » B** in importance for this tiny graph. We can rank pages by descending $\pi_i$—there’s your “Who gets to sit at the top of search results” math.
 
-### 6. Why Does It Matter?
+### 6. Common Doubt
+If there are a lot of pages pointing to a webpage, wouldn't it automatically become the most important?
+
+Not always. The quality, relevance, and structure of those links are just as critical—if not more.
+
+Google's former Search Advocate, John Mueller, emphasized:
+
+“The total number of inbound links pointing to a website is completely irrelevant to search rankings... We try to understand what is relevant for a website... and the total number essentially is completely irrelevant. ... One high-quality link from a reputable site is often far more valuable than a thousand from lower-quality sources.”
+
+For page $i$:
+
+$$
+\text{PR}(i) \;=\; \frac{1-d}{N} \;+\; d \sum_{j \to i} \frac{\text{PR}(j)}{\text{outdeg}(j)}
+$$
+
+where
+
+* $d$ is the damping factor (usually $0.85$),
+* $N$ is total pages,
+* the sum runs over pages $j$ that link to $i$.
+
+Read in words: **PageRank of a page = a baseline teleport probability + a weighted sum of the PageRanks of pages that point to it.** Each inbound link contributes $\text{PR(source)}/\text{outdeg(source)}$. So you can't create a million dummy links and make it point to your website to increase it's PageRank :p
+
+SEO gurus have tried this already... And it doesn't work.
+
+### 7. Why Does It Matter?
 
 * **Relevance vs. Importance**: PageRank gives a global, query-independent notion of “authority.” But when you search, Google blends this with relevance signals — keyword match, recency, personalization, and a secret sauce of hundreds of other features. Think of PageRank as the backbone; the muscles and nerves come later.
 * **A Family Tree of PageRanks**: Over the years, Google has spun PageRank into many flavors — topic-sensitive, personalized, and who knows, maybe even a secret “cat videos only” edition. The underlying Markov principle, though, stays the same: random walks reveal hidden structure.
@@ -279,7 +303,6 @@ First, a quick disclaimer: we’re not talking about the startup **Perplexity AI
 
 Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** — meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the teens.
 
----
 
 ### Perplexity in Practice
 
@@ -290,11 +313,11 @@ Perplexity is still used today to evaluate both **n-gram models** and **large la
 | **Trigram**       | Even lower (e.g., 109) | More context, much less “surprised”                                       |
 | **LLMs today**    | Often < 20             | They “see” entire paragraphs, not just 2–3 words, so uncertainty plummets |
 
----
 
 ### Perplexity: Not Perfect, But Useful
 
-Perplexity doesn’t tell us if the model truly *understands* — it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“ducking”*).
+Perplexity doesn’t tell us if the model truly *understands* — it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“duck”* :p).
+
 
 Still, perplexity is:
 
@@ -302,19 +325,16 @@ Still, perplexity is:
 * **Easy to compute** – great for tracking progress during training.
 * **Still alive in the LLM era** – researchers and engineers watch perplexity curves to diagnose models, even if end-user metrics (fluency, factuality) matter more in production.
 
+Perplexity, is like a sly critic in the background: *“Nice prediction — but could you sound a little less confused next time?”*
 
 ## Conclusion
 
-From neutrons bouncing inside an atom bomb to surfers hopping between web pages, and from words tumbling out in autocomplete to entire paragraphs spun by LLMs, **Markov chains** are the quiet thread running through it all.
+From neutrons bouncing inside a nuclear bomb to surfers hopping between web pages, and from words tumbling out in autocomplete to entire paragraphs spun by LLMs, **Markov chains** are the quiet thread running through it all.
 
 * In **PageRank**, they turned the chaos of the early web into an ordered map of authority.
 * In **n-gram models**, they gave us a way to guess the next word with only a short memory.
 * In **perplexity**, they still remind us how “surprised” our models are — whether it’s a trigram from the ’90s or GPT-5 today.
 
-Markov chains don’t claim to understand meaning; they just keep track of *what comes next*. But sometimes, that’s enough to build bombs, rank billions of pages, or generate text that feels uncannily human.
-
-Perplexity, then, is like a sly critic in the background: *“Nice prediction — but could you sound a little less confused next time?”*
-
-From bombs to browsers to bots, Markov chains prove that sometimes the future really is just a matter of probability. If history shows anything, it’s this: give a Markov chain enough steps, and it’ll change the world.
+Markov chains don’t claim to understand meaning; they just keep track of *what comes next*. But sometimes, that’s enough. From bombs to browsers to bots, Markov chains prove that sometimes the future really is just a matter of probability. If history shows anything, it’s this: give a Markov chain enough steps, and it’ll change the world.
 
 Fin.

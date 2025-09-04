@@ -13,7 +13,7 @@ In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model
 
 ## PageRank: Google’s Markovian Math in Action
 
-Let me take you deeper into the maze—starting from “random surfer” intuition, moving to matrices, and reaching the heart of the algorithm with Eigen Values that you can actually sink your teeth into.
+Let me take you deeper into the maze - starting from “random surfer” intuition, moving to matrices, and reaching the heart of the algorithm with Eigen Values that you can actually sink your teeth into.
 
 
 ### 1. The Random Surfer & Markov Chains
@@ -50,9 +50,8 @@ This is the essence of a **discrete-time Markov chain**—the same mathematical 
 
     Here, $A_{ij} = 1$ if **page j links to page i**.
 
-
-    ### Making It Stochastic (the $S$ matrix)
-
+    How do we convert this into a stochastic matrix? 
+    
     Now, column $j$ might have multiple 1’s (outgoing links). To turn them into probabilities:
 
     $$
@@ -131,10 +130,9 @@ This converges to $\pi$ efficiently—even in massive graphs—thanks to the mat
 
 ### 5. Worked-Out Mini Example
 
-Suppose we have 3 pages (A, B, C) like above. And these are the **Links:** A → {B, C}; B → {C}; C → {A}.
-We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochastic matrices. Let's take it from there.
+Let's go back to our 3 pages (A, B, C) example. Assuming these are the **links** present in these pages: A → {B, C}; B → {C}; C → {A}. We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochastic matrices. Let's take it from there.
 
-  #### 1. Adjacency $A$ (column $j$ = links *from* page $j$)
+#### Adjacency $A$ (column $j$ = links *from* page $j$)
 
   $$
   A=
@@ -147,7 +145,7 @@ We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochasti
 
   Entry $A_{ij}=1$ if page $j$ links to page $i$.
 
-  #### 2. Column-stochastic $S$ (divide each column by its outdegree $k_j$)
+#### Column-stochastic $S$ (divide each column by its outdegree $k_j$)
 
   Outdegrees: $k_A=2,\ k_B=1,\ k_C=1$.
 
@@ -162,7 +160,7 @@ We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochasti
 
   Columns of $S$ sum to 1; this is the Markov transition matrix for link-following.
 
-  #### 3. Google matrix $G$ with damping $\alpha=0.85$
+#### Google matrix $G$ with damping $\alpha=0.85$
 
   $$
   G=\alpha S + (1-\alpha)\frac{1}{N}\mathbf{1}\mathbf{1}^\top,\quad N=3
@@ -181,7 +179,7 @@ We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochasti
 
   The $\alpha$ “teleportation” makes $G$ primitive/aperiodic so PageRank is unique and power iteration converges.
 
-  #### 4. Power iteration
+#### Power iteration
 
   Start from uniform $\pi^{(0)}=(1/3,1/3,1/3)$ and iterate $\pi^{(t+1)}=G\,\pi^{(t)}$:
 
@@ -235,7 +233,7 @@ And just as PageRank uses Markov chains to model how a surfer hops across web pa
 
 If PageRank is Markov chains in the wild on the web, then **n-gram models** are Markov chains living in your text—predicting the next word based on the last few. It’s like your phone finishing your sentences… and often getting it wrong. Damn you, autocorrect!
 
-### The N-Gram Formula
+### 1. The N-Gram Formula
 
 In an **n-gram model**, to predict the probability of a word $w_i$, we approximate:
 
@@ -249,7 +247,7 @@ $$
 * **Trigram** (3-gram): Considers the last two words — e.g., $P(\text{"park"} \mid \text{"the", "big"})$
 
 
-### Estimating Probabilities
+### 2. Estimating Probabilities
 
 We estimate probabilities using raw counts:
 
@@ -265,7 +263,7 @@ $$
 
 This is how autocorrect decides on ‘peanut butter and jelly’ instead of ‘peanut butter and belly.’
 
-### Handling Data Sparsity: Katz Back-off
+### 3. Handling Data Sparsity: Katz Back-off
 
 Real-world text is messy. That means many n-grams never occur in your training data. Enter **Katz's back-off model**, a neat way to handle this:
 
@@ -284,7 +282,7 @@ This way, if “heavy fluffy rain” never appears in your data, you back off to
 
 So your model can generate text—but how good is it? Enter **perplexity**, the metric that literally asks, “Just how perplexed are you, model?”
 
-### What Does Perplexity Measure?
+### 1. What Does Perplexity Measure?
 
 Perplexity quantifies a model’s **uncertainty** in predicting text. Formally:
 
@@ -294,7 +292,7 @@ $$
 
 Or equivalently, it’s the **median branching factor**—how many choices the model is considering on average for the next word.
 
-### Why Perplexity Matters
+### 2. Why Perplexity Matters
 
 First, a quick disclaimer: we’re not talking about the startup **Perplexity AI** here — we’re talking about the classic **perplexity score** in language modeling.
 
@@ -304,7 +302,7 @@ First, a quick disclaimer: we’re not talking about the startup **Perplexity AI
 Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** — meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the teens.
 
 
-### Perplexity in Practice
+### 3. Perplexity in Practice
 
 | Model Type        | Typical Perplexity     | Insight                                                                   |
 | ----------------- | ---------------------- | ------------------------------------------------------------------------- |
@@ -314,7 +312,7 @@ Perplexity is still used today to evaluate both **n-gram models** and **large la
 | **LLMs today**    | Often < 20             | They “see” entire paragraphs, not just 2–3 words, so uncertainty plummets |
 
 
-### Perplexity: Not Perfect, But Useful
+### 4. Perplexity: Not Perfect, But Useful
 
 Perplexity doesn’t tell us if the model truly *understands* — it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“duck”* :p).
 

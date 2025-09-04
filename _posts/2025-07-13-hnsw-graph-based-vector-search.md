@@ -5,7 +5,7 @@ date:   2025-07-13
 image:  images/blog19/cover.jpg
 tags:  vector search hnsw
 ---
-*On the cover: HNSW graph depiction. Credits; https://www.marqo.ai/blog/understanding-recall-in-hnsw-search*
+*On the cover: HNSW graph depiction. Credits: [Marqo](https://www.marqo.ai/blog/understanding-recall-in-hnsw-search)*
 
 Imagine a city with **10 million coffee shops**.
 You (the customer) have a very specific taste vector: medium roast, cozy seating, quiet music. Now how do you go about finding the best coffee shop?

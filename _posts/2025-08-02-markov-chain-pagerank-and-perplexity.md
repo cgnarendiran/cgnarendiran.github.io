@@ -2,10 +2,10 @@
 layout: post
 title:  "Markov Chain - The connection between Nuclear Bombs, Google Search, and Perplexity"
 date:   2025-08-02
-image:  images/blog20/cover.jpg
+image:  images/blog20/cover.webp
 tags:  markov chain pagerank perplexity
 ---
-*On the cover: Markov Chain*
+*On the cover: A Nuclear Bomb Explosion*
 
 Recently I watched this video by Veritasium talking about [Markov Chains](https://www.youtube.com/watch?v=KZeIEiBrT_w&ab_channel=Veritasium). I really liked the examples he used to explain the usage of Markov Chains, ranging from Nuclear Bombs to Google Search and Perplexity scores of LLMs. At first, comparing an Atom Bomb to Google Search might sound like the setup to a terrible joke—but in fact, they *do* share this wonderful mathematical lineage called **Markov Chains**. 
 

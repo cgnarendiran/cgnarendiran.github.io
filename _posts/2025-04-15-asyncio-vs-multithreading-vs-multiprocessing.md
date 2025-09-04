@@ -2,7 +2,7 @@
 layout: post
 title:  "How can you cook your pasta fasta? :p"
 date:   2025-04-15
-image:  images/blog17/cover.jpg
+image:  images/blog17/cover.jpeg
 tags:  asyncio multithreading multiprocessing python parallelism pasta
 ---
 *On the cover: Boiling pot of spaghetti pasta*

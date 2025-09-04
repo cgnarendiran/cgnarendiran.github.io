@@ -5,7 +5,7 @@ date:   2025-04-15
 image:  images/blog17/cover.jpeg
 tags:  asyncio multithreading multiprocessing python parallelism pasta
 ---
-*On the cover: Boiling pot of spaghetti pasta*
+*On the cover: A cute robot chef cooking pasta*
 
 Concurrency in Python is like running a restaurant kitchen during a dinner rush — and if you're making pasta, you're bound to get a side of judgment from an Italian grandma every time you mess up.
 

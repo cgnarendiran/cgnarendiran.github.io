@@ -15,7 +15,7 @@ In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model
 Picture this: a free neutron enters Uranium-235, triggers fission, and releases more neutrons—which may in turn trigger more fissions. This cascade is inherently **Markovian**: each step only depends on the *current* generation of neutrons, not the past ones.
 
 ![alt](/images/blog20/nuclear_chain_reaction.png){: .center-image }
-*Figure 1: Nuclear Reaction States*
+*Figure 1: Nuclear Reaction States. Source: Veritasium*
 
 ### 1. The States & Transitions
 

@@ -25,66 +25,12 @@ This is the essence of a **discrete-time Markov chain**—the same mathematical 
 
 ### 2. Building the Google Matrix (a.k.a. G)
 
-1. **Adjacency → Stochastic Matrix $S$**
+* **Adjacency Matrix**: Start with an adjacency matrix $A$ where $A_{ij} = 1$ if page *j* links to page *i*.
 
-   * Start with an adjacency matrix $A$ where $A_{ij} = 1$ if page *j* links to page *i*.
-   * Convert it into a Markov (column-stochastic) matrix $S$ by dividing each column by the total outgoing links $k_j$.
-   * For “dangling pages” (with no outgoing links), every entry in that column is replaced with $1/N$, ensuring no dead ends.
+* **Stochastic Matrix**: Convert it into a Markov (column-stochastic) matrix $S$ by dividing each column by the total outgoing links $k_j$. That means $S_{ij} = \frac{A_{ij}}{k_j}$, where $k_j$ is the number of outgoing links from page $j$.
 
-    Let's make this more clear with an example. Suppose we have 3 pages: A, B, C.
+* **Google Matrix**: For “dangling pages” (with no outgoing links), use teleportation to every entry in that column is replaced with $1/N$, ensuring no dead ends. This is done by using the identity matrix $I$ and scaling it by $(1-\alpha)/N$. That means, $G_{ij} = \alpha S_{ij} + (1-\alpha) \frac{1}{N} I_{ij}$, where $\alpha$ is the damping factor (usually $0.85$).
 
-    * A links to B and C
-    * B links only to C
-    * C links back to A
-
-    This is the **adjacency matrix** $A$:
-
-    $$
-    A = 
-    \begin{bmatrix}
-    0 & 0 & 1 \\   % From A? no self loop, B? no link, C -> A
-    1 & 0 & 0 \\   % From A -> B, B? no link, C? no
-    1 & 1 & 0      % From A -> C, B -> C, C? no
-    \end{bmatrix}
-    $$
-
-    Here, $A_{ij} = 1$ if **page j links to page i**.
-
-    How do we convert this into a stochastic matrix? 
-    
-    Now, column $j$ might have multiple 1’s (outgoing links). To turn them into probabilities:
-
-    $$
-    S_{ij} = \frac{A_{ij}}{k_j}
-    $$
-
-    where $k_j$ = number of outgoing links from page $j$.
-
-    * From **Page A**: 2 links (to B and C). So each link has probability $1/2$.
-    * From **Page B**: 1 link (to C). So probability = 1.
-    * From **Page C**: 1 link (to A). So probability = 1.
-
-    So $S$ becomes:
-
-    $$
-    S = 
-    \begin{bmatrix}
-    0   & 0 & 1 \\ 
-    0.5 & 0 & 0 \\ 
-    0.5 & 1 & 0
-    \end{bmatrix}
-    $$
-
-2. **Teleportation (via damping factor $\alpha$)**
-
-   * Define the Google matrix:
-
-     $$
-     G_{ij} = \alpha S_{ij} + (1 - \alpha) \frac{1}{N} I_{ij}
-     $$
-
-     where $\alpha$ is the damping factor and $I_{ij}$ is the identity matrix.
-   * This means: with probability $\alpha$, follow an outgoing link; with probability $1-\alpha$, teleport to a random page.
 
 ### 3. The Stationary Distribution: $\pi = G\pi$
 
@@ -132,6 +78,9 @@ This converges to $\pi$ efficiently—even in massive graphs—thanks to the mat
 
 Let's go back to our 3 pages (A, B, C) example. Assuming these are the **links** present in these pages: A → {B, C}; B → {C}; C → {A}. We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochastic matrices. Let's take it from there.
 
+![alt](/images/blog20/webpage_links.png){: .center-image }
+*Figure 1: Webpage links illustration with $\pi$ scores after 1000 Power Iterations. Source: [PageRank Simulator](https://tools.withcode.uk/pagerank/)*
+
 #### Adjacency $A$ (column $j$ = links *from* page $j$)
 
   $$
@@ -143,11 +92,29 @@ Let's go back to our 3 pages (A, B, C) example. Assuming these are the **links**
   \end{bmatrix}
   $$
 
-  Entry $A_{ij}=1$ if page $j$ links to page $i$.
+  Here, $A_{ij} = 1$ if **page j links to page i**.
+
+    How do we convert this into a stochastic matrix? 
+    
+    Now, column $j$ might have multiple 1’s (outgoing links). To turn them into probabilities:
+
+    $$
+    S_{ij} = \frac{A_{ij}}{k_j}
+    $$
+
+    where $k_j$ = number of outgoing links from page $j$.
+
+    * From **Page A**: 2 links (to B and C). So each link has probability $1/2$.
+    * From **Page B**: 1 link (to C). So probability = 1.
+    * From **Page C**: 1 link (to A). So probability = 1.
+    Outdegrees: $k_A=2,\ k_B=1,\ k_C=1$.
+
+
 
 #### Column-stochastic $S$ (divide each column by its outdegree $k_j$)
 
-  Outdegrees: $k_A=2,\ k_B=1,\ k_C=1$.
+  So $S$ becomes:
+
 
   $$
   S=
@@ -161,6 +128,15 @@ Let's go back to our 3 pages (A, B, C) example. Assuming these are the **links**
   Columns of $S$ sum to 1; this is the Markov transition matrix for link-following.
 
 #### Google matrix $G$ with damping $\alpha=0.85$
+
+  * Define the Google matrix:
+
+     $$
+     G_{ij} = \alpha S_{ij} + (1 - \alpha) \frac{1}{N} I_{ij}
+     $$
+
+     where $\alpha$ is the damping factor and $I_{ij}$ is the identity matrix.
+   * This means: with probability $\alpha$, follow an outgoing link; with probability $1-\alpha$, teleport to a random page.
 
   $$
   G=\alpha S + (1-\alpha)\frac{1}{N}\mathbf{1}\mathbf{1}^\top,\quad N=3

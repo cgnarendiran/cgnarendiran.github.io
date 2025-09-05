@@ -11,6 +11,57 @@ Recently I watched this video by Veritasium talking about [Markov Chains](https:
 
 In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model neutron behavior in nuclear fission; Google’s PageRank models web navigation similarly—except with links instead of neutrons and a slightly friendlier ending. But what the video lacked is perhaps a detailed mathematical explanation of how PageRank works or the math behind Perplexity scores of LLMs. In this blog, I will try to explain the math behind PageRank and Perplexity scores of LLMs.
 
+## Nuclear Bomb or Reactor: The Math Behind the Manhattan Project
+Picture this: a free neutron enters Uranium-235, triggers fission, and releases more neutrons—which may in turn trigger more fissions. This cascade is inherently **Markovian**: each step only depends on the *current* generation of neutrons, not the past ones.
+
+![alt](/images/blog20/nuclear_chain_reaction.jpg){: .center-image }
+*Figure 1: Nuclear Chain Reaction*
+
+### 1. The States & Transitions
+
+Let’s simplify the system into two states:
+
+* **State A – Free Neutron**: A neutron is free to strike a nucleus.
+* **State B – Reaction Ends**: The neutron is either absorbed or escapes.
+
+From State A, there are two possible transitions:
+
+| From → To                  | Probability                                           |
+| -------------------------- | ----------------------------------------------------- |
+| A → A (via fission)        | $p_f$: neutron causes fission and new neutrons emerge |
+| A → B (absorbed or escape) | $p_a = 1 - p_f$: reaction ends for that neutron       |
+
+This forms a **branching Markov process**, since each neutron independently transitions and can spawn new neutrons or end.
+
+
+### 2. The Math: Tracking Neutron Generations
+
+Define $Z_n$ as the number of neutrons in generation $n$. Then:
+
+$$
+\mathbb{E}[Z_{n+1} \mid Z_n] = k \cdot Z_n
+$$
+
+where $k$ is the *average number of new neutrons produced per neutron* (i.e., expected offspring).
+
+This leads directly to the **neutron multiplication factor** $k$:
+
+$$
+k = \frac{\mathbb{E}[Z_{n+1}]}{\mathbb{E}[Z_n]}
+$$
+
+* If **$k > 1$**: supercritical — the chain amplifies (like a bomb).
+* If **$k = 1$**: critical — the reaction sustains itself.
+* If **$k < 1$**: subcritical — the chain fizzles out.
+
+
+### 3. Why It Matters (and Feels Like Markov Magic)
+
+* Each neutron's journey depends **only** on its current fate—completely ignoring where it came from.
+* The whole system behaves like a **stochastic branching process**, essentially a Markov chain.
+* Fission modeling via this Markovian approach was crucial in the development of nuclear reactors and weapons
+
+
 ## PageRank: Google’s Markovian Math in Action
 
 Let me take you deeper into the maze - starting from “random surfer” intuition, moving to matrices, and reaching the heart of the algorithm with Eigen Values that you can actually sink your teeth into.
@@ -99,7 +150,7 @@ Let's a simple 3 webpage example. Assuming these are the **links** present in th
 We'll start with the adjacency matrix $A$ and stochastic matrix $S$.
 
 ![alt](/images/blog20/webpage_links.png){: .center-image }
-*Figure 1: Webpage links illustration with $\pi$ scores after 1000 Power Iterations. Source: [PageRank Simulator](https://tools.withcode.uk/pagerank/)*
+*Figure 2: Webpage links illustration with $\pi$ scores after 1000 Power Iterations. Source: [PageRank Simulator](https://tools.withcode.uk/pagerank/)*
 
 #### Adjacency $A$ (column $j$ = links *from* page $j$)
 
@@ -114,22 +165,20 @@ We'll start with the adjacency matrix $A$ and stochastic matrix $S$.
 
   Here, $A_{ij} = 1$ if **page j links to page i**.
 
-    How do we convert this into a stochastic matrix? 
-    
-    Now, column $j$ might have multiple 1’s (outgoing links). To turn them into probabilities:
+  How do we convert this into a stochastic matrix? 
+  
+  Now, column $j$ might have multiple 1’s (outgoing links). To turn them into probabilities:
 
-    $$
-    S_{ij} = \frac{A_{ij}}{k_j}
-    $$
+  $$
+  S_{ij} = \frac{A_{ij}}{k_j}
+  $$
 
-    where $k_j$ = number of outgoing links from page $j$.
+  where $k_j$ = number of outgoing links from page $j$.
 
-    * From **Page A**: 2 links (to B and C). So each link has probability $1/2$.
-    * From **Page B**: 1 link (to C). So probability = 1.
-    * From **Page C**: 1 link (to A). So probability = 1.
-    Outdegrees: $k_A=2,\ k_B=1,\ k_C=1$.
-
-
+  * From **Page A**: 2 links (to B and C). So each link has probability $1/2$.
+  * From **Page B**: 1 link (to C). So probability = 1.
+  * From **Page C**: 1 link (to A). So probability = 1.
+  Outdegrees: $k_A=2,\ k_B=1,\ k_C=1$.
 
 #### Column-stochastic $S$ (divide each column by its outdegree $k_j$)
 
@@ -276,6 +325,8 @@ This way, if “heavy fluffy rain” never appears in your data, you back off to
 
 ## Perplexity: How Confused Is the Model?
 
+First, a quick disclaimer: we’re not talking about the startup **Perplexity AI** here — we’re talking about the classic **perplexity score** in language modeling.
+
 So your model can generate text—but how good is it? Enter **perplexity**, the metric that literally asks, “Just how perplexed are you, model?”
 
 ### 1. What Does Perplexity Measure?
@@ -288,17 +339,13 @@ $$
 
 Or equivalently, it’s the **median branching factor**—how many choices the model is considering on average for the next word.
 
-### 2. Why Perplexity Matters
-
-First, a quick disclaimer: we’re not talking about the startup **Perplexity AI** here — we’re talking about the classic **perplexity score** in language modeling.
+### 2. Perplexity in Practice
 
 * **Low perplexity**: The model is confident and smooth — like your barista handing you your *usual* before you even order.
 * **High perplexity**: The model is lost — like debating whether you meant \*“Java” the island, \*“Java” the coffee, or \*“JavaScript” the language.
 
-Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** — meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the teens.
+Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** — meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the tens.
 
-
-### 3. Perplexity in Practice
 
 | Model Type        | Typical Perplexity     | Insight                                                                   |
 | ----------------- | ---------------------- | ------------------------------------------------------------------------- |
@@ -308,7 +355,7 @@ Perplexity is still used today to evaluate both **n-gram models** and **large la
 | **LLMs today**    | Often < 20             | They “see” entire paragraphs, not just 2–3 words, so uncertainty plummets |
 
 
-### 4. Perplexity: Not Perfect, But Useful
+### 3. Perplexity: Not Perfect, But Useful
 
 Perplexity doesn’t tell us if the model truly *understands* — it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“duck”* :p).
 

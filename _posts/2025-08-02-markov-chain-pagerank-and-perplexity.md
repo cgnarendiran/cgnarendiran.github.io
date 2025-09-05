@@ -14,22 +14,25 @@ In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model
 ## Nuclear Bomb or Reactor: The Math Behind the Manhattan Project
 Picture this: a free neutron enters Uranium-235, triggers fission, and releases more neutrons—which may in turn trigger more fissions. This cascade is inherently **Markovian**: each step only depends on the *current* generation of neutrons, not the past ones.
 
-![alt](/images/blog20/nuclear_chain_reaction.jpg){: .center-image }
-*Figure 1: Nuclear Chain Reaction*
+![alt](/images/blog20/nuclear_chain_reaction.png){: .center-image }
+*Figure 1: Nuclear Reaction States*
 
 ### 1. The States & Transitions
 
 Let’s simplify the system into two states:
 
-* **State A – Free Neutron**: A neutron is free to strike a nucleus.
-* **State B – Reaction Ends**: The neutron is either absorbed or escapes.
+* **State A – Travelling Neutron**: A neutron is free to strike a nucleus.
+* **State B – Leave or Absorbed**: The neutron is either absorbed or escapes.
+* **State C - Fission**: The neutron causes fission and releases more neutrons.
 
-From State A, there are two possible transitions:
+From State A, there are three possible transitions:
 
 | From → To                  | Probability                                           |
 | -------------------------- | ----------------------------------------------------- |
-| A → A (via fission)        | $p_f$: neutron causes fission and new neutrons emerge |
-| A → B (absorbed or escape) | $p_a = 1 - p_f$: reaction ends for that neutron       |
+| A → A (scattered)          | $p_s$: neutron scatters and continues its journey     |
+| A → B (absorbed or escape) | $p_a$: neutron is absorbed or escapes                 |
+| A → C (fission)            | $p_f$: neutron causes fission and releases more neutrons |
+
 
 This forms a **branching Markov process**, since each neutron independently transitions and can spawn new neutrons or end.
 
@@ -51,7 +54,7 @@ k = \frac{\mathbb{E}[Z_{n+1}]}{\mathbb{E}[Z_n]}
 $$
 
 * If **$k > 1$**: supercritical — the chain amplifies (like a bomb).
-* If **$k = 1$**: critical — the reaction sustains itself.
+* If **$k = 1$**: critical — the reaction sustains itself (like in a controlled reactor)
 * If **$k < 1$**: subcritical — the chain fizzles out.
 
 

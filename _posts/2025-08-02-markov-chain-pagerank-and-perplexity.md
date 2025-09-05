@@ -27,9 +27,23 @@ This is the essence of a **discrete-time Markov chain**—the same mathematical 
 
 * **Adjacency Matrix**: Start with an adjacency matrix $A$ where $A_{ij} = 1$ if page *j* links to page *i*.
 
-* **Stochastic Matrix**: Convert it into a Markov (column-stochastic) matrix $S$ by dividing each column by the total outgoing links $k_j$. That means $S_{ij} = \frac{A_{ij}}{k_j}$, where $k_j$ is the number of outgoing links from page $j$.
+* **Stochastic Matrix**: Convert it into a Markov (column-stochastic) matrix $S$ by dividing each column by the total outgoing links $k_j$. That means, 
 
-* **Google Matrix**: For “dangling pages” (with no outgoing links), use teleportation to every entry in that column is replaced with $1/N$, ensuring no dead ends. This is done by using the identity matrix $I$ and scaling it by $(1-\alpha)/N$. That means, $G_{ij} = \alpha S_{ij} + (1-\alpha) \frac{1}{N} I_{ij}$, where $\alpha$ is the damping factor (usually $0.85$).
+$$
+S_{ij} = \frac{A_{ij}}{k_j}
+$$
+
+where $k_j$ is the number of outgoing links from page $j$.
+
+* **Google Matrix**: For “dangling pages” (with no outgoing links), use teleportation. That means every entry in that column is replaced with $1/N$, ensuring no dead ends. This is done by using the identity matrix $I$ and scaling it by $(1-\alpha)/N$. Essentially, 
+
+$$
+G_{ij} = \alpha S_{ij} + (1-\alpha) \frac{1}{N} I_{ij}
+$$
+
+where $\alpha$ is the damping factor (usually $0.85$).
+
+Find a worked out example below to make this concrete.
 
 
 ### 3. The Stationary Distribution: $\pi = G\pi$
@@ -76,7 +90,13 @@ This converges to $\pi$ efficiently—even in massive graphs—thanks to the mat
 
 ### 5. Worked-Out Mini Example
 
-Let's go back to our 3 pages (A, B, C) example. Assuming these are the **links** present in these pages: A → {B, C}; B → {C}; C → {A}. We’ll order pages as $[A,B,C]$. We've already seen the adjacency and stochastic matrices. Let's take it from there.
+Let's a simple 3 webpage example. Assuming these are the **links** present in these pages: 
+
+* A → {B, C}
+* B → {C}
+* C → {A} 
+
+We'll start with the adjacency matrix $A$ and stochastic matrix $S$.
 
 ![alt](/images/blog20/webpage_links.png){: .center-image }
 *Figure 1: Webpage links illustration with $\pi$ scores after 1000 Power Iterations. Source: [PageRank Simulator](https://tools.withcode.uk/pagerank/)*

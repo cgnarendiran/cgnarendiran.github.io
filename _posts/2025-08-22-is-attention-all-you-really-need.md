@@ -2,7 +2,7 @@
 layout: post
 title:  "Is Attention All You Really Need?"
 date:   2025-08-22
-image:  images/blog21/cover.webp
+image:  images/blog21/cover.jpeg
 tags:  DeepSeek Attention MLA KV Caching MoE 
 ---
 *On the cover: MLA Architecture*

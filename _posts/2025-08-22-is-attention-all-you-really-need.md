@@ -5,9 +5,7 @@ date:   2025-08-22
 image:  images/blog21/cover.jpeg
 tags:  DeepSeek Attention MLA KV Caching MoE 
 ---
-*On the cover: MLA Architecture*
-
-## Why do we even cache keys and values?
+*On the cover: MLA Architecture. Credits: Welch Labs*
 
 Large language models generate text one token at a time by taking all the tokens that came before them as input. They are the classic autoregressive models after all. At step *t*, the attention for head *i* is:
 
@@ -15,11 +13,18 @@ $$
 \text{Attention}_t^{(i)} = \text{softmax}\!\left(\frac{Q_t^{(i)} K_{1:t}^{(i)\,T}}{\sqrt{d_h}}\right)V_{1:t}^{(i)}.
 $$
 
-Without caching, every new token requires recomputing all past $K$ and $V$, giving a per-sequence cost:
+Problem with this is that most of the computations are repeated again and again for the same tokens. There must be a better way to do this right? Welcome to *KV Caching*.
+
+
+## Why do we even cache keys and values?
+
+Because without caching, every new token requires recomputing all past $K$ and $V$, giving a per-sequence cost of:
 
 $$
 O(T^2 d_h).
 $$
+
+where $T$ is the sequence length and $d_h$ is the hidden dimension.
 
 With KV caching, we reuse stored $K,V$, so cost drops to:
 
@@ -27,24 +32,26 @@ $$
 O(T d_h).
 $$
 
-Miss caching and your GPU ends up grinding away on the same math over and over, like a hamster on an espresso drip.
+If we didn't do caching, our GPU ends up grinding away on the same math over and over, like a hamster on an espresso drip.
 
 
 ## The cache bites back
 
-Each token requires storing one key and one value vector per head:
+This is fine, but there's a new problem now. We traded the compute problem with a memory problem now. Each token requires storing one key and one value vector per head:
 
 $$
 \text{Cache per token per layer} = 2 d_h H.
 $$
 
-Across $L$ layers and sequence length $T$:
+$2$ because we store $K$ and $V$.
+
+We also need to worry about the number of layers $L$ and sequence length $T$. Across $L$ layers and sequence length $T$, this becomes,
 
 $$
 \text{Total cache size} = 2 d_h H L T.
 $$
 
-This linear growth in $T$ and multiplicative scaling with $H$ and $L$ makes cache the dominant memory consumer. Engineers tried sharing keys and values to cut this down—**MQA** shares one K/V across all heads, and **GQA** shares K/V across groups. Let's see what those are.
+This linear growth in $T$ and multiplicative scaling with $H$ and $L$ makes cache the dominant memory consumer. Now what can we do about this? Engineers tried sharing keys and values to cut this down, resulting in **Multi-Query Attention(MQA)** and **Grouped-Query Attention(GQA)**. **MQA** shares one K/V across all heads, and **GQA** shares K/V across groups. Let's see what those are.
 
 
 ## MQA and GQA: Taming the Cache Explosion
@@ -59,7 +66,7 @@ MQA proposes a simple but powerful trick: instead of giving **each head its own 
 * Keys (`K`) and Values (`V`) are shared (so we store just one copy in the cache).
 
 **Cache implication:**
-Instead of storing `h * d_h * L` for keys and values, you only store `d_h * L`. The reduction factor is roughly the number of heads `h`.
+Instead of storing $H * d_h * L$ for keys and values, you only store $d_h * L$. The reduction factor is roughly the number of heads $H$.
 
 This means a model with 32 heads and hidden dimension 4096 cuts cache memory by **32×**, without changing the sequence length or batch size. That’s a massive saving.
 
@@ -71,10 +78,10 @@ MQA is an extreme case. GQA generalizes it by letting **groups of heads share K 
 * Within each group, heads share K and V, but across groups they don’t.
 
 **Cache implication:**
-Now the cache size scales as `(h / g) * d_h * L` where `g` is the group size.
+Now the cache size scales as $(H / g) * d_h * L$ where $g$ is the group size.
 
-* With `g = h`, you recover standard attention (each head has its own KV).
-* With `g = 1`, you get MQA (all heads share the same KV).
+* With $g = H$, you recover standard attention (each head has its own KV).
+* With $g = 1$, you get MQA (all heads share the same KV).
 * Anywhere in between gives you a tradeoff between **memory efficiency** and **expressive power**.
 
 
@@ -82,7 +89,7 @@ This idea is so effective that many modern LLMs (like PaLM, LLaMA 2, Falcon, Mis
 
 ## Enter DeepSeek’s Multi-Head Latent Attention (MLA)
 
-Instead of lugging around full-rank keys and values, MLA asks: why not store a compressed latent “carry-on” and reconstruct the rest only when needed?
+This is where the brilliance of DeepSeek’s Multi-Head Latent Attention (MLA) comes in. Instead of lugging around full-rank keys and values, MLA asks: why not store a compressed latent “carry-on” and reconstruct the rest only when needed?
 
 1. **Compress once:**
 
@@ -102,7 +109,7 @@ Instead of lugging around full-rank keys and values, MLA asks: why not store a c
    K_t^{(i)} = L_t W^{UK}_i, \quad V_t^{(i)} = L_t W^{UV}_i, \quad W^{UK}_i, W^{UV}_i \in \mathbb{R}^{r \times d_h}.
    $$
 
-4. **Preserve positions:** RoPE is applied in a decoupled way so compression doesn’t break positional encoding.
+4. **Preserve positions:** RoPE (Rotary Positional Encoding) is applied in a decoupled way so compression doesn’t break positional encoding.
 
 The effective compression ratio is:
 
@@ -110,9 +117,9 @@ $$
 \frac{\text{MLA cache}}{\text{Naive cache}} = \frac{r}{2 d_h H}.
 $$
 
-It’s Marie Kondo for tensors—only what sparks inference joy makes the cut.
+It’s Marie Kondo for tensors: whatever sparks inference joy only those make the cut.
 
-## But won’t extra projections slow things down?
+**NOTE:** But won’t extra projections slow things down?
 
 The reconstruction step adds multiplications of size $O(r d_h)$. Compared to the dominant attention cost $O(d_h T)$, this is negligible. So memory shrinks drastically while latency barely moves.
 
@@ -153,3 +160,4 @@ over an order of magnitude smaller, while keeping accuracy nearly intact. Cache 
 | **GQA** (group size $g$) | $\tfrac{2 d_h H}{g}$      | $\tfrac{2 d_h H}{g} L T$                  |
 | **MLA**                  | $r$                       | $r L T$                                   |
 
+This is the 

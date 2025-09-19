@@ -13,12 +13,21 @@ $$
 \text{Attention}_t^{(i)} = \text{softmax}\!\left(\frac{Q_t^{(i)} K_{1:t}^{(i)\,T}}{\sqrt{d_h}}\right)V_{1:t}^{(i)}.
 $$
 
+where $t$ is the token position, $i$ goes from $1$ to $d_h$ which is the hidden dimension. And the $Q_t^{(i)}$, $K_t^{(i)}$, $V_t^{(i)}$ are the query, key, and value vectors for the $i$-th index at token $t$.
+
+$$
+Q_t^{(i)} = W^{Q}_i X_t^{(i)}
+K_t^{(i)} = W^{K}_i X_t^{(i)}
+V_t^{(i)} = W^{V}_i X_t^{(i)}
+$$
+
+
 Problem with this is that most of the computations are repeated again and again for the same tokens. There must be a better way to do this right? Welcome to *KV Caching*.
 
 
 ## Why do we even cache keys and values?
 
-Because without caching, every new token requires recomputing all past $K$ and $V$, giving a per-sequence cost of:
+Essentially we cache the $K$ and $V$ encodings of the tokens. Why do we do this? Because without caching, every new token requires recomputing all past $K$ and $V$, giving a per-sequence cost of:
 
 $$
 O(T^2 d_h).

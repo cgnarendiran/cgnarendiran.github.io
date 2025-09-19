@@ -63,7 +63,7 @@ $$
 This linear growth in $T$ and multiplicative scaling with $H$ and $L$ makes cache the dominant memory consumer. Now what can we do about this? Engineers tried sharing keys and values to cut this down, resulting in **Multi-Query Attention(MQA)** and **Grouped-Query Attention(GQA)**. **MQA** shares one K/V across all heads, and **GQA** shares K/V across groups. Let's see what those are.
 
 
-## MQA and GQA: Taming the Cache Explosion
+## Taming the Cache Explosion
 
 Once you realize that the memory footprint grows linearly with the number of attention heads, the natural question is: *do we really need to store a full key-value cache for every single head?*
 
@@ -106,17 +106,23 @@ This is where the brilliance of DeepSeek’s Multi-Head Latent Attention (MLA) c
    L_t = H_t W^{DKV}, \quad W^{DKV} \in \mathbb{R}^{d_{\text{model}} \times r}, \quad r \ll d_h.
    $$
 
+   where $L_t$ is the latent encoding of the token $t$. $W^{DKV}$ is the projection matrix for the latent encoding.
+
 2. **Cache only latent:**
 
    $$
    \text{Cache per token per layer} = r.
    $$
 
+   This $r$ is the rank of the latent encoding. It is much smaller than $d_h$.
+
 3. **Reinflate on demand:**
 
    $$
    K_t^{(i)} = L_t W^{UK}_i, \quad V_t^{(i)} = L_t W^{UV}_i, \quad W^{UK}_i, W^{UV}_i \in \mathbb{R}^{r \times d_h}.
    $$
+
+   where $W^{UK}_i$ and $W^{UV}_i$ are the projection matrices for the key and value encoding.
 
 4. **Preserve positions:** RoPE (Rotary Positional Encoding) is applied in a decoupled way so compression doesn’t break positional encoding.
 
@@ -142,13 +148,17 @@ Some products are constant with respect to the input and can be fused.
   (H_t W^{UQ}_i)(L_{1:t} W^{UK}_i)^T \quad \Rightarrow \quad (W^{UQ}_i)^T W^{UK}_i \; \text{is constant}.
   $$
 
+  If you take a look at the score side, where we multiply the query and key, we can combine the $W^{UQ}_i$ and $W^{UK}_i$ to get a constant matrix, since these are always the same.
+
 * Value side:
 
   $$
   (L_t W^{UV}_i) W^O_i \quad \Rightarrow \quad W^O_i W^{UV}_i \; \text{is constant}.
   $$
 
-By folding these products at model load, two matmuls disappear from every inference step. It’s like realizing two roommates can split rent by moving into the same apartment.
+  Same goes in the value side, where we multiply the latent matrix $W^{UV}_i$ and the output projection matrix $W^O_i$.
+
+By folding these products at model load, two matmuls disappear from every inference step. It’s like realizing two roommates can split rent by moving into the same apartment. 
 
 ## Curtain call
 
@@ -169,4 +179,6 @@ over an order of magnitude smaller, while keeping accuracy nearly intact. Cache 
 | **GQA** (group size $g$) | $\tfrac{2 d_h H}{g}$      | $\tfrac{2 d_h H}{g} L T$                  |
 | **MLA**                  | $r$                       | $r L T$                                   |
 
-This is the 
+Mind you, this is a significant speedup, while also reducing the memory footprint. All this put together is what caused DeepSeek to wipe out billions of dollars in maket cap in the US. Because now you can run more accurate models with less memory. And now you know!
+
+Fin.

@@ -16,13 +16,13 @@ $$
 where $t$ is the token position, $i$ goes from $1$ to $d_h$ which is the hidden dimension. And the $Q_t^{(i)}$, $K_t^{(i)}$, $V_t^{(i)}$ are the query, key, and value vectors for the $i$-th index at token $t$.
 
 $$
-Q_t^{(i)} = W^{Q}_i X_t^{(i)}
-K_t^{(i)} = W^{K}_i X_t^{(i)}
-V_t^{(i)} = W^{V}_i X_t^{(i)}
+Q_t^{(i)} = W^{Q}_i X_t^{(i)}\\
+K_t^{(i)} = W^{K}_i X_t^{(i)}\\
+V_t^{(i)} = W^{V}_i X_t^{(i)}\\
 $$
 
 
-Problem with this is that most of the computations are repeated again and again for the same tokens. There must be a better way to do this right? Welcome to *KV Caching*.
+Problem with this is that most of the computations are repeated again and again for the same previous tokens. There must be a better way to do this right? Welcome to *KV Caching*.
 
 
 ## Why do we even cache keys and values?
@@ -46,13 +46,13 @@ If we didn't do caching, our GPU ends up grinding away on the same math over and
 
 ## The cache bites back
 
-This is fine, but there's a new problem now. We traded the compute problem with a memory problem now. Each token requires storing one key and one value vector per head:
+This is fine, but there's a new problem now. We traded the compute problem with a memory problem. Each token requires storing one key and one value vector per head:
 
 $$
 \text{Cache per token per layer} = 2 d_h H.
 $$
 
-$2$ because we store $K$ and $V$.
+There's a $2$ because we store $K$ and $V$ both.
 
 We also need to worry about the number of layers $L$ and sequence length $T$. Across $L$ layers and sequence length $T$, this becomes,
 
@@ -87,7 +87,7 @@ MQA is an extreme case. GQA generalizes it by letting **groups of heads share K 
 * Within each group, heads share K and V, but across groups they don’t.
 
 **Cache implication:**
-Now the cache size scales as $(H / g) * d_h * L$ where $g$ is the group size.
+Now the cache size scales as $g * d_h * L$ where $g$ is the group size.
 
 * With $g = H$, you recover standard attention (each head has its own KV).
 * With $g = 1$, you get MQA (all heads share the same KV).
@@ -103,10 +103,10 @@ This is where the brilliance of DeepSeek’s Multi-Head Latent Attention (MLA) c
 1. **Compress once:**
 
    $$
-   L_t = H_t W^{DKV}, \quad W^{DKV} \in \mathbb{R}^{d_{\text{model}} \times r}, \quad r \ll d_h.
+   L_t = X_t W^{DKV}, \quad W^{DKV} \in \mathbb{R}^{d_{\text{model}} \times r}, \quad r \ll d_h.
    $$
 
-   where $L_t$ is the latent encoding of the token $t$. $W^{DKV}$ is the projection matrix for the latent encoding.
+   where $L_t$ is the latent encoding and $X_t$ is the input token embedding of token $t$. $W^{DKV}$ is the projection matrix for the latent encoding.
 
 2. **Cache only latent:**
 
@@ -136,7 +136,7 @@ It’s Marie Kondo for tensors: whatever sparks inference joy only those make th
 
 **NOTE:** But won’t extra projections slow things down?
 
-The reconstruction step adds multiplications of size $O(r d_h)$. Compared to the dominant attention cost $O(d_h T)$, this is negligible. So memory shrinks drastically while latency barely moves.
+The reconstruction step adds multiplications of size $O(r H d_h)$. Compared to the dominant attention cost $O(H d_h T)$, this is negligible. So memory shrinks drastically while latency barely moves.
 
 ## DeepSeek’s final flourish: pre-multiplying weights
 
@@ -145,7 +145,7 @@ Some products are constant with respect to the input and can be fused.
 * Score side:
 
   $$
-  (H_t W^{UQ}_i)(L_{1:t} W^{UK}_i)^T \quad \Rightarrow \quad (W^{UQ}_i)^T W^{UK}_i \; \text{is constant}.
+  (X_t W^{UQ}_i)(L_{1:t} W^{UK}_i)^T \quad \Rightarrow \quad (W^{UQ}_i)^T W^{UK}_i \; \text{is constant}.
   $$
 
   If you take a look at the score side, where we multiply the query and key, we can combine the $W^{UQ}_i$ and $W^{UK}_i$ to get a constant matrix, since these are always the same.

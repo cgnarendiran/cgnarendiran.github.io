@@ -1,24 +1,30 @@
 ---
 layout: post
-title:  "Is Attention All You Really Need?"
+title:  "KV Caching & MLA - Is Attention All You Really Need?"
 date:   2025-08-22
 image:  images/blog21/cover.jpeg
 tags:  DeepSeek Attention MLA KV Caching MoE 
 ---
 *On the cover: MLA Architecture. Credits: Welch Labs*
 
+It's been 8 years since the landmark paper "Attention is all you need" was published. The paper introduced the attention mechanism, which has revolutionized the field of natural language processing. The self-attention mechanism and consequently the transformer models are the main reason we have large launguage models (LLMs) today.
+
+But these have gone through significant improvements over the years. These include the introduction of multi-head attentions (MHA), rotary positional encodings (RoPE), mixture of experts (MoE), and KV caching. In this post I'll talk about KV caching, their variants and DeepSeek's Multi-Head Latent Attention (MLAs). I will cover the remaining topics in subsequent posts.
+
+## Inference in LLMs
+
 Large language models generate text one token at a time by taking all the tokens that came before them as input. They are the classic autoregressive models after all. At step *t*, the attention for head *i* is:
 
 $$
-\text{Attention}_t^{(i)} = \text{softmax}\!\left(\frac{Q_t^{(i)} K_{1:t}^{(i)\,T}}{\sqrt{d_h}}\right)V_{1:t}^{(i)}.
+\text{Attention}_t = \text{softmax}\!\left(\frac{Q_t K_{1:t}^{T}}{\sqrt{d_h}}\right)V_{1:t}.
 $$
 
-where $t$ is the token position, $i$ goes from $1$ to $d_h$ which is the hidden dimension. And the $Q_t^{(i)}$, $K_t^{(i)}$, $V_t^{(i)}$ are the query, key, and value vectors for the $i$-th index at token $t$.
+where $t$ is the token position, $d_h$ is the hidden dimension. And the $Q_t$, $K_{1:t}$, $V_{1:t}$ are the query, key, and value vectors for the token $t$ and $1:t$.
 
 $$
-Q_t^{(i)} = W^{Q}_i X_t^{(i)}\\
-K_t^{(i)} = W^{K}_i X_t^{(i)}\\
-V_t^{(i)} = W^{V}_i X_t^{(i)}\\
+Q_t = W^{Q}_i X_t\\
+K_{1:t} = W^{K}_i X_{1:t}\\
+V_{1:t} = W^{V}_i X_{1:t}\\
 $$
 
 

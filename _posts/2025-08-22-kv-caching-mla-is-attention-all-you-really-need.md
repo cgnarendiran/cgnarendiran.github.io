@@ -66,7 +66,7 @@ $$
 \text{Total cache size} = 2 d_h H L T.
 $$
 
-This linear growth in $T$ and multiplicative scaling with $H$ and $L$ makes cache the dominant memory consumer. Now what can we do about this? Engineers tried sharing keys and values to cut this down, resulting in **Multi-Query Attention(MQA)** and **Grouped-Query Attention(GQA)**. **MQA** shares one K/V across all heads, and **GQA** shares K/V across groups. Let's see what those are.
+This linear growth in $T$ and multiplicative scaling with $H$ and $L$ makes cache the dominant memory consumer. Now what can we do about this? Engineers tried sharing keys and values to cut this down, resulting in **MQA** that shares one K/V across all heads, and **GQA** that shares K/V across groups. Let's see what those are.
 
 
 ## Taming the Cache Explosion
@@ -178,12 +178,12 @@ over an order of magnitude smaller, while keeping accuracy nearly intact. Cache 
 
 ## Summary table
 
-| Method                   | Cache per token per layer | Total cache size ($T$ tokens, $L$ layers) |
-| ------------------------ | ------------------------- | ----------------------------------------- |
-| **Naive KV**             | $2 d_h H$                 | $2 d_h H L T$                             |
-| **MQA**                  | $2 d_h$                   | $2 d_h L T$                               |
-| **GQA** (group size $g$) | $\tfrac{2 d_h H}{g}$      | $\tfrac{2 d_h H}{g} L T$                  |
-| **MLA**                  | $r$                       | $r L T$                                   |
+| Method                   | Total cache size ($T$ tokens, $H$ heads, $L$ layers) |
+| ------------------------ | ---------------------------------------------------- |
+| **Naive KV**             | $2 d_h H L T$                                        |
+| **MQA** (same K/V)       | $2 d_h L T$                                          |
+| **GQA** (group size $g$) | $2 d_h g L T$                                        |
+| **MLA**                  | $r L T$                                              |
 
 Mind you, this is a significant speedup, while also reducing the memory footprint. All this put together is what caused DeepSeek to wipe out billions of dollars in maket cap in the US. Because now you can run more accurate models with less memory. And now you know!
 

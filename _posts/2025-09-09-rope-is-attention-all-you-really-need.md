@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "RoPE - Is Attention All You Really Need?"
-date:   2025-08-22
+date:   2025-09-09
 image:  images/blog22/cover.jpeg
 tags:  DeepSeek RoPE Rotary Positional Encoding LLMs
 ---

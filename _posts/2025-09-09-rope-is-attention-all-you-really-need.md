@@ -108,7 +108,11 @@ $$
 Concretely, we split each $d$-dimensional vector into 2D sub-vectors and rotate each pair. For example, for the $i$th 2D pair we do:
 
 $$
-left (matrix {q {′} rsub {2 i} ## q {′} rsub {2 i + 1}} right ) = left (matrix {cos left (p {θ} rsub {i} right ) # − sin left (p {θ} rsub {i} right ) ## sin left (p {θ} rsub {i} right ) # cos left (p {θ} rsub {i} right )} right ) left (matrix {{q} rsub {2 i} ## {q} rsub {2 i + 1}} right ) ,
+\begin{align}
+\begin{bmatrix} q'*{2i} \ q'*{2i+1} \end{bmatrix} =
+\begin{bmatrix} \cos(m \theta_i) & -\sin(m \theta_i) \ \sin(m \theta_i) & \cos(m \theta_i) \end{bmatrix}
+\begin{bmatrix} q_{2i} \ q_{2i+1} \end{bmatrix},
+\end{align}
 $$
 
 

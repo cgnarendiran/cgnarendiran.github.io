@@ -82,7 +82,7 @@ This choice makes relative positions easy to learn. The Transformer authors poin
 $$
 PE_{p+k} =
 \begin{bmatrix}
-\cos(k\theta_1) & -\sin(k\theta_1) \
+\cos(k\theta_1) & -\sin(k\theta_1) \\
 \sin(k\theta_1) & \cos(k\theta_1)
 \end{bmatrix}
 PE_p
@@ -129,9 +129,18 @@ $$
 Concretely, we split each $d$-dimensional vector into 2D sub-vectors and rotate each pair. For example, for the $i$th 2D pair we do:
 
 $$
-\begin{bmatrix} q'*{2i} \ q'*{2i+1} \end{bmatrix} =
-\begin{bmatrix} \cos(m \theta_i) & -\sin(m \theta_i) \ \sin(m \theta_i) & \cos(m \theta_i) \end{bmatrix}
-\begin{bmatrix} q_{2i} \ q_{2i+1} \end{bmatrix}
+\begin{bmatrix} 
+q'*{2i} \\ 
+q'*{2i+1} 
+\end{bmatrix} =
+\begin{bmatrix} 
+\cos(m \theta_i) & -\sin(m \theta_i) \\ 
+\sin(m \theta_i) & \cos(m \theta_i) 
+\end{bmatrix}
+\begin{bmatrix} 
+q_{2i} \\ 
+q_{2i+1} 
+\end{bmatrix}
 $$
 
 

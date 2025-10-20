@@ -47,7 +47,7 @@ PE_{11,0:8} = 00001011\\
 ...\\
 $$
 
-What we can see is that the lowest bit (i.e. $PE_{p,0}$) varies a lot compared to the higher indices (i.e. $PE_{p,1}$). This is intentional. Because the immediately closer words need to be distinguished. Whereas the higher indices vary less frequently and can capture the long term relationships. A visual might help; I made a plot of the binary encodings for positions 0 to 120 with 8 dimensions.
+What we can see is that the lowest bit (i.e. $PE_{p,0}$) varies a lot compared to the higher indices (i.e. $PE_{p,7}$). This is intentional. Because the immediately closer words need to be distinguished. Whereas the higher indices vary less frequently and can capture the long term relationships. A visual might help; I made a plot of the binary encodings for positions 0 to 120 with 8 dimensions.
 
 ![alt](/images/blog22/binary_pe.png){: .center-image }
 *Figure 1: Binary Encoding of sequential integers. Source: Author*
@@ -80,14 +80,12 @@ Doesn't this look extremely similar to the binary encodings except smoother? But
 This choice makes relative positions easy to learn. The Transformer authors pointed out that shifting a sine/cosine position by a fixed offset is just a linear transform of the encoding, i.e. $PE_{p+k}$ can be expressed as a linear function of $$PE_p$$ for pairwise indices of the positional embedding vector. 
 
 $$
-[
 PE_{p+k} =
 \begin{bmatrix}
 \cos(k\theta_1) & -\sin(k\theta_1) \
 \sin(k\theta_1) & \cos(k\theta_1)
 \end{bmatrix}
 PE_p
-]
 $$
 
 In other words, the network can attend “by relative positions” without extra hassle. Also, because these are fixed functions (not learned vectors), the model can extrapolate beyond the training length. Indeed, Vaswani et al. noted that learned vs. sinusoidal encodings gave similar results, but favored sinusoids because “they may allow the model to extrapolate to sequence lengths longer than those seen in training.” Intuitively, you can think of each position sliding along a fixed multidimensional sine wave – even if you go further out than in training, the pattern keeps repeating in a controlled way.
@@ -131,11 +129,9 @@ $$
 Concretely, we split each $d$-dimensional vector into 2D sub-vectors and rotate each pair. For example, for the $i$th 2D pair we do:
 
 $$
-[
 \begin{bmatrix} q'*{2i} \ q'*{2i+1} \end{bmatrix} =
 \begin{bmatrix} \cos(m \theta_i) & -\sin(m \theta_i) \ \sin(m \theta_i) & \cos(m \theta_i) \end{bmatrix}
 \begin{bmatrix} q_{2i} \ q_{2i+1} \end{bmatrix}
-]
 $$
 
 
@@ -159,7 +155,7 @@ Notice that $\mathbf{R}(m)^\top\mathbf{R}(n)$ is just a rotation by $(n-m)\theta
 *Figure 3: Rotary Position Embedding in action. The query vector (blue) at position $m$ is rotated by an angle $m\theta$ say $2\theta$, and the key vector (red) at position $n$ by $n\theta$ say $5\theta$. After rotation, their inner product depends on the difference $(n-m)$ say $(5-2)\theta = 3\theta$, so attention is a function of token distance rather than their absolute positions.Source: Author*
 
 
-$$ \mathbf{R}(m)^\top \mathbf{R}(n) = \mathbf{R}(n-m)!, $$ 
+$$\mathbf{R}(m)^\top \mathbf{R}(n) = \mathbf{R}(n-m)$$
 
 meaning the combined effect is a rotation by $(n-m)\theta$. Plugging into the attention score: 
 
@@ -176,7 +172,7 @@ Rotary encoding packs many nice properties into a simple idea:
 
 - Flexible Sequence Length: Like the sinusoidal case, RoPE is not learned per index so you can run it on arbitrarily long sequences. There’s no fixed maximum position cap.
 
-- Distance Decay: The choice of angles (often matching the sinusoid scaling) means that as |n-m| grows, the effective dot product tends to “mix” more of both sin and cos components, causing a gradual decay. In fact, the RoFormer paper proves that the attention scores naturally shrink as distance increases, aligning with the intuition that very distant tokens should connect less strongly.
+- Distance Decay: The choice of angles (often matching the sinusoid scaling) means that as (n-m) grows, the effective dot product tends to “mix” more of both sin and cos components, causing a gradual decay. In fact, the RoFormer paper proves that the attention scores naturally shrink as distance increases, aligning with the intuition that very distant tokens should connect less strongly.
 
 - Linear-Attention Friendly: Because rotation preserves norms, RoPE works seamlessly even in linear-time attention mechanisms (e.g. Performers). In contrast, many relative-encoding schemes require adding bias terms or adjustments that don’t play nicely with kernelized attention. RoPE’s multiplicative, orthogonal nature means it can be plugged into any self-attention variant without extra tricks.
 

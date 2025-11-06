@@ -2,7 +2,7 @@
 layout: project
 title:  Legal Research Assistant
 date:   2025-07-10
-image:  images/project13/cover.png
+image:  images/project14/cover.png
 tags:   Legal Research Assistant RAG AI Summarization Australia
 ---
 *On the cover: Legal Research Assistant Platform*
@@ -20,12 +20,12 @@ Legal professionals and everyday users often struggle to navigate large volumes 
 
 ## Methodology
 
-### 1. Data Acquisition
+#### 1. Data Acquisition
 
 * Built custom crawlers using Scrapy/BeautifulSoup to ingest case law and statutory material from Australian legal sources.
 * Extracted rich metadata (jurisdiction, court hierarchy, dates, judges, catchwords, legislation structure) and stored it in PostgreSQL.
 
-### 2. Summary-First Preprocessing
+#### 2. Summary-First Preprocessing
 
 Rather than chunking full judgments, I developed a pipeline that extracts and summarizes:
 
@@ -36,17 +36,17 @@ Rather than chunking full judgments, I developed a pipeline that extracts and su
 
 Each case is reduced to a dense, coherent summary which forms the basis of semantic search. This dramatically improves retrieval precision and keeps the vector index compact.
 
-### 3. Hybrid Retrieval System
+#### 3. Hybrid Retrieval System
 
 A dual retrieval architecture was implemented:
 
-* BM25 lexical search (Elasticsearch) for precise keyword/citation queries
+* BM25 lexical search (Milvus) for precise keyword/citation queries
 * Vector search (Milvus) using embeddings from the latest Sentence Transformer models
-* **Reranker** (cross-encoder) to re-rank the combined results for maximum relevance
+* Reranker (cross-encoder) to re-rank the combined results for maximum relevance
 
 This hybrid pipeline provides both coverage and precision, ideal for legal research tasks.
 
-### 4. Retrieval-Augmented Generation (RAG)
+#### 4. Retrieval-Augmented Generation (RAG)
 
 A custom RAG pipeline combines:
 
@@ -62,13 +62,9 @@ The system produces:
 * Legislative section interpretation
 * Clear explanations grounded in retrieved documents
 
-All responses include citation-backed evidence from the retrieved summaries or statutory sections.
+All responses include citation-backed evidence from the retrieved summaries or statutory sections. A dedicated pipeline crawls federal and state legislation, extracts section-level structure, and embeds summaries for retrieval. This allows the system to identify relevant statutory sections for any factual scenario.
 
-### 5. Legislation Research Module
-
-A dedicated pipeline crawls federal and state legislation, extracts section-level structure, and embeds summaries for retrieval. This allows the system to identify relevant statutory sections for any factual scenario.
-
-### 6. User Interface
+#### 5. User Interface
 
 The final system includes a React + FastAPI interface offering:
 

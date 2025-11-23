@@ -13,21 +13,19 @@ But these have gone through significant improvements over the years. These inclu
 
 ## Intuition
 
-Imagine one musician being asked to play *every* instrument in an orchestra: violin, drums, flute, trumpet, piano, even the tuba. They’d spend more time switching instruments than making music — and the result would sound… questionable.
+Imagine one musician being asked to play *every* instrument in an orchestra: violin, drums, flute, trumpet, piano, even the tuba. They’d spend more time switching instruments than making music and the result would sound… questionable.
 
-Real orchestras don’t work like that. They rely on **specialized players** for everything, say violinists for texture, percussionists for rhythm, brass section for power, woodwinds for color, etc. Each group is exceptional at its own style of sound. And at the center stands the **conductor**, who decides which section should play when, how loudly, and in what combination. They don’t need every musician for every moment — only the ones best suited for that specific passage.
+Real orchestras don’t work like that. They rely on specialized players for everything, say violinists for texture, percussionists for rhythm, brass section for power, woodwinds for color, etc. Each group is exceptional at its own style of sound. And at the center stands the conductor, who decides which section should play when, how loudly, and in what combination. They don’t need every musician for every moment, only the ones best suited for that specific passage.
 
-This is exactly how **Mixture of Experts (MoE)** works. Instead of forcing a single giant neural network to handle everything — math reasoning, casual conversation, coding, emotional tone, long-context reasoning — MoE creates **multiple specialized sub-networks** called *experts*. For every incoming token, a **gating function** acts like the conductor: it evaluates the “melody” of the input and decides *which experts should play their part*.
+This is exactly how **Mixture of Experts (MoE)** works. Instead of forcing a single giant neural network to handle everything math reasoning, casual conversation, coding, emotional tone, long-context reasoning, MoE creates multiple specialized sub-networks called *experts*. For every incoming token, a *gating function* acts like the conductor: it evaluates the “melody” of the input and decides which experts should play their part.
 
-When transformers first appeared, scaling was simple: **More layers. More width. More parameters.** But this quickly hit practical limits:
+When transformers first appeared, scaling was simple: More layers. More width. More parameters. But this quickly hit practical limits:
 
 1. **Memory limits** — A 1T-parameter dense model is… unpleasant.
 2. **Compute limits** — Every forward pass activates every parameter.
 3. **Inefficient specialisation** — A single monolithic network must learn *everything*, even skills it rarely uses.
 
-MoE solves this by decoupling *capacity* from *compute*.
-
-It lets you build a model with hundreds of billions or trillions of parameters, while only activating a tiny fraction (say 1–10%) for each token. This makes training faster, inference cheaper, and the architecture more modular.
+MoE solves this by decoupling *capacity* from *compute*. It lets you build a model with hundreds of billions or trillions of parameters, while only activating a tiny fraction (say 1–10%) for each token. This makes training faster, inference cheaper, and the architecture more modular.
 
 Just like an orchestra creating a richer, more dynamic performance, MoE models deliver stronger results by letting the right specialists play at the right time. Mathematically, it’s concise and a little mischievous:
 
@@ -41,20 +39,20 @@ Where:
 * $(g_i(x))$ is the gating function: which expert “gets the package.”
 * $(y)$ is the final output—the delivered prediction.
 
-And the clever trick: **most experts stay idle most of the time**, saving compute while keeping the model huge in capacity.
+And the clever trick is most experts stay idle most of the time, saving compute while keeping the model huge in capacity.
 
-In this post, we’ll cover:
 
+<!-- 
 * **Dense vs. Sparse MoE** — and why “sparse” changed everything.
 * **Top-K routing** — how tokens are assigned to experts.
 * **Challenges like load balancing & router collapse** — and how modern models avoid them.
 * **Practical variants** like Switch Transformers, DeepSeek’s modifications, and shared experts.
-* **What MoE means for the future of LLMs** — and why almost every frontier model is now exploring it.
+* **What MoE means for the future of LLMs** — and why almost every frontier model is now exploring it. -->
 
 
-## Dense vs Sparse MoE:
+## Sparse MoE:
 
-The earliest MoE proposals were **dense**: all experts produce an output, and the gating function blends them. This was the idea from a very old paper (1991) from Hinton's reseach group in Toronto called [Adaptive Mixture of Experts](https://www.cs.toronto.edu/~fritz/absps/jjnh91.pdf). The gating function is essentially a softmax that yields probabilities for each expert. Mathematically, it’s concise and a little mischievous:
+The earliest MoE proposals were **dense**: all experts produce an output, and the gating function blends them. This was the idea from a very old paper (1991) from Hinton's reseach group in Toronto called [Adaptive Mixture of Experts](https://www.cs.toronto.edu/~fritz/absps/jjnh91.pdf). The gating function is essentially a softmax that yields probabilities for each expert. Mathematically,
 
 $$
 g_i(x) = \frac{\exp(f_i(x))}{\sum_{j=1}^{N} \exp(f_j(x))}
@@ -66,7 +64,7 @@ Where:
 * $(g_i(x))$ is the gating function: which expert “gets the package.”
 * $(y)$ is the final output—the delivered prediction.
 
-This works, but it has a fatal flaw: you compute every expert anyway, even if the gate assigns it near-zero weight. Zero computational savings. Dense MoE improves representation power, but not efficiency. So modern LLMs rarely use it. So in the context of LLMs, Hinton and his group (a different one with Google Brain this time), released a paper called [Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer](https://openreview.net/pdf?id=B1ckMDqlg).
+This works, but it computes every expert anyway, even if the gate assigns it near-zero weight. So it has zero computational savings. Dense MoE improves representation power, but not efficiency. So modern LLMs rarely use it. In the context of LLMs, Hinton and his group (a different one with Google Brain this time), released a paper called [Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer](https://openreview.net/pdf?id=B1ckMDqlg).
 
 The insight was simple, only activate the best K experts for each token. Instead of running all N experts: the gating function scores each token, selects the top-1 or top-2 experts (top-K routing), and only those experts run. Essentially using an argmax over the softmax.
 
@@ -77,38 +75,32 @@ Suddenly, you get the following benefits:
 * **Specialisation** — experts discover structure in data
 * **Parallelism** — experts can live on different GPUs
 
-Sparse MoE is the core of DeepSeek V2/V3, GLaM, Mixtral 8×22B, and almost every modern giant model.
+Sparse MoE is the core of Switch Transformers, DeepSeek V2/V3, GLaM, Mixtral 8×22B, and almost every modern giant model.
 
-## Router Collapse: When One Expert Does Too Much
+## Router Collapse and Load Balancing
 
-A big danger with sparse MoE is what’s called **router collapse** (sometimes “expert collapse”):
+A big danger with sparse MoE is what’s called **router collapse**:
 
 * The router may learn to favor just a few experts and send *most tokens* to them.
 * That leaves other experts **underused**, defeating the purpose of having many experts in the first place.
-* Over time, the heavily used experts get better (more data), and the underused ones stagnate — creating a vicious feedback loop.
+* Over time, the heavily used experts get better (more data), and the underused ones stagnate, creating a vicious feedback loop.
 
-This is problematic in two ways:
+This leads to inefficient specialization, where you don’t get the full expressive power of all experts. Another problem is load imbalance in a distributed setup (GPUs or devices). Essentially, some experts may become bottlenecks, hurting parallelism and compute efficiency.
 
-1. **Inefficient specialization** — you don’t get the full expressive power of all experts.
-2. **Load imbalance** — in a distributed setup (GPUs or devices), some experts may become bottlenecks, hurting parallelism and compute efficiency. ([neptune.ai][3])
-
-
-### Load Balancing: Keeping Experts in the Game
-
-To solve router collapse and ensure all experts contribute, MoE models use *load-balancing strategies*. Broadly, there are two kinds:
+To solve router collapse and ensure all experts contribute, MoE models use **load-balancing strategies**. Broadly, there are two kinds:
 
 1. **With Auxiliary Losses**
 2. **Without Auxiliary Losses (Bias-based)**
 
-#### 1. Load Balancing *With* Auxiliary Losses
+### 1. Load Balancing with Auxiliary Losses
 
 This is the traditional method: add a regularization term (or multiple) to the training loss to encourage uniform or balanced usage of the experts.
 
-* For example, in earlier MoE work (e.g., Switch Transformer), the model adds a **balance loss** that penalizes the router for sending too many tokens to one expert. ([papers.nips.cc][4])
-* The idea: if expert *i* is used too often compared to others, its “frequency” term in the loss will increase, nudging the router to distribute future tokens more evenly. ([neptune.ai][3])
+* For example, in earlier MoE work (e.g., Switch Transformer), the model adds a **balance loss** that penalizes the router for sending too many tokens to one expert.
+* The idea: if expert *i* is used too often compared to others, its “frequency” term in the loss will increase, nudging the router to distribute future tokens more evenly.
 * But this isn’t perfect: if the auxiliary loss is too strong, it can **hurt model quality**, because the model may prioritize balancing over actually routing tokens to the *most appropriate* expert.
 
-#### 2. Load Balancing *Without* Auxiliary Losses
+### 2. Load Balancing without Auxiliary Losses
 
 Modern MoE architectures (notably **DeepSeek V3**) use a much more elegant trick: **bias adjustment**, instead of adding extra losses.
 
@@ -118,10 +110,10 @@ Modern MoE architectures (notably **DeepSeek V3**) use a much more elegant trick
 
   * If expert (i) is overused → **decrease** (b_i)
   * If expert (i) is underused → **increase** (b_i)
-  * The adjustment step is controlled via a hyperparameter (\gamma), often called the *bias update speed*. ([praxis.ac.in][5])
+  * The adjustment step is controlled via a hyperparameter (\gamma), often called the *bias update speed*.
 * This way, the router “learns” to use all experts, but without messing with the main task loss.
 
-DeepSeek’s own technical report shows that this **auxiliary-loss-free strategy** achieves good balance while avoiding the performance hit of traditional balancing losses. ([praxis.ac.in][5])
+DeepSeek’s own technical report shows that this **auxiliary-loss-free strategy** achieves good balance while avoiding the performance hit of traditional balancing losses.
 
 ### Switch Transformers: The Simpler, Faster MoE
 

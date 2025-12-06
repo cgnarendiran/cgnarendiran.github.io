@@ -7,12 +7,12 @@ tags:  markov chain pagerank perplexity
 ---
 *On the cover: A Nuclear Bomb Explosion*
 
-Recently I watched this video by Veritasium talking about [Markov Chains](https://www.youtube.com/watch?v=KZeIEiBrT_w&ab_channel=Veritasium). I really liked the examples he used to explain the usage of Markov Chains, ranging from Nuclear Bombs to Google Search and Perplexity scores of LLMs. At first, comparing an Atom Bomb to Google Search might sound like the setup to a terrible joke—but in fact, they *do* share this wonderful mathematical lineage called **Markov Chains**. 
+Recently I watched this video by Veritasium talking about [Markov Chains](https://www.youtube.com/watch?v=KZeIEiBrT_w&ab_channel=Veritasium). I really liked the examples he used to explain the usage of Markov Chains, ranging from Nuclear Bombs to Google Search and Perplexity scores of LLMs. At first, comparing an Atom Bomb to Google Search might sound like the setup to a terrible joke-but in fact, they *do* share this wonderful mathematical lineage called **Markov Chains**. 
 
-In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model neutron behavior in nuclear fission; Google’s PageRank models web navigation similarly—except with links instead of neutrons and a slightly friendlier ending. But what the video lacked is perhaps a detailed mathematical explanation of how PageRank works or the math behind Perplexity scores of LLMs. In this blog, I will try to explain the math behind PageRank and Perplexity scores of LLMs.
+In the Manhattan Project, Stanislaw Ulam and John von Neumann used them to model neutron behavior in nuclear fission; Google’s PageRank models web navigation similarly-except with links instead of neutrons and a slightly friendlier ending. But what the video lacked is perhaps a detailed mathematical explanation of how PageRank works or the math behind Perplexity scores of LLMs. In this blog, I will try to explain the math behind PageRank and Perplexity scores of LLMs.
 
 ## Nuclear Bomb or Reactor: The Math Behind the Manhattan Project
-Picture this: a free neutron enters Uranium-235, triggers fission, and releases more neutrons—which may in turn trigger more fissions. This cascade is inherently **Markovian**: each step only depends on the *current* generation of neutrons, not the past ones.
+Picture this: a free neutron enters Uranium-235, triggers fission, and releases more neutrons-which may in turn trigger more fissions. This cascade is inherently **Markovian**: each step only depends on the *current* generation of neutrons, not the past ones.
 
 ![alt](/images/blog20/nuclear_chain_reaction.png){: .center-image }
 *Figure 1: Nuclear Reaction States. Source: Veritasium*
@@ -53,14 +53,14 @@ $$
 k = \frac{\mathbb{E}[Z_{n+1}]}{\mathbb{E}[Z_n]}
 $$
 
-* If **$k > 1$**: supercritical — the chain amplifies (like a bomb).
-* If **$k = 1$**: critical — the reaction sustains itself (like in a controlled reactor)
-* If **$k < 1$**: subcritical — the chain fizzles out.
+* If **$k > 1$**: supercritical - the chain amplifies (like a bomb).
+* If **$k = 1$**: critical - the reaction sustains itself (like in a controlled reactor)
+* If **$k < 1$**: subcritical - the chain fizzles out.
 
 
 ### 3. Why It Matters (and Feels Like Markov Magic)
 
-* Each neutron's journey depends **only** on its current fate—completely ignoring where it came from.
+* Each neutron's journey depends **only** on its current fate-completely ignoring where it came from.
 * The whole system behaves like a **stochastic branching process**, essentially a Markov chain.
 * Fission modeling via this Markovian approach was crucial in the development of nuclear reactors and weapons
 
@@ -73,9 +73,9 @@ Let me take you deeper into the maze - starting from “random surfer” intuiti
 ### 1. The Random Surfer & Markov Chains
 
 * **Basic idea**: Picture a “random surfer” on the internet. They click random links, but occasionally get bored and teleport to a completely new page.
-* **Markovian nature**: The next page they choose depends *only* on what page they’re currently on—not their surfing history.
+* **Markovian nature**: The next page they choose depends *only* on what page they’re currently on-not their surfing history.
 
-This is the essence of a **discrete-time Markov chain**—the same mathematical idea behind modeling neutrons in a fission process, but now repurposed for web pages. Google PageRank is a Markov Chain where the random surfer is a robot that surfs the web and the web pages are the states of the Markov Chain. The random surfer surfs the web by clicking on links and occasionally teleporting to a random page.
+This is the essence of a **discrete-time Markov chain**-the same mathematical idea behind modeling neutrons in a fission process, but now repurposed for web pages. Google PageRank is a Markov Chain where the random surfer is a robot that surfs the web and the web pages are the states of the Markov Chain. The random surfer surfs the web by clicking on links and occasionally teleporting to a random page.
 
 ### 2. Building the Google Matrix (a.k.a. G)
 
@@ -140,7 +140,7 @@ Rather than solving $(I - G)\pi = 0$ directly, PageRank uses **power iteration**
    $$
 3. Repeat until $\pi^{(t+1)} \approx \pi^{(t)}$.
 
-This converges to $\pi$ efficiently—even in massive graphs—thanks to the matrix’s sparsity and structure.
+This converges to $\pi$ efficiently-even in massive graphs-thanks to the matrix’s sparsity and structure.
 
 ### 5. Worked-Out Mini Example
 
@@ -241,12 +241,12 @@ We'll start with the adjacency matrix $A$ and stochastic matrix $S$.
   \end{aligned}
   $$
 
-  So **C ≳ A » B** in importance for this tiny graph. We can rank pages by descending $\pi_i$—there’s your “Who gets to sit at the top of search results” math.
+  So **C ≳ A » B** in importance for this tiny graph. We can rank pages by descending $\pi_i$-there’s your “Who gets to sit at the top of search results” math.
 
 ### 6. Common Doubt
 If there are a lot of pages pointing to a webpage, wouldn't it automatically become the most important?
 
-Not always. The quality, relevance, and structure of those links are just as critical—if not more.
+Not always. The quality, relevance, and structure of those links are just as critical-if not more.
 
 Google's former Search Advocate, John Mueller, emphasized:
 
@@ -270,16 +270,16 @@ SEO gurus have tried this already... And it doesn't work.
 
 ### 7. Why Does It Matter?
 
-* **Relevance vs. Importance**: PageRank gives a global, query-independent notion of “authority.” But when you search, Google blends this with relevance signals — keyword match, recency, personalization, and a secret sauce of hundreds of other features. Think of PageRank as the backbone; the muscles and nerves come later.
-* **A Family Tree of PageRanks**: Over the years, Google has spun PageRank into many flavors — topic-sensitive, personalized, and who knows, maybe even a secret “cat videos only” edition. The underlying Markov principle, though, stays the same: random walks reveal hidden structure.
+* **Relevance vs. Importance**: PageRank gives a global, query-independent notion of “authority.” But when you search, Google blends this with relevance signals - keyword match, recency, personalization, and a secret sauce of hundreds of other features. Think of PageRank as the backbone; the muscles and nerves come later.
+* **A Family Tree of PageRanks**: Over the years, Google has spun PageRank into many flavors - topic-sensitive, personalized, and who knows, maybe even a secret “cat videos only” edition. The underlying Markov principle, though, stays the same: random walks reveal hidden structure.
 
 If the Manhattan Project mathematicians once thought tracking neutrons was tricky, they never met a billion web surfers with ADHD and a mouse.
 
 ## N-Gram Models: The Word-Level Markov Chains
 
-And just as PageRank uses Markov chains to model how a surfer hops across web pages, language models use the very same idea to predict how a word hops to the next — welcome to the world of n-grams.
+And just as PageRank uses Markov chains to model how a surfer hops across web pages, language models use the very same idea to predict how a word hops to the next - welcome to the world of n-grams.
 
-If PageRank is Markov chains in the wild on the web, then **n-gram models** are Markov chains living in your text—predicting the next word based on the last few. It’s like your phone finishing your sentences… and often getting it wrong. Damn you, autocorrect!
+If PageRank is Markov chains in the wild on the web, then **n-gram models** are Markov chains living in your text-predicting the next word based on the last few. It’s like your phone finishing your sentences… and often getting it wrong. Damn you, autocorrect!
 
 ### 1. The N-Gram Formula
 
@@ -289,10 +289,10 @@ $$
 P(w_i \mid w_1, \dots, w_{i-1}) \approx P(w_i \mid w_{i-n+1}, \dots, w_{i-1})
 $$
 
-— this is the **Markov assumption** in action, limiting context to the last $n-1$ words.
+- this is the **Markov assumption** in action, limiting context to the last $n-1$ words.
 
-* **Bigram** (2-gram): Looks at just the previous word — e.g., $P(\text{"dog"} \mid \text{"the"})$
-* **Trigram** (3-gram): Considers the last two words — e.g., $P(\text{"park"} \mid \text{"the", "big"})$
+* **Bigram** (2-gram): Looks at just the previous word - e.g., $P(\text{"dog"} \mid \text{"the"})$
+* **Trigram** (3-gram): Considers the last two words - e.g., $P(\text{"park"} \mid \text{"the", "big"})$
 
 
 ### 2. Estimating Probabilities
@@ -324,13 +324,13 @@ P_{bo}(w_i \mid \text{history})
 \end{cases}
 $$
 
-This way, if “heavy fluffy rain” never appears in your data, you back off to “fluffy rain,” and if that’s missing—back to “rain.”
+This way, if “heavy fluffy rain” never appears in your data, you back off to “fluffy rain,” and if that’s missing-back to “rain.”
 
 ## Perplexity: How Confused Is the Model?
 
-First, a quick disclaimer: we’re not talking about the startup **Perplexity AI** here — we’re talking about the classic **perplexity score** in language modeling.
+First, a quick disclaimer: we’re not talking about the startup **Perplexity AI** here - we’re talking about the classic **perplexity score** in language modeling.
 
-So your model can generate text—but how good is it? Enter **perplexity**, the metric that literally asks, “Just how perplexed are you, model?”
+So your model can generate text-but how good is it? Enter **perplexity**, the metric that literally asks, “Just how perplexed are you, model?”
 
 ### 1. What Does Perplexity Measure?
 
@@ -340,14 +340,14 @@ $$
 \mathrm{Perplexity}(W) = \exp\left(-\frac{1}{N}\sum_{i=1}^N \log P(w_i \mid \text{context})\right)
 $$
 
-Or equivalently, it’s the **median branching factor**—how many choices the model is considering on average for the next word.
+Or equivalently, it’s the **median branching factor**-how many choices the model is considering on average for the next word.
 
 ### 2. Perplexity in Practice
 
-* **Low perplexity**: The model is confident and smooth — like your barista handing you your *usual* before you even order.
-* **High perplexity**: The model is lost — like debating whether you meant \*“Java” the island, \*“Java” the coffee, or \*“JavaScript” the language.
+* **Low perplexity**: The model is confident and smooth - like your barista handing you your *usual* before you even order.
+* **High perplexity**: The model is lost - like debating whether you meant \*“Java” the island, \*“Java” the coffee, or \*“JavaScript” the language.
 
-Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** — meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the tens.
+Perplexity is still used today to evaluate both **n-gram models** and **large language models (LLMs)**. For instance, an old-school trigram model on the Brown corpus had a perplexity around **247 per word** - meaning the model was basically choosing between 247 equally likely words at each step. Modern LLMs? They’ve brought this number *way* down, often into the tens.
 
 
 | Model Type        | Typical Perplexity     | Insight                                                                   |
@@ -360,7 +360,7 @@ Perplexity is still used today to evaluate both **n-gram models** and **large la
 
 ### 3. Perplexity: Not Perfect, But Useful
 
-Perplexity doesn’t tell us if the model truly *understands* — it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“duck”* :p).
+Perplexity doesn’t tell us if the model truly *understands* - it only tells us how well the model predicts the next word on average. A model can be confidently wrong (like autocorrect insisting you meant *“duck”* :p).
 
 
 Still, perplexity is:
@@ -369,7 +369,7 @@ Still, perplexity is:
 * **Easy to compute** – great for tracking progress during training.
 * **Still alive in the LLM era** – researchers and engineers watch perplexity curves to diagnose models, even if end-user metrics (fluency, factuality) matter more in production.
 
-Perplexity, is like a sly critic in the background: *“Nice prediction — but could you sound a little less confused next time?”*
+Perplexity, is like a sly critic in the background: *“Nice prediction - but could you sound a little less confused next time?”*
 
 ## Conclusion
 
@@ -377,7 +377,7 @@ From neutrons bouncing inside a nuclear bomb to surfers hopping between web page
 
 * In **PageRank**, they turned the chaos of the early web into an ordered map of authority.
 * In **n-gram models**, they gave us a way to guess the next word with only a short memory.
-* In **perplexity**, they still remind us how “surprised” our models are — whether it’s a trigram from the ’90s or GPT-5 today.
+* In **perplexity**, they still remind us how “surprised” our models are - whether it’s a trigram from the ’90s or GPT-5 today.
 
 Markov chains don’t claim to understand meaning; they just keep track of *what comes next*. But sometimes, that’s enough. From bombs to browsers to bots, Markov chains prove that sometimes the future really is just a matter of probability. If history shows anything, it’s this: give a Markov chain enough steps, and it’ll change the world.
 

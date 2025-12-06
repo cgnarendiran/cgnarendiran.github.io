@@ -174,7 +174,7 @@ $$
 2 d_h H L T \quad \to \quad r L T,
 $$
 
-over an order of magnitude smaller, while keeping accuracy nearly intact. Cache bloat turned into cache chic—enabling 128K contexts on a single GPU without blowing up memory.
+over an order of magnitude smaller, while keeping accuracy nearly intact. Cache bloat turned into cache chic-enabling 128K contexts on a single GPU without blowing up memory.
 
 ## Summary table
 

@@ -93,14 +93,14 @@ In other words, the network can attend “by relative positions” without extra
 ### Frequency Term
 Now, about that mysterious $10000^{2i/d}$ term in the denominator, it’s not random math magic. Each embedding dimension corresponds to a different frequency of sine and cosine. Smaller indices wiggle fast to capture local order (“who’s next to whom”), while larger indices change slowly to capture global position (“am I near the start or end?”). 
 
-The exponential term $10000^{2i/d}$ spreads these frequencies out in a geometric progression, giving the model both fine and coarse positional detail — like tuning each dimension to a different radio wavelength. Why Geometric Progression (GP)? Why not Arithmetic Progression (AP)? Well, you need a large range of varying frequencies to capture the positional information. And AP is too slow for this.
+The exponential term $10000^{2i/d}$ spreads these frequencies out in a geometric progression, giving the model both fine and coarse positional detail - like tuning each dimension to a different radio wavelength. Why Geometric Progression (GP)? Why not Arithmetic Progression (AP)? Well, you need a large range of varying frequencies to capture the positional information. And AP is too slow for this.
 
-And the 10,000? Arbitrary. It just keeps the slowest waves slow enough for typical sequence lengths. In short: $10000^{2i/d}$ gives sinusoidal encodings their multi-scale rhythm — smooth, unique, and easy for the model to learn from.
+And the 10,000? Arbitrary. It just keeps the slowest waves slow enough for typical sequence lengths. In short: $10000^{2i/d}$ gives sinusoidal encodings their multi-scale rhythm - smooth, unique, and easy for the model to learn from.
 
 ## Keeping Track of Distance: Why Relative Position Matters
-Even with sinusoidal encodings, later work observed that relative distance between tokens often matters more than their absolute positions. For example, models like Transformer-XL and T5 introduced explicit bias terms based on $|m - n|$ — because words two apart should interact differently than words fifty apart.
+Even with sinusoidal encodings, later work observed that relative distance between tokens often matters more than their absolute positions. For example, models like Transformer-XL and T5 introduced explicit bias terms based on $|m - n|$ - because words two apart should interact differently than words fifty apart.
 
-Sinusoidal encodings do allow the model to infer these relations indirectly (thanks to their linear shift property), but they mix positional and semantic information through addition — the position vector gets added to the token embedding. This changes the direction of the embedding and slightly warps its meaning.
+Sinusoidal encodings do allow the model to infer these relations indirectly (thanks to their linear shift property), but they mix positional and semantic information through addition - the position vector gets added to the token embedding. This changes the direction of the embedding and slightly warps its meaning.
 
 Rotary Positional Embeddings (RoPE) fix that by applying position as a rotation in embedding space instead of an addition. Each token’s representation is rotated by an angle proportional to its position, so relative offsets become explicitly encoded in the dot product between tokens. In short:
 
@@ -110,7 +110,7 @@ Rotary PE → rotate position → semantics preserved, relative distance encoded
 
 ## Rotary Positional Embeddings (RoPE): The Twist
 
-RoPE takes a simple but powerful approach: instead of adding positional information to token embeddings, it rotates the query and key vectors after they’ve been projected through their weight matrices. That means the token’s semantic meaning (the embedding itself) stays intact — position is only introduced when the model is about to compute attention.
+RoPE takes a simple but powerful approach: instead of adding positional information to token embeddings, it rotates the query and key vectors after they’ve been projected through their weight matrices. That means the token’s semantic meaning (the embedding itself) stays intact - position is only introduced when the model is about to compute attention.
 
 Formally, for a token at position $p$:
 

@@ -17,7 +17,7 @@ This blog is a beginner-friendly walk-through of **how** that’s possible, and 
 
 Imagine you want to send me a secret message by mail.
 
-1. I send you an **open padlock** — but **keep the key** with me.
+1. I send you an **open padlock** - but **keep the key** with me.
 2. You put your message in a box, lock it with my padlock, and send it back.
 3. Because the box is locked, **only I** (who has the key) can open it.
 
@@ -34,15 +34,15 @@ RSA works on the **same idea**, except the padlock is just a **big number** call
 1. **Two large prime numbers**: $p$ and $q$ of the order of 100s of digits
    (We keep these secret.)
 2. **Their product**: $n = p \times q$
-   (This is the “padlock” — we give this to everyone.)
+   (This is the “padlock” - we give this to everyone.)
 3. **Euler's Totient**: $\varphi(n) = (p-1) \times (q-1)$
    (This is used for building the key.)
 4. **Public exponent**: $e$
 
-   * A small number that’s coprime to $\varphi(n)$ — often 3, 17, or 65537.
+   * A small number that’s coprime to $\varphi(n)$ - often 3, 17, or 65537.
    * This is the “how to lock the box” number.
    * We give out **both $n$ and $e$** to the world.
-     This is totally safe — knowing $n$ and $e$ doesn’t help anyone find $p$ and $q$ if they’re large enough.
+     This is totally safe - knowing $n$ and $e$ doesn’t help anyone find $p$ and $q$ if they’re large enough.
 
 
 ## Why We Give Out e (and n)
@@ -219,7 +219,7 @@ Simon Singh’s padlock analogy nails the intuition, but the real magic is in ho
 
 ## From RSA Theory to Practice: `ssh-keygen`
 
-So far, we’ve seen the math behind RSA — two primes, $n=pq$, Euler’s totient $\varphi(n)$, the exponents $e$ and $d$. But how does this translate into something real, like the SSH keys we use every day?
+So far, we’ve seen the math behind RSA - two primes, $n=pq$, Euler’s totient $\varphi(n)$, the exponents $e$ and $d$. But how does this translate into something real, like the SSH keys we use every day?
 
 The command you’ve probably typed before is:
 
@@ -280,7 +280,7 @@ ssh user@server
 1. The server checks your `authorized_keys` file for your public key.
 2. It encrypts a challenge using that key.
 3. Your client uses your **private key** to prove you can decrypt the challenge.
-4. If it matches, you’re in — no password needed.
+4. If it matches, you’re in - no password needed.
 
 
 ### 4. Why this design?

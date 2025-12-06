@@ -7,9 +7,9 @@ tags:  asyncio multithreading multiprocessing python parallelism pasta
 ---
 *On the cover: A cute robot chef cooking pasta*
 
-Concurrency in Python is like running a restaurant kitchen during a dinner rush — and if you're making pasta, you're bound to get a side of judgment from an Italian grandma every time you mess up.
+Concurrency in Python is like running a restaurant kitchen during a dinner rush - and if you're making pasta, you're bound to get a side of judgment from an Italian grandma every time you mess up.
 
-Let’s walk through **asyncio**, **multithreading**, and **multiprocessing** — with veggies, pasta, and real code along the way.
+Let’s walk through **asyncio**, **multithreading**, and **multiprocessing** - with veggies, pasta, and real code along the way.
 
 ## 1. Asyncio: One Chef, Smart Scheduling
 
@@ -63,7 +63,7 @@ async def restaurant():
 asyncio.run(restaurant())
 ```
 
-Yes, we’re boiling three pastas at once — and no, we’re not adding olive oil to the water. Somewhere in Italy, a grandma just fainted.
+Yes, we’re boiling three pastas at once - and no, we’re not adding olive oil to the water. Somewhere in Italy, a grandma just fainted.
 
 But look at the blocking `chop_veggies` and `prepare_sauce` functions. They block the event loop (in this case the chef) and defeat the purpose of async. Even though three pastas are boiling simultaneously, the chef still has to chop veggies and prepare sauce one at a time. Every piece of code has to yield control back to event loop, otherwise it will block it completely.
 
@@ -83,9 +83,9 @@ Now, it is truly parallel. At this point, you might as well hire a bunch of chef
 
 You hire **multiple chefs**, but they all work in the same cramped kitchen.
 
-They can each work on something — one’s boiling pasta, another’s chopping veggies — but they bump into each other. Sometimes they fight over who gets to use the stove, and sometimes, someone just stands there holding a ladle, waiting.
+They can each work on something - one’s boiling pasta, another’s chopping veggies - but they bump into each other. Sometimes they fight over who gets to use the stove, and sometimes, someone just stands there holding a ladle, waiting.
 
-That’s **multithreading** in Python. It works well when tasks are **I/O-bound**, but for CPU work, they still politely wait in line — thanks to the Global Interpreter Lock (GIL).
+That’s **multithreading** in Python. It works well when tasks are **I/O-bound**, but for CPU work, they still politely wait in line - thanks to the Global Interpreter Lock (GIL).
 
 🔑 **Key Traits**:
 
@@ -144,7 +144,7 @@ You finally go full Gordon Ramsay and open **multiple kitchens**, each with its 
 
 They don’t talk to each other much, but each gets their job done in full parallel glory. No fighting over ladles or fridge space.
 
-That’s **multiprocessing** — great for **CPU-bound** tasks, because every process runs on its own core.
+That’s **multiprocessing** - great for **CPU-bound** tasks, because every process runs on its own core.
 
 🔑 **Key Traits**:
 
@@ -210,7 +210,7 @@ The worst use case for multiprocessing is when you have several IO-bound tasks a
 | **Multiprocessing** | Many chefs, many kitchens       | CPU-bound | Data sharing, high memory use  |
 
 
-Concurrency in Python is about making the most of what you’ve got — chefs, stoves, and time.
+Concurrency in Python is about making the most of what you’ve got - chefs, stoves, and time.
 
 * If you're mostly **waiting on things** (I/O), let one chef juggle tasks smartly with `asyncio`.
 * If you've got **lots of waiting**, and can tolerate a bit of stepping on toes, go `multithreading`.

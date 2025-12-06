@@ -61,7 +61,7 @@ This is way better than blind wandering.
 HNSW (Hierarchical Navigable Small World) makes the city **multi-layered**:
 
 * **Layer 0**: The street-level café friendships (dense and local).
-* **Higher layers**: Sparse networks where only a few cafés live — the “famous” ones, like landmark coffee houses everyone knows.
+* **Higher layers**: Sparse networks where only a few cafés live - the “famous” ones, like landmark coffee houses everyone knows.
 * **Top layer**: Just a handful (often one) “super-networked café” that acts as the entry point.
 
 When a new shop opens, it randomly decides how high it reaches in the hierarchy. Most are only in layer 0, but some lucky cafés also make it into higher networking circles. They "live" in all the lower layers too. In expectation, the tallest “friendship ladder” is about $\log n$ layers.
@@ -84,7 +84,7 @@ When a café (node) joins the city:
 
    * At each layer $\leq L$, search for candidate neighbors using **`efConstruction`**.
    * Keep the best $M$ matches as friends.
-   * Connections are mutual — if A knows B, B knows A.
+   * Connections are mutual - if A knows B, B knows A.
 
 **`efConstruction`** = how aggressively a new café networks.
 
@@ -149,8 +149,8 @@ Together, these decide the **speed/accuracy tradeoff**.
 
 ## Conclusion
 
-Brute force NN, visiting every café in town, is honest but slow. ANN is a flat graph where you're asking for nearby cafes until you stumble upon the right spot. HNSW? It’s where you **build a multi-layer city map, sprinkle in shortcuts, and then end up at the right coffee shop** — almost every time.
+Brute force NN, visiting every café in town, is honest but slow. ANN is a flat graph where you're asking for nearby cafes until you stumble upon the right spot. HNSW? It’s where you **build a multi-layer city map, sprinkle in shortcuts, and then end up at the right coffee shop** - almost every time.
 
-That’s why HNSW is the backbone of modern vector databases like Milvus, Weaviate, Pinecone, Vespa. When embeddings look for their “nearest neighbor café,” they don’t wander — they network.
+That’s why HNSW is the backbone of modern vector databases like Milvus, Weaviate, Pinecone, Vespa. When embeddings look for their “nearest neighbor café,” they don’t wander - they network.
 
 So the next time your vector database finds your nearest neighbor in milliseconds, remember: there’s a tiny greedy traveler sprinting down a small-world graph to make it happen.

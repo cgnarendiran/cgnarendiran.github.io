@@ -21,9 +21,9 @@ This is exactly how **Mixture of Experts (MoE)** works. Instead of forcing a sin
 
 When transformers first appeared, scaling was simple: More layers. More width. More parameters. But this quickly hit practical limits:
 
-1. **Memory limits** — A 1T-parameter dense model is… unpleasant.
-2. **Compute limits** — Every forward pass activates every parameter.
-3. **Inefficient specialisation** — A single monolithic network must learn *everything*, even skills it rarely uses.
+1. **Memory limits** - A 1T-parameter dense model is… unpleasant.
+2. **Compute limits** - Every forward pass activates every parameter.
+3. **Inefficient specialisation** - A single monolithic network must learn *everything*, even skills it rarely uses.
 
 MoE solves this by decoupling *capacity* from *compute*. It lets you build a model with hundreds of billions or trillions of parameters, while only activating a tiny fraction (say 1–10%) for each token. This makes training faster, inference cheaper, and the architecture more modular.
 
@@ -37,17 +37,17 @@ Where:
 
 * $(E_i(x))$ is the $(i)$-th expert.
 * $(g_i(x))$ is the gating function: which expert “gets the package.”
-* $(y)$ is the final output—the delivered prediction.
+* $(y)$ is the final output-the delivered prediction.
 
 And the clever trick is most experts stay idle most of the time, saving compute while keeping the model huge in capacity.
 
 
 <!-- 
-* **Dense vs. Sparse MoE** — and why “sparse” changed everything.
-* **Top-K routing** — how tokens are assigned to experts.
-* **Challenges like load balancing & router collapse** — and how modern models avoid them.
+* **Dense vs. Sparse MoE** - and why “sparse” changed everything.
+* **Top-K routing** - how tokens are assigned to experts.
+* **Challenges like load balancing & router collapse** - and how modern models avoid them.
 * **Practical variants** like Switch Transformers, DeepSeek’s modifications, and shared experts.
-* **What MoE means for the future of LLMs** — and why almost every frontier model is now exploring it. -->
+* **What MoE means for the future of LLMs** - and why almost every frontier model is now exploring it. -->
 
 
 ## Sparse MoE:
@@ -62,7 +62,7 @@ Where:
 
 * $(f_i(x))$ is the $(i)$-th expert.
 * $(g_i(x))$ is the gating function: which expert “gets the package.”
-* $(y)$ is the final output—the delivered prediction.
+* $(y)$ is the final output-the delivered prediction.
 
 This works, but it computes every expert anyway, even if the gate assigns it near-zero weight. So it has zero computational savings. Dense MoE improves representation power, but not efficiency. So modern LLMs rarely use it. In the context of LLMs, Hinton and his group (a different one with Google Brain this time), released a paper called [Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer](https://openreview.net/pdf?id=B1ckMDqlg).
 
@@ -70,10 +70,10 @@ The insight was simple, only activate the best K experts for each token. Instead
 
 Suddenly, you get the following benefits:
 
-* **Speed** — far fewer floating-point operations
-* **Scale** — larger total capacity without larger per-token cost   
-* **Specialisation** — experts discover structure in data
-* **Parallelism** — experts can live on different GPUs
+* **Speed** - far fewer floating-point operations
+* **Scale** - larger total capacity without larger per-token cost   
+* **Specialisation** - experts discover structure in data
+* **Parallelism** - experts can live on different GPUs
 
 Sparse MoE is the core of Switch Transformers, DeepSeek V2/V3, GLaM, Mixtral 8×22B, and almost every modern giant model.
 
@@ -134,7 +134,7 @@ This made the model *operationally simple* and extremely fast:
 * Memory + compute cost per token is dramatically lower
 * Routing is easier to parallelize
 
-Even with top-1 routing, Switch achieved large performance gains compared to dense models — showing that *specialization works even when each token only gets one expert*.
+Even with top-1 routing, Switch achieved large performance gains compared to dense models - showing that *specialization works even when each token only gets one expert*.
 
 
 ## Expert Capacity: What Happens When an Expert Gets Too Many Tokens?
@@ -181,13 +181,13 @@ Two modes exist:
    * If expert (E_i) is full, send the token to the next-best expert.
    * Reduces drops but increases compute.
 
-Dropping tokens sounds alarming, but because residual connections bypass the MoE layer, the network remains stable — this is similar to Dropout in spirit.
+Dropping tokens sounds alarming, but because residual connections bypass the MoE layer, the network remains stable - this is similar to Dropout in spirit.
 
 
 # 2. **Fine-Grained Top-K Routing (e.g., Top-8)**
 
 Earlier models used **top-1** (Switch) or **top-2** (GLaM, Mixtral) routing.
-DeepSeek moved to **top-8** routing — a larger expert subset.
+DeepSeek moved to **top-8** routing - a larger expert subset.
 
 ### Why this matters:
 

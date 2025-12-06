@@ -7,7 +7,7 @@ tags:   Legal Research Assistant RAG AI Summarization Australia
 ---
 *On the cover: Legal Research Assistant Platform*
 
-This project was delivered for MiAI.law, an Australian legal technology firm, to build a modern AI-driven system for rapid, accurate legal research across case law and legislation. The platform supports multiple legal workflows—lite research, deep research, contract review, contract audit, case summarization, and legislation research—using an advanced RAG pipeline optimized for legal reasoning.
+This project was delivered for MiAI.law, an Australian legal technology firm, to build a modern AI-driven system for rapid, accurate legal research across case law and legislation. The platform supports multiple legal workflows-lite research, deep research, contract review, contract audit, case summarization, and legislation research-using an advanced RAG pipeline optimized for legal reasoning.
 
 ## Background:
 Legal professionals and everyday users often struggle to navigate large volumes of case law from the High Court, Federal Courts, and State/Territory jurisdictions. Identifying the correct cause of action, finding authoritative principles, and interpreting legislative sections is slow and requires deep expertise. MiAI.law needed an AI system that could:

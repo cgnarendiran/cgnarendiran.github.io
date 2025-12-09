@@ -111,12 +111,26 @@ Think of it as the router saying: “Sure, violin section is great… but maybe 
 
 This is the *classic* technique introduced in the GShard and Switch Transformer papers.
 
-Two simple auxiliary terms are added:
+This loss encourages all experts to receive roughly equal numbers of tokens and encourages the router’s attention distribution to stay balanced. Mathematically,
 
-* **Load loss** - encourages all experts to receive roughly equal numbers of tokens.
-* **Importance loss** - encourages the router’s attention distribution to stay balanced.
+* **Average gate probability** (also called *importance score* or mean gate):
+  $$
+  P_i = \frac{1}{T}\sum_{t=1}^T p_{t,i}
+  $$
 
-These losses look like tiny penalties during training, but they play the role of the orchestra conductor whispering:
+* **Empirical fraction of tokens dispatched** (the *load*):
+  $$
+  f_i = \frac{1}{T}\sum_{t=1}^T \mathbb{I}[\mathrm{assign}_t = i]
+  $$
+
+The loss is then computed as:
+$$
+\mathcal{L}_{balance} = \lambda \cdot E \cdot \sum_{i=1}^{E} P_i , f_i
+$$
+
+Where (\lambda) is a small hyperparameter (loss weight).
+
+This loss look like tiny penalties during training, but they play the role of the orchestra conductor whispering:
 “Hey, brass section, stop overpowering everyone; give the flutes a chance.”
 
 The downside? You’ve now added extra gradients, hyperparameters, and another term that must be tuned. But for many early MoE models, this was the most effective stabilization method.
@@ -176,19 +190,16 @@ $$
 
 with bias ($b_i$) updated based on usage statistics. No extra loss function. No tuning of balance weights. No additional backprop.
 
-This encourages the router to “spread the love” without interfering with the main optimization objective.
-
-Think of it as slip-roads on a highway dynamically opening or closing based on traffic. Smooth, adaptive, and almost invisible.
-
+This encourages the router to “spread the love” without interfering with the main optimization objective. This technique is smooth, adaptive, and almost invisible unlike loss-based methods.
 
 
 ## Big Picture
 
-Dense models are hitting diminishing returns. Training a model 2× larger no longer gives you 2× improvements—and the cost is enormous.
+Dense models are hitting diminishing returns. Training a model 2× larger no longer gives you 2× improvements and the cost is enormous.
 
 MoE flips that equation: You can scale parameters without scaling compute.
 
-This is why almost every frontier model roadmap includes MoE variants. For the next several years, MoEs will likely be the central scaling strategy for large language models—just like attention was from 2017-2023.
+This is why almost every frontier model roadmap includes MoE variants. For the next several years, MoEs will likely be the central scaling strategy for large language models, just like attention was from 2017-2023.
 
 MoE is not just a “research idea.” It’s becoming the production-grade architecture for trillion-parameter intelligence.
 

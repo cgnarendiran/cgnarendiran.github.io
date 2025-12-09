@@ -9,7 +9,7 @@ tags:  DeepSeek Attention MLA KV Caching MoE
 
 It's been 8 years since the landmark paper "Attention is all you need" was published. The paper introduced the attention mechanism, which has revolutionized the field of natural language processing. The self-attention mechanism and consequently the transformer models are the main reason we have large launguage models (LLMs) today.
 
-But these have gone through significant improvements over the years. These include the introduction of multi-head attentions (MHA), rotary positional encodings (RoPE), mixture of experts (MoE), and KV caching. In this post I'll talk about KV caching, their variants and DeepSeek's Multi-Head Latent Attention (MLAs). I will cover the remaining topics in subsequent posts.
+But these have gone through significant improvements over the years. These include the introduction of KV caching, multi-head attentions (MHA), rotary positional encodings (RoPE), and mixture of experts (MoE). In this post I'll talk about KV caching, their variants and DeepSeek's Multi-Head Latent Attention (MLAs). I will cover the remaining topics in subsequent posts.
 
 ## Inference in LLMs
 

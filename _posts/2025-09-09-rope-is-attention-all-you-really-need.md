@@ -9,7 +9,7 @@ tags:  DeepSeek RoPE Rotary Positional Encoding LLMs
 
 It's been 8 years since the landmark paper "Attention is all you need" was published. The paper introduced the attention mechanism, which has revolutionized the field of natural language processing. The self-attention mechanism and consequently the transformer models are the main reason we have large launguage models (LLMs) today.
 
-But these have gone through significant improvements over the years. These include the introduction of multi-head attentions (MHA), rotary positional encodings (RoPE), mixture of experts (MoE), and KV caching. In my [previous post](https://cgnarendiran.github.io/2025-08-22-kv-caching-mla-is-attention-all-you-really-need/) I spoke about MLA and KV caching. In this post I'll talk about Rotary Positional Encodings (RoPE).
+But these have gone through significant improvements over the years. These include the introduction of KV caching, multi-head attentions (MHA), rotary positional encodings (RoPE), and mixture of experts (MoE). In my [previous post](https://cgnarendiran.github.io/2025-08-22-kv-caching-mla-is-attention-all-you-really-need/) I spoke about MLA and KV caching. In this post I'll talk about Rotary Positional Encodings (RoPE).
 
 ## Going Round in Circles: From Naive to RoPE
 

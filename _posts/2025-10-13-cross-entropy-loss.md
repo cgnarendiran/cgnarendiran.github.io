@@ -36,7 +36,7 @@ So how do we measure this uncertainty?
 
 Enter Information Theory.
 
-## Shannon's Questions
+## Shannon's Questions and Axioms
 
 Claude Elwood Shannon - who invented the field of information theory asked a deceptively simple question:
 
@@ -48,9 +48,7 @@ He wanted a mathematical quantity that:
 * decreases when outcomes become certain
 * behaves nicely when we combine independent events
 
-Instead of guessing a formula, Shannon laid down **axioms** — rules any reasonable measure of uncertainty must follow.
-
-### Shannon’s Axioms
+Instead of guessing a formula, Shannon laid down **axioms** - rules any reasonable measure of uncertainty must follow.
 
 Let’s call our uncertainty measure **entropy**, denoted by (H(p)), where (p) is the probability distribution over weather outcomes.
 
@@ -159,8 +157,7 @@ H(p, q) = -\sum_x p(x) \log q(x)
 $$
 
 Interpretation:
-
-> **How surprised will you be if the world behaves like (p), but you plan your life using (q)?**
+**How surprised will you be if the world behaves like (p), but you plan your life using (q)?**
 
 Bad app → more wet clothes.
 
@@ -201,8 +198,7 @@ D_{\text{KL}}(p||q) = H(p, q) - H(p)
 $$
 
 Interpretation:
-
-> **How many extra bits of surprise you pay because your weather app is wrong.**
+**How many extra bits of surprise you pay because your weather app is wrong.**
 
 It’s always non-negative and zero only when your model matches reality.
 

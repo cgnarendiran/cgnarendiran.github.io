@@ -7,34 +7,29 @@ tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
 *On the cover: Stacked Dice*
 
-Imagine you live in a strange world of weather.
+Imagine you live in, work in and vacation in three different cities.
 
-In **City A**, it is sunny every single day. No clouds. No rain. Ever.
+In **City A (home)**, it is sunny every single day. No clouds. No rain. Ever.
 You wake up, glance outside, and already know the answer.
-
 Informative? Not at all. Boring? Yes.
 
-Now consider **City B**.
+Now consider **City B (work)**.
 Every morning, the weather could be sunny, rainy, or cloudy, each with equal probability.
 You actually *check* the forecast now, because there’s uncertainty involved.
 
-Finally, welcome to **City C**.
+Finally, welcome to **City C (vacation)**.
 Here, the weather might be sunny, rainy, cloudy, snowing, hailing, stormy, or something you’ve never seen before.
 Every day feels like a plot twist or surprise.
 
 What changed as we moved from City A → B → C?
 
-The number of possible outcomes increased. But more importantly, the uncertainty about tomorrow increased.
-
-Intuitively:
+The number of possible outcomes increased. But more importantly, the uncertainty about tomorrow increased. Intuitively:
 
 The less certain or surprised you are about what will happen, the more information the outcome carries.
 
 A forecast that says “it will definitely be sunny” carries almost no information. A forecast that says “it could be anything” carries a lot.
 
-So how do we measure this uncertainty?
-
-Enter Information Theory.
+So how do we measure this uncertainty? Enter Information Theory.
 
 ## Shannon's Questions and Axioms
 

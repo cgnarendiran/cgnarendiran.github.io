@@ -5,190 +5,218 @@ date:   2025-10-13
 image:  images/blog24/cover.jpg
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
-*On the cover: Cross Entropy Loss*
+*On the cover: Stacked Dice*
 
-Cross Entropy Loss is a loss function that is used to measure the difference between the predicted probability distribution and the true probability distribution. It is a measure of the uncertainty of the model's predictions.
+Imagine you live in a strange world of weather.
 
-That just sounds like a bunch of jargon doesn't it. Well, let's break it down. All of this is rooted in Information Theory. Claude Shannon-who essentially invented the entire field of information theory-asked a deceptively simple question:
+In **City A**, it is sunny every single day. No clouds. No rain. Ever.
+You wake up, glance outside, and already know the answer.
+
+Informative? Not at all. Boring? Yes.
+
+Now consider **City B**.
+Every morning, the weather could be sunny, rainy, or cloudy, each with equal probability.
+You actually *check* the forecast now, because there’s uncertainty involved.
+
+Finally, welcome to **City C**.
+Here, the weather might be sunny, rainy, cloudy, snowing, hailing, stormy, or something you’ve never seen before.
+Every day feels like a plot twist or surprise.
+
+What changed as we moved from City A → B → C?
+
+The number of possible outcomes increased. But more importantly, the uncertainty about tomorrow increased.
+
+Intuitively:
+
+The less certain or surprised you are about what will happen, the more information the outcome carries.
+
+A forecast that says “it will definitely be sunny” carries almost no information. A forecast that says “it could be anything” carries a lot.
+
+So how do we measure this uncertainty?
+
+Enter Information Theory.
+
+## Shannon's Questions
+
+Claude Elwood Shannon - who invented the field of information theory asked a deceptively simple question:
 
 > **“How do we measure information in a way that makes sense?”**
 
-He proposed three axioms for an information measure (H(p)):
+He wanted a mathematical quantity that:
 
-### **Shannon’s Axioms**
+* increases when the forecast becomes more unpredictable
+* decreases when outcomes become certain
+* behaves nicely when we combine independent events
 
-1. **Continuity**
-   (H(p)) should change smoothly as probabilities change.
+Instead of guessing a formula, Shannon laid down **axioms** — rules any reasonable measure of uncertainty must follow.
 
-2. **Maximization**
-   For a fixed number of outcomes, entropy is maximized when all outcomes are equally likely.
-   (A perfectly fair die is the most chaotic die.)
+### Shannon’s Axioms
 
-3. **Additivity (a.k.a. the “Chain Rule”)**
-   If a decision can be broken into independent parts, total entropy is the weighted sum of entropies.
-   $$
-   H(X, Y) = H(X) + H(Y|X)
-   $$
+Let’s call our uncertainty measure **entropy**, denoted by (H(p)), where (p) is the probability distribution over weather outcomes.
 
-Shannon proved that the **only** function satisfying these axioms (up to a constant factor) is:
+### 1. Continuity
+
+If tomorrow’s rain probability changes from 30% to 31%, the uncertainty shouldn’t jump wildly.
+
+So, small changes in forecast → small changes in entropy.
+
+### 2. Maximization
+
+For a fixed number of weather types, uncertainty is **maximized** when all are equally likely.
+
+A city where sun, rain, and clouds are all equally likely is more uncertain than one where it’s sunny 90% of the time.
+
+A perfectly unpredictable forecast has maximum entropy.
+
+
+### 3. Additivity (Chain Rule)
+
+Suppose weather depends on two independent factors:
+
+* large-scale climate pattern
+* local atmospheric noise
+
+Total uncertainty should be the sum of uncertainties from each source:
+
+$$
+H(X, Y) = H(X) + H(Y|X)
+$$
+
+Uncertainty accumulates.
+
+## The Entropy Formula (Inevitable, Not Arbitrary)
+
+Shannon proved something remarkable:
+
+There is only one function (up to a constant) that satisfies all these axioms.
+
+That function is:
 
 $$
 H(p_1,\dots,p_n) = -K \sum_i p_i \log p_i
 $$
 
-Set (K = 1) and we get the familiar form.
+Choosing (K = 1) gives entropy measured in **bits**.
 
+This wasn’t a clever guess - it was mathematically forced.
 
-## 2. Self-Information: Surprise in a Single Number
+## Self-Information: Surprise of a Single Day
 
-Shannon also defined the information content of a single event:
+Before talking about averages, let’s talk about *one day*.
+
+If today turns out to be sunny with probability (p), the **surprise** of observing it is:
 
 $$
 I(x) = -\log p(x)
 $$
 
-Properties:
+Examples:
 
-* When (p(x)) is small → big surprise
-* When (p(x)) is large → small surprise
-* When (p(x) = 1) → (I(x) = 0) (no surprise)
+* “It’s sunny in City A.”
+  Probability = 1 → Surprise = 0
 
-Example:
-Your friend says “gravity still works today.”
-Probability = 1.
-Surprise = 0 bits.
+* “It snowed in the desert.”
+  Probability ≈ 0 → Massive surprise
 
-Your friend says “the stock market went up because Mercury is in retrograde.”
-Surprise = ∞ bits.
+Rare weather events carry more information.
+
+* Your friend says “gravity still works today.”
+  Probability = 1.
+  Surprise = 0 bits.
+
+* Your friend says “the stock market went up because Mercury is in retrograde.”
+  Probability = 0.
+  Surprise = ∞ bits.
+
+Don't trust this friend :p
 
 
-## 3. Entropy: Expected Surprise
+## Entropy = Expected Weather Surprise
 
-Entropy measures the *average* amount of self-information:
+Entropy is simply the **average surprise** you expect before seeing tomorrow’s weather:
 
 $$
-H(p) = \mathbb{E}_{x \sim p}[ -\log p(x) ] \
-H(p) = -\sum_x p(x) \log p(x)
+H(p) = \mathbb{E}_{x \sim p}[-\log p(x)] = -\sum_x p(x) \log p(x)
 $$
 
-Alternative continuous form:
+Interpretation:
 
-$$
-H(p) = -\int p(x) \log p(x), dx
-$$
-
-Entropy reflects how uncertain the world is.
-
-* High entropy → chaotic, unpredictable
-* Low entropy → predictable, boring (like a model that always predicts “cat”)
+* High entropy → wild, unpredictable climate
+* Low entropy → boring, reliable forecasts
 
 
-## 4. Cross Entropy: When Your Beliefs Are Wrong
+## 7. Cross Entropy: Using the Wrong Weather App
 
-Cross entropy is:
+Now suppose:
+
+* $p$: the true weather distribution
+* $q$: your weather app’s predictions
+
+Cross entropy measures:
 
 $$
 H(p, q) = -\sum_x p(x) \log q(x)
 $$
 
-Compare with entropy:
-
-$$
-H(p) = -\sum_x p(x) \log p(x)
-$$
-
 Interpretation:
 
-> **“How many bits do I need to encode messages drawn from (p) if I assume the world is (q)?”**
+> **How surprised will you be if the world behaves like (p), but you plan your life using (q)?**
 
-This is exactly what we do in machine learning:
+Bad app → more wet clothes.
 
-* (p) = true labels
-* (q) = model’s predicted distribution
+This is exactly what happens in machine learning:
 
-For one-hot labels, if true class is (y):
-
-$$
-H(p,q) = - \log q(y)
-$$
-
-This is the famous per-sample classification loss.
+* true labels = $p$
+* model predictions = $q$
 
 
-## 5. Negative Log-Likelihood (NLL): The ML Version
+## Negative Log-Likelihood: Daily Forecast Pain
 
-Likelihood for a sample (x):
+If your model assigns probability $q(x)$ to today’s weather, the pain you feel when it happens is:
 
 $$
-\mathcal{L} = q(x)
+-\log q(x)
 $$
 
-Negative log-likelihood loss:
+Confident and wrong?
+Massive pain.
+
+Average this over many days and you get **cross entropy**.
+
+That’s why NLL is the standard ML loss.
+
+
+## KL Divergence: Cost of a Bad Weather Model
+
+KL divergence isolates the *extra* surprise caused by using the wrong beliefs:
 
 $$
-\text{NLL} = -\log q(x)
-$$
-
-Averaged over the dataset:
-
-$$
-\frac{1}{N} \sum_{i=1}^N -\log q(x_i)
-$$
-
-This is **exactly** the empirical cross entropy:
-
-$$
-H_{\text{empirical}}(p, q)
-$$
-
-Why log?
-
-* Turns products into sums
-* Penalizes confident wrong predictions heavily
-* Leads to convex/log-concave objectives (nice gradients)
-* Sine/cosine would oscillate and destroy the loss landscape (and your model)
-
----
-
-## 6. KL Divergence: Distance Between Belief Systems
-
-Defined as:
-
-$$
-D_{\text{KL}}(p,||,q) = \sum_x p(x) \log \frac{p(x)}{q(x)}
+D_{\text{KL}}(p||q) = \sum_x p(x) \log \frac{p(x)}{q(x)}
 $$
 
 Equivalent form:
 
 $$
-D_{\text{KL}}(p,||,q) = H(p, q) - H(p)
+D_{\text{KL}}(p||q) = H(p, q) - H(p)
 $$
 
 Interpretation:
 
-> **Extra surprise caused by using the wrong model (q)**
+> **How many extra bits of surprise you pay because your weather app is wrong.**
 
-Properties:
+It’s always non-negative and zero only when your model matches reality.
 
-* (D_{\text{KL}} \ge 0)
-* (D_{\text{KL}}(p||q) = 0) only when (p = q)
-* Not symmetric:
+## Importance Sampling: Studying Rare Storms
 
-$$
-D_{\text{KL}}(p||q) \neq D_{\text{KL}}(q||p)
-$$
+Suppose you want to estimate the probability of extreme storms.
 
-KL divergence is everywhere:
+Problem: they’re rare.
+Waiting around with uniform sampling will take forever.
 
-* Variational inference
-* Regularization in VAEs
-* Policy updates in RL (Trust Region methods)
-* Comparing distributions
-* Aligning model predictions with truth
+Instead:
 
----
-
-## 7. Importance Sampling: When Rare Events Refuse to Show Up
+* Sample more often from storm-heavy cities (say distribution $q$)
+* Correct the bias using importance weights:
 
 Suppose you want to estimate:
 
@@ -227,38 +255,25 @@ Interpretation:
 * You sample from a convenient distribution (q)
 * and then “fix” the bias using the ratio (p/q).
 
-### Example: Rare Events in Finance
+This is how meteorology, finance, and ML handle rare-but-important events.
 
-Want the probability of a 5-sigma loss:
+## The Big Picture
 
-* Sampling from the real distribution won’t give you enough 5-sigma events
-* You choose a biased distribution that produces more extreme returns
-* Apply importance weights to correct the bias
-* Estimator now converges with far fewer samples
-
-Importance sampling is basically:
-
-> **“Cheat smartly, and then correct the cheat mathematically.”**
-
----
-
-## 8. Deep Connections
-
-All these concepts are unified:
-
-* **Self-information**: surprise of one event
-* **Entropy**: expected surprise under true distribution
-* **Cross entropy**: expected surprise under model distribution
-* **NLL**: empirical cross entropy
-* **KL divergence**: the price you pay for being wrong
-* **Importance sampling**: fixing the price by reweighting surprise
-
-The common thread?
-They all revolve around:
+All of information theory revolves around one quantity:
 
 $$
 -\log(\text{probability})
 $$
 
-This quantity is the currency of information.
+* Self-information: surprise of one day
+* Entropy: expected surprise
+* Cross entropy: surprise under wrong beliefs
+* NLL: empirical cross entropy
+* KL divergence: penalty for being wrong
+* Importance sampling: reweighting surprise
 
+Information is not abstract.
+
+It’s the mathematics of **how shocked you are when reality happens**.
+
+And now you know. Fin.

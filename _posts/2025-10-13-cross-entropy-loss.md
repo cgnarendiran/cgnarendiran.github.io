@@ -82,7 +82,7 @@ $$
 
 Uncertainty accumulates.
 
-## The Entropy Formula (Inevitable, Not Arbitrary)
+## Entropy Formulation: The Inevitable, Not Arbitrary
 
 Shannon proved something remarkable:
 
@@ -129,7 +129,7 @@ Rare weather events carry more information.
 Don't trust this friend :p
 
 
-## Entropy = Expected Weather Surprise
+## Entropy: Expected Weather Surprise
 
 Entropy is simply the **average surprise** you expect before seeing tomorrow’s weather:
 
@@ -143,7 +143,7 @@ Interpretation:
 * Low entropy → boring, reliable forecasts
 
 
-## 7. Cross Entropy: Using the Wrong Weather App
+## Cross Entropy: Using the Wrong Weather App
 
 Now suppose:
 

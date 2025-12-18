@@ -40,15 +40,12 @@ Instead of guessing a formula, Shannon laid down **axioms** - rules any reasonab
 Let’s call our uncertainty measure **entropy**, denoted by $H(p)$, where $p$ is the probability distribution over weather outcomes.
 
 ### 1. Continuity
-
 If tomorrow’s rain probability changes from 30% to 33%, the uncertainty shouldn’t jump wildly. So, small changes in forecast should reflect small changes in entropy. Essentially the entropy should be a continuous function of the probabilities.
 
 ### 2. Maximization
-
 For a fixed number of weather types, uncertainty is **maximized** when all are equally likely. A city where sun, rain, and clouds are all equally likely is more uncertain than one where it’s sunny 90% of the time. A perfectly unpredictable forecast has maximum entropy. Essentially the entropy should increase as the probability decreases.
 
-### 3. Additivity (Chain Rule)
-
+### 3. Additivity
 Suppose weather depends on two independent factors:
 
 * large-scale climate pattern ($X_1$)
@@ -137,6 +134,9 @@ This is exactly what happens in machine learning:
 * true labels = $p$
 * model predictions = $q$
 
+![alt](/images/blog24/cross_entropy.webp){: .center-image }
+*Figure 1: Cross Entropy loss. Source: [Cross Entropy Loss Formula](https://www.v7labs.com/blog/cross-entropy-loss-guide)*
+
 
 ## Negative Log-Likelihood: Daily Forecast Pain
 
@@ -209,6 +209,7 @@ Multiply & divide by (q(x)):
 
 $$
 \mu = \int f(x) \frac{p(x)}{q(x)} q(x) dx
+\mu = \int f(x) w(x) q(x) dx
 $$
 
 Now sample from $q$:

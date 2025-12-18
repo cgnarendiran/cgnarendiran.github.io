@@ -45,28 +45,28 @@ If tomorrow’s rain probability changes from 30% to 33%, the uncertainty should
 
 ### 2. Maximization
 
-For a fixed number of weather types, uncertainty is **maximized** when all are equally likely. A city where sun, rain, and clouds are all equally likely is more uncertain than one where it’s sunny 90% of the time. A perfectly unpredictable forecast has maximum entropy.
+For a fixed number of weather types, uncertainty is **maximized** when all are equally likely. A city where sun, rain, and clouds are all equally likely is more uncertain than one where it’s sunny 90% of the time. A perfectly unpredictable forecast has maximum entropy. Essentially the entropy should increase as the probability decreases.
 
 ### 3. Additivity (Chain Rule)
 
 Suppose weather depends on two independent factors:
 
-* large-scale climate pattern
-* local atmospheric noise
+* large-scale climate pattern ($X_1$)
+* local atmospheric noise ($X_2$)
 
-Total uncertainty should be the sum of uncertainties from each source:
+Total entropy should be the sum of entropies from each source:
 
 $$
-H(X, Y) = H(X) + H(Y|X)
+H(X) = H(X_1, X_2) = H(X_1) + H(X_2)
 $$
 
-Uncertainty accumulates.
+Uncertainty accumulates, and so does entropy. Essentially entropy should be an additive function of probabilities.
 
 ## Entropy Formulation: The Inevitable, Not Arbitrary
 
 Shannon proved something remarkable:
 
-There is only one function (up to a constant) that satisfies all these axioms.
+There is only one function that satisfies all these axioms.
 
 That function is:
 

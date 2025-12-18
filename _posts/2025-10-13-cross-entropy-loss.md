@@ -5,7 +5,7 @@ date:   2025-10-13
 image:  images/blog24/cover.jpeg
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
-*On the cover: Stacked Dice*
+*On the cover: Wall-E holding an umbrella*
 
 Imagine you live, work and vacation in three different cities.
 
@@ -89,23 +89,13 @@ $$
 
 Examples:
 
-* “It’s sunny in City A.”
-  Probability = 1
-  Surprise = 0 bits
-
-* “It snowed in the desert.”
-  Probability ≈ 0
-  Massive surprise
+* “It’s sunny in City A.”. Probability = 1. Surprise = 0 bits
+* “It snowed in the desert.”. Probability ≈ 0. Massive surprise
 
 Rare weather events carry more information.
 
-* Your friend says “gravity still works today.”
-  Probability = 1.
-  Surprise = 0 bits.
-
-* Your friend says “the stock market went up because Mercury is in retrograde.”
-  Probability = 0.
-  Surprise = ∞ bits.
+* Your friend says “gravity still works today.”. Probability = 1. Surprise = 0 bits.
+* Your friend says “the stock market went up because Mercury is in retrograde.”. Probability = 0. Surprise = ∞ bits.
 
 Don't trust this friend :p
 

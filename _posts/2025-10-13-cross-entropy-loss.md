@@ -5,7 +5,7 @@ date:   2025-10-13
 image:  images/blog24/cover.webp
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
-*On the cover: Wall-E holding an umbrella in unpredictable weather*
+*On the cover: A weather forecasting stone meme*
 
 Imagine you live, work and vacation in three different cities.
 
@@ -135,7 +135,7 @@ This is exactly what happens in machine learning:
 * model predictions = $q$
 
 ![alt](/images/blog24/cross_entropy.webp){: .center-image }
-*Figure 1: Cross Entropy loss. Source: [Cross Entropy Loss Formula](https://www.v7labs.com/blog/cross-entropy-loss-guide)*
+*Figure 1: Cross Entropy loss formula. Source: [V7 Go](https://www.v7labs.com/blog/cross-entropy-loss-guide)*
 
 
 ## Negative Log-Likelihood: Daily Forecast Pain

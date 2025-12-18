@@ -2,7 +2,7 @@
 layout: post
 title:  "Cross Entropy Loss"
 date:   2025-10-13
-image:  images/blog24/cover.jpg
+image:  images/blog24/cover.jpeg
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
 *On the cover: Stacked Dice*

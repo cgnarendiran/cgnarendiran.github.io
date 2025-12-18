@@ -2,7 +2,7 @@
 layout: post
 title:  "Cross Entropy Loss"
 date:   2025-10-13
-image:  images/blog24/cover.jpeg
+image:  images/blog24/cover.webp
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
 *On the cover: Wall-E holding an umbrella in unpredictable weather*

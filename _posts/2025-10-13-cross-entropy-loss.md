@@ -5,7 +5,7 @@ date:   2025-10-13
 image:  images/blog24/cover.jpeg
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
-*On the cover: Wall-E holding an umbrella*
+*On the cover: Wall-E holding an umbrella in unpredictable weather*
 
 Imagine you live, work and vacation in three different cities.
 
@@ -15,9 +15,9 @@ Now consider **City B (work)**. Every morning, the weather could be sunny, rainy
 
 Finally, welcome to **City C (vacation)**. Here, the weather might be sunny, rainy, cloudy, snowing, hailing, stormy, or something you’ve never seen before. Every day feels like a plot twist or surprise.
 
-What changed as we moved from City A to B to C?
+Guess what changed as we moved from City A to B to C?
 
-The number of possible outcomes increased. But more importantly, the uncertainty about tomorrow increased. Intuitively, the less certain or more surprised you are about what will happen, the more information the outcome carries.
+The number of possible outcomes increased. But more importantly, the uncertainty about tomorrow increased. Intuitively, the "less certain" or "more surprised" you are about what will happen, the more information the outcome carries.
 
 A forecast that says “it will definitely be sunny” carries almost no information. A forecast that says “it could be anything” carries a lot.
 
@@ -74,9 +74,9 @@ $$
 H(p_1,\dots,p_n) = -K \sum_i p_i \log p_i
 $$
 
-Choosing $K = 1$ and log base as 2, gives entropy measured in **bits**.
+Choosing $K = 1$ and log base as 2, gives entropy measured in **bits**. This formal, axiomatic approach provided a robust mathematical foundation for the concept of information as a measurable quantity, independent of its physical manifestation. 
 
-This formal, axiomatic approach provided a robust mathematical foundation for the concept of information as a measurable quantity, independent of its physical manifestation. Shannon was advised by John von Neumann to use the term "entropy" because the formula was similar to the existing statistical mechanics formula developed by Boltzmann and Gibbs, and "nobody knows what entropy really is, so you will have an advantage in a debate". That's pretty smort.
+Shannon was advised by John von Neumann to use the term "entropy" because the formula was similar to the existing statistical mechanics formula developed by Boltzmann and Gibbs, and "nobody knows what entropy really is, so you will have an advantage in a debate". That's pretty smort.
 
 
 ## Self-Information: Surprise of a Single Day
@@ -202,25 +202,27 @@ But sampling from $p$ rarely hits the events that matter, ie., actually storms h
 Rewrite expectation using another distribution $q$:
 
 $$
-\mu = \int f(x) p(x), dx
+\mu = \int f(x) p(x) dx
 $$
 
 Multiply & divide by (q(x)):
 
 $$
-\mu = \int f(x) \frac{p(x)}{q(x)} q(x), dx
+\mu = \int f(x) \frac{p(x)}{q(x)} q(x) dx
 $$
 
 Now sample from $q$:
 
 $$
-\hat{\mu} = \frac{1}{N} \sum_{i=1}^N f(x_i), w(x_i)
+\hat{\mu} = \frac{1}{N} \sum_{i=1}^N f(x_i) w(x_i)
 $$
 
 where
+
 $$
 w(x) = \frac{p(x)}{q(x)}
 $$
+
 is the **importance weight**.
 
 Interpretation:

@@ -102,45 +102,45 @@ V = XW_v \\
 \text{Attention} = \text{softmax}(QK^T / \sqrt{d}) V
 $$
 
-Inside the attention mechanism, every single patch looks at every other patch simultaneously. Just like our good old text transformers, but now for images.
+Inside the attention mechanism, every single patch looks at every other patch simultaneously. There's a difference in the attention between the vision transformers and text transformers. In text, we perform masked self-attention because we want the model to see only the past tokens to predict the next token. Whereas here, we want the vision tokens to attend fully to each patch without any masking!
 
-A ViT has a global receptive field instantly. The top-left pixel can talk to the bottom-right pixel immediately. No soda straws required.
+This means that a ViT has a global receptive field instantly. The top-left pixel can talk to the bottom-right pixel immediately. No soda straws required.
 
 ## The Hangover: The Early Cons of ViTs. 
 
 When the ViT paper dropped, it wasn't an immediate slam dunk. There were several problems:
 
-- **The Data Hunger**: Because ViTs lack the inductive bias of CNNs (they don't assume locality), they have to learn how to see from scratch. The original ViT only beat state-of-the-art ResNets when pre-trained on Google’s private JFT-300M dataset (that’s 300 million images). On standard ImageNet (1.3M images), it actually underperformed CNNs. They were data-hungry monsters.
+- **The Data Hunger**: Because ViTs lack the inductive bias of CNNs (they don't assume locality), they have to learn how to see from scratch. The original ViT only beat state-of-the-art ResNets when pre-trained on Google’s private JFT-300M dataset (that’s 300 million images). On standard ImageNet (1.3M images), it actually underperformed CNNs. This tells us that ViTs are data-hungry monsters.
 
-- **The Computational Cost**: Calculating attention means every token talks to every other token. If you double the image resolution, the number of patches quadruples, and the computational cost of attention grows quadratically. High-res images brought GPUs to their knees.
+- **The Computational Cost**: Calculating attention means every token talks to every other token. If you double the image resolution, the number of patches quadruples (since its $P^2$), and the computational cost of attention grows quadratically. High-res images brought GPUs to their knees.
 
 ## The Evolution: Fixing the Beast
 The research community, realizing they were onto something huge, quickly addressed the flaws.
 
-- **DeiT (Data-efficient Image Transformers)**: Facebook AI figured out how to train these things without Google-sized datasets. They used "knowledge distillation"—basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests.
+- **DeiT (Data-efficient Image Transformers)**: Meta AI figured out how to train these things without Google-sized datasets. They used "knowledge distillation"—basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests.
 
 - **Swin Transformer (Hierarchical ViT)**: Microsoft said, "Hey, maybe those CNN guys were onto something with those sliding windows." The Swin Transformer re-introduced locality by computing attention only within local windows, then shifting those windows and zooming out in later layers. It brought back the hierarchy of CNNs while keeping the power of attention.
 
 - **Hybrid Models**: The easiest fix? Slap a few convolutional layers on the front end to handle the low-level feature extraction, turn those maps into tokens, and let the Transformer handle the high-level reasoning.
 
 ## Implications: The Great Unification
-Why does any of this matter? Are we just chasing a 0.5% accuracy bump on ImageNet?
+Why does any of this matter? Were we just chasing a 0.5% accuracy bump on ImageNet?
 
 No. The shift from pixels to tokens is about unification.
 
-Before ViTs, we had different architectures for different senses. CNNs for eyes, LSTMs/Transformers for ears and mouths.
+Before ViTs, we had different architectures for different senses. CNNs for images, Transformers for language and perhaps LSTMs for audio.
 
 Now, everything is a token. An image patch is a token. A text word is a token. A snippet of audio spectrogram is a token.
 
-This is why we now have massive Multimodal Foundation Models like GPT-4o or Gemini. Because ViTs proved that visual data could be processed by the same engine that processes text, we can now dump images and text into the same massive neural network and let it figure out the correlations.
+This is why we now have massive Multimodal Foundation Models like GPT-5 or Gemini-3. Because ViTs proved that visual data could be processed by the same engine that processes text, we can now dump images and text into the same massive network and let it figure out the correlations.
 
-CNNs aren't dead; they are still highly efficient and useful on edge devices. But the Vision Transformer proved that sometimes, to see the big picture, you have to smash it into little pieces and treat it like a language.
+I wouldn't say CNNs are dead yet; they are still highly efficient and useful on edge devices. But the Vision Transformer proved that sometimes, to see the big picture, you have to smash it into little pieces and treat it like a language.
 
-## The Real Break from Classical Computer Vision
+## Conclusion
 
 The real break from classical computer vision didn't happen when models got deeper. It happened when images stopped being treated as grids and started being treated as **sequences**.
 
-Vision Transformers (ViTs) reframed perception as a token-processing problem. Instead of sliding filters over pixels, they convert images into discrete units and let attention learn structure from data. This shift sounds cosmetic. It isn't. It fundamentally changes how spatial reasoning, scale, and abstraction emerge in vision models.
+Vision Transformers (ViTs) reframed perception as a token-processing problem. Instead of sliding filters over pixels, they convert images into discrete units and let attention learn structure from data. This shift has fundamentally changed how spatial reasoning, scale, and abstraction emerge in vision models, especially when you have large amounts of data.
 
 And now you know. Fin.
 

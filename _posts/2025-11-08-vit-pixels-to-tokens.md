@@ -2,10 +2,10 @@
 layout: post
 title:  "ViT - Pixels to Tokens"
 date:   2025-11-08
-image:  images/blog25/cover.webp
+image:  images/blog25/cover.jpg
 tags:  Tokens Pixels Vision Transformers Computer Vision
 ---
-*On the cover: Pixels to tokens*
+*On the cover: Decorative eye in AI*
 
 For nearly a decade, if you wanted a computer to identify a cat in a picture, you had one reliable tool: The Convolutional Neural Network (CNN). CNNs were the undisputed kings of Computer vVision. They were dependable, they understood that pixels next to each other usually relate to each other (locality), and they didn't ask for much other than a decent GPU and some ImageNet data.
 

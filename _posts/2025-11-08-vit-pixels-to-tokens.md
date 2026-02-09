@@ -149,8 +149,8 @@ I wouldn't say CNNs are dead yet; they are still highly efficient and useful on 
 
 ## Conclusion
 
-The real break from classical computer vision didn't happen when models got deeper. It happened when images stopped being treated as grids and started being treated as **sequences**.
+Vision Transformers (ViTs) reframed perception as a token-processing problem. Instead of sliding filters over pixels, they convert images into discrete units and let attention learn structure from data. 
 
-Vision Transformers (ViTs) reframed perception as a token-processing problem. Instead of sliding filters over pixels, they convert images into discrete units and let attention learn structure from data. This shift has fundamentally changed how spatial reasoning, scale, and abstraction emerge in vision models, especially when you have large amounts of data.
+Images stopped being treated as grids and started being treated as **sequences**. This shift has fundamentally changed how spatial reasoning, scale, and abstraction emerge in vision models, especially when you have large amounts of data.
 
 And now you know. Fin.

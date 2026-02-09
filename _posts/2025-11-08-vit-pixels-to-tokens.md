@@ -126,7 +126,7 @@ When the ViT paper dropped, it wasn't an immediate slam dunk. There were several
 - **The Computational Cost**: Calculating attention means every token talks to every other token. If you double the image resolution, the number of patches quadruples (since its $P^2$), and the computational cost of attention grows quadratically. High-res images brought GPUs to their knees.
 
 ## The Evolution: Fixing the Beast
-The research community, realizing they were onto something huge, quickly addressed the flaws.
+The research community, realizing they were onto something huge, quickly addressed the flaws and also proposed many variants to improve the ViT.
 
 - **DeiT (Data-efficient Image Transformers, 2020)**: Meta AI figured out how to train these things without Google-sized datasets in the paper [DeiT](https://arxiv.org/abs/2012.12877) They used knowledge distillation, basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests. Also used strong augmentations like Mixup, CutMix and RandAugment.
 
@@ -138,9 +138,9 @@ The research community, realizing they were onto something huge, quickly address
 
 - **MAE (Masked Autoencoders, 2021)**: Kaiming He and team struck gold with [MAE](https://arxiv.org/abs/2111.06377). Instead of predicting discrete tokens, MAE masked around 75% of patches and trained the model to reconstruct them. A lightweight decoder plus a heavy encoder made pretraining extremely efficient. This quickly became the default recipe for large ViT pretraining.
 
-- **CLIP (Vision Meets Language, 2021)**: OpenAI changed the rules with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020). Trained on hundreds of millions of image–text pairs, CLIP aligned vision and language in a shared embedding space. Zero-shot classification suddenly worked. Labels were optional. The internet became the dataset. We'll speak more about this in our next post.
-
 - **ConvNeXt (The Reality Check, 2022)**: After everyone boarded the Transformer hype train, Meta released [ConvNeXt: Revisiting ConvNets for the 2020s](https://arxiv.org/abs/2201.03545). They modernized CNNs using ViT-style tricks—LayerNorm, large kernels, GELU, and better optimization—and showed that “old-school” convolutions could still compete. One uncomfortable takeaway from this paper was that a big chunk of ViT’s success came from better training, not just attention.
+
+- **CLIP (Vision Meets Language, 2021)**: OpenAI changed the rules with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020). Trained on hundreds of millions of image–text pairs, CLIP aligned vision and language in a shared embedding space. Zero-shot classification suddenly worked. Labels were optional. The internet became the dataset. We'll speak more about this in our next post.
 
 
 ## Implications: The Great Unification

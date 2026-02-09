@@ -65,17 +65,28 @@ A 16x16 RGB patch is still just raw pixel data (16 x 16 x 3 color channels = 768
 
 So, we flatten that patch into a long vector and shove it through a linear projection layer. Think of this as squashing the raw visual information into a dense, mathematical smoothie that represents the essence of that patch.
 
-Formally,
+Formally, if $X_p \in \mathbb{R}^{N \times (P^2 C)}$ is the matrix of flattened patches, ViT computes:
 
-* Each patch: flattened into a vector of size $P^2 \times C$
-* Linear projection: maps to embedding dimension $D$
+$$
+E = X_p W_E + b_E,\quad W_E \in \mathbb{R}^{(P^2 C)\times D}
+$$
+
+mapping each patch into a $D$-dimensional token embedding.
+
+In practice, this linear projection is often implemented as a convolution:
+
+$$
+\text{Conv2D}(C \rightarrow D,; \text{kernel}=P,; \text{stride}=P)
+$$
+
+which is mathematically equivalent to patch extraction + projection.
 
 Congratulations! That smoothie is now a "token." We have converted pixels into the visual equivalent of a word.
 
-## Step 3: The "Where Am I?" Sticker (Positional Embedding)
+## Step 3: The Location Sticker (Positional Embedding)
 Here is the Transformer’s Achilles' heel: It has absolutely no sense of space. If you feed it the puzzle pieces, it doesn't know that the "ears" token belongs above the "whiskers" token. It treats the image like a bag of words.
 
-To fix this, we must add Positional Embeddings. We literally add a unique vector (often sine and cosine waves of different frequencies; you can also use RoPE which I have explained in a previous blog) to each token that says, "Hey, I belong in row 2, column 3." Now the model knows the geometry.
+To fix this, we must add Positional Embeddings. We can add a unique vector, often sine and cosine waves of different frequencies; you can also use RoPE which I have explained in a previous [blog](https://cgnarendiran.github.io/blog/rope-is-attention-all-you-really-need/) to each token that says, "Hey, I belong in row 2, column 3." Now the model knows the geometry.
 
 Essentially,
 
@@ -143,4 +154,3 @@ The real break from classical computer vision didn't happen when models got deep
 Vision Transformers (ViTs) reframed perception as a token-processing problem. Instead of sliding filters over pixels, they convert images into discrete units and let attention learn structure from data. This shift has fundamentally changed how spatial reasoning, scale, and abstraction emerge in vision models, especially when you have large amounts of data.
 
 And now you know. Fin.
-

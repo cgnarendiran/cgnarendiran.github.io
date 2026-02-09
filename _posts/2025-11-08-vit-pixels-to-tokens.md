@@ -7,7 +7,7 @@ tags:  Tokens Pixels Vision Transformers Computer Vision
 ---
 *On the cover: Just an eye in AI*
 
-For nearly a decade, if you wanted a computer to identify a cat in a picture, you had one reliable tool: The Convolutional Neural Network (CNN). CNNs were the undisputed kings of Computer vVision. They were dependable, they understood that pixels next to each other usually relate to each other (locality), and they didn't ask for much other than a decent GPU and some ImageNet data.
+For nearly a decade, if you wanted a computer to identify a cat in a picture, you had one reliable tool: The Convolutional Neural Network (CNN). CNNs were the undisputed kings of Computer Vision. They were dependable, they understood that pixels next to each other usually relate to each other (locality), and they didn't ask for much other than a decent GPU and some ImageNet data.
 
 Then, around 2017, the Natural Language Processing (NLP) folks started throwing a massive party with something called "Transformers". They were generating poetry, translating languages instantly, summarizing long documents and creating eerily coherent chatbots.
 
@@ -128,11 +128,20 @@ When the ViT paper dropped, it wasn't an immediate slam dunk. There were several
 ## The Evolution: Fixing the Beast
 The research community, realizing they were onto something huge, quickly addressed the flaws.
 
-- **DeiT (Data-efficient Image Transformers)**: Meta AI figured out how to train these things without Google-sized datasets. They used "knowledge distillation"—basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests.
+- **DeiT (Data-efficient Image Transformers, 2020)**: Meta AI figured out how to train these things without Google-sized datasets in the paper [DeiT](https://arxiv.org/abs/2012.12877) They used knowledge distillation, basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests. Also used strong augmentations like Mixup, CutMix and RandAugment.
 
-- **Swin Transformer (Hierarchical ViT)**: Microsoft said, "Hey, maybe those CNN guys were onto something with those sliding windows." The Swin Transformer re-introduced locality by computing attention only within local windows, then shifting those windows and zooming out in later layers. It brought back the hierarchy of CNNs while keeping the power of attention.
+- **Swin Transformer (Hierarchical ViT, 2021)**: Microsoft said, "Hey, maybe those CNN guys were onto something with those sliding windows." The [Swin Transformer](https://arxiv.org/abs/2103.14030) re-introduced locality by computing attention only within local windows, then shifting those windows and zooming out in later layers. It brought back the hierarchy of CNNs while keeping the power of attention.
 
-- **Hybrid Models**: The easiest fix? Slap a few convolutional layers on the front end to handle the low-level feature extraction, turn those maps into tokens, and let the Transformer handle the high-level reasoning.
+- **BEiT (BERT for Images, 2021)**: Microsoft leaned hard into NLP analogies with [BEiT](https://arxiv.org/abs/2106.08254). Images were tokenized using a VQ-VAE, and the ViT was trained to predict masked visual tokens, just like BERT predicts masked words. This was the first serious attempt to bring masked language modeling to vision.
+
+- **DINO (Self-Distillation, 2021)**: Facebook AI surprised everyone with [DINO: Emerging Properties in Self-Supervised Vision Transformers](https://arxiv.org/abs/2106.04560), showing that ViTs could learn meaningful object structure without any labels. Using student–teacher self-distillation, DINO-trained models spontaneously learned segmentation-like attention maps. No supervision, no problem.
+
+- **MAE (Masked Autoencoders, 2021)**: Kaiming He and team struck gold with [MAE](https://arxiv.org/abs/2111.06377). Instead of predicting discrete tokens, MAE masked around 75% of patches and trained the model to reconstruct them. A lightweight decoder plus a heavy encoder made pretraining extremely efficient. This quickly became the default recipe for large ViT pretraining.
+
+- **CLIP (Vision Meets Language, 2021)**: OpenAI changed the rules with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020). Trained on hundreds of millions of image–text pairs, CLIP aligned vision and language in a shared embedding space. Zero-shot classification suddenly worked. Labels were optional. The internet became the dataset. We'll speak more about this in our next post.
+
+- **ConvNeXt (The Reality Check, 2022)**: After everyone boarded the Transformer hype train, Meta released [ConvNeXt: Revisiting ConvNets for the 2020s](https://arxiv.org/abs/2201.03545). They modernized CNNs using ViT-style tricks—LayerNorm, large kernels, GELU, and better optimization—and showed that “old-school” convolutions could still compete. One uncomfortable takeaway from this paper was that a big chunk of ViT’s success came from better training, not just attention.
+
 
 ## Implications: The Great Unification
 Why does any of this matter? Were we just chasing a 0.5% accuracy bump on ImageNet?

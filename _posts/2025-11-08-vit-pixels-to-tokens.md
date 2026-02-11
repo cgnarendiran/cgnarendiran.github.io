@@ -130,13 +130,29 @@ The research community, realizing they were onto something huge, quickly address
 
 - **DeiT (Data-efficient Image Transformers, 2020)**: Meta AI figured out how to train these things without Google-sized datasets in the paper [DeiT](https://arxiv.org/abs/2012.12877) They used knowledge distillation, basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests. Also used strong augmentations like Mixup, CutMix and RandAugment.
 
+![alt](/images/blog25/diet.png){: .center-image }
+*Figure 2: DeiT architecture. Source: [DeiT](https://arxiv.org/abs/2012.12877)*
+
+
 - **Swin Transformer (Hierarchical ViT, 2021)**: Microsoft said, "Hey, maybe those CNN guys were onto something with those sliding windows." The [Swin Transformer](https://arxiv.org/abs/2103.14030) re-introduced locality by computing attention only within local windows, then shifting those windows and zooming out in later layers. It brought back the hierarchy of CNNs while keeping the power of attention.
+
+![alt](/images/blog25/swin.png){: .center-image }
+*Figure 3: Swin architecture. Source: [Swin Transformer](https://arxiv.org/abs/2103.14030)*
 
 - **BEiT (BERT for Images, 2021)**: Microsoft leaned hard into NLP analogies with [BEiT](https://arxiv.org/abs/2106.08254). Images were tokenized using a VQ-VAE, and the ViT was trained to predict masked visual tokens, just like BERT predicts masked words. This was the first serious attempt to bring masked language modeling to vision.
 
+![alt](/images/blog25/beit.png){: .center-image }
+*Figure 4: BEiT architecture. Source: [BEiT](https://arxiv.org/abs/2106.08254)*
+
 - **DINO (Self-Distillation, 2021)**: Facebook AI surprised everyone with [DINO: Emerging Properties in Self-Supervised Vision Transformers](https://arxiv.org/abs/2106.04560), showing that ViTs could learn meaningful object structure without any labels. Using student–teacher self-distillation, DINO-trained models spontaneously learned segmentation-like attention maps. No supervision, no problem.
 
+![alt](/images/blog25/dino.png){: .center-image }
+*Figure 5: DINO architecture. Source: [DINO](https://arxiv.org/abs/2106.04560)*
+
 - **MAE (Masked Autoencoders, 2021)**: Kaiming He and team struck gold with [MAE](https://arxiv.org/abs/2111.06377). Instead of predicting discrete tokens, MAE masked around 75% of patches and trained the model to reconstruct them. A lightweight decoder plus a heavy encoder made pretraining extremely efficient. This quickly became the default recipe for large ViT pretraining.
+
+![alt](/images/blog25/mae.png){: .center-image }
+*Figure 6: MAE architecture. Source: [MAE](https://arxiv.org/abs/2111.06377)*
 
 - **ConvNeXt (The Reality Check, 2022)**: After everyone boarded the Transformer hype train, Meta released [ConvNeXt: Revisiting ConvNets for the 2020s](https://arxiv.org/abs/2201.03545). They modernized CNNs using ViT-style tricks—LayerNorm, large kernels, GELU, and better optimization—and showed that “old-school” convolutions could still compete. One uncomfortable takeaway from this paper was that a big chunk of ViT’s success came from better training, not just attention.
 

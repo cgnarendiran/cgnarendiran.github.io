@@ -130,7 +130,7 @@ The research community, realizing they were onto something huge, quickly address
 
 - **DeiT (Data-efficient Image Transformers, 2020)**: Meta AI figured out how to train these things without Google-sized datasets in the paper [DeiT](https://arxiv.org/abs/2012.12877) They used knowledge distillation, basically having a smart, pre-trained CNN act as a teacher, giving the junior ViT hints during tests. Also used strong augmentations like Mixup, CutMix and RandAugment.
 
-![alt](/images/blog25/diet.png){: .center-image }
+![alt](/images/blog25/deit.png){: .center-image }
 *Figure 2: DeiT architecture. Source: [DeiT](https://arxiv.org/abs/2012.12877)*
 
 

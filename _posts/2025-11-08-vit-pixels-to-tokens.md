@@ -5,7 +5,7 @@ date:   2025-11-08
 image:  images/blog25/cover.jpg
 tags:  Tokens Pixels Vision Transformers Computer Vision
 ---
-*On the cover: Just an eye in AI*
+*On the cover: Decorative*
 
 For nearly a decade, if you wanted a computer to identify a cat in a picture, you had one reliable tool: The Convolutional Neural Network (CNN). CNNs were the undisputed kings of Computer Vision. They were dependable, they understood that pixels next to each other usually relate to each other (locality), and they didn't ask for much other than a decent GPU and some ImageNet data.
 
@@ -18,7 +18,7 @@ Enter the Vision Transformer (ViT). This is the story of how we stopped treating
 ## Why We Loved (and Tolerated) CNNs
 Before we dive into tokens, let's pour one out for the CNN.
 
-CNNs work because they possess a brilliant "inductive bias": a baked-in assumption about the world. They assume that a pixel's relationship with its immediate neighbors is paramount. They use little sliding windows (kernels) to scan an image, detecting edges, then textures, then dog ears, then entire dogs.
+CNNs work because they possess a brilliant "inductive bias": a baked-in assumption about the world. They assume that a pixel's relationship with its immediate neighbors is paramount. They use little sliding windows (kernels) to scan an image, detecting edges, then textures, then cat ears, then entire cats.
 
 This is highly efficient. But it has a flaw: A CNN looks at the world through a soda straw. To understand the relationship between a pixel in the top-left corner and one in the bottom-right, the information has to travel through layer after layer after layer, slowly dilating that soda straw until it sees the whole picture. CNNs are great at seeing the trees, but sometimes struggle to grasp the concept of a "forest" until very late in the game.
 

@@ -2,7 +2,7 @@
 layout: post
 title:  "Cross Entropy Loss"
 date:   2025-10-13
-image:  images/blog24/cover.webp
+image:  images/blog24/cover.jpg
 tags:  Cross Entropy Loss Information Theory KL Divergence
 ---
 *On the cover: A weather forecasting stone meme*

@@ -2,7 +2,7 @@
 layout: post
 title:  "VLMs - Pixels to Tokens"
 date:   2025-12-09
-image:  images/blog26/cover.jpg
+image:  images/blog26/cover.png
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
 *On the cover: Pixels to tokens*

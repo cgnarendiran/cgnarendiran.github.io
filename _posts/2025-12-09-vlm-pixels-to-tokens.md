@@ -49,25 +49,25 @@ $$
 More mathematically,
 
 $$
-\mathcal{L} =
-\sum_{i=1}^{|\mathcal{B}|}
+\mathbb{L} =
+\sum_{i=1}^{|\mathbb{B}|}
 \log
 \frac{e^{x_i^\top y_i / \tau}}
-{\sum_{j=1}^{|\mathcal{B}|} e^{x_i^\top y_j / \tau}}
+{\sum_{j=1}^{|\mathbb{B}|} e^{x_i^\top y_j / \tau}}
 +
-\sum_{i=1}^{|\mathcal{B}|}
+\sum_{i=1}^{|\mathbb{B}|}
 \log
 \frac{e^{x_i^\top y_i / \tau}}
-{\sum_{j=1}^{|\mathcal{B}|} e^{x_j^\top y_i / \tau}}
+{\sum_{j=1}^{|\mathbb{B}|} e^{x_j^\top y_i / \tau}}
 
 $$
 
-where $x_i$ is an image feature vector and $y_j$ is a text feature vector, $\mathcal{B}$ is the mini-batch size of images and texts, and $\tau$ is a temperature parameter.
+where $x_i$ is an image feature vector and $y_j$ is a text feature vector, $\mathbb{B}$ is the mini-batch size of images and texts, and $\tau$ is a temperature parameter.
 
-The loss is computed **twice**:
+The loss is computed twice, one for every image and one for every text.
 
-* Image → Text
-* Text → Image
+* Image -> Text
+* Text -> Image
 
 Softmax forces every image to compete against *all other texts in the batch*.
 
@@ -88,7 +88,7 @@ CLIP had one major issue. Imagine for a given image there are multiple captions 
 Softmax assumes **only one is correct within the batch**. That normalization term:
 
 $$
-\sum_{j=1}^{|\mathcal{B}|} e^{x_i^\top y_j}
+\sum_{j=1}^{|\mathbb{B}|} e^{x_i^\top y_j}
 $$
 
 forces captions to compete with each other.
@@ -111,7 +111,7 @@ Softmax -> Sigmoid
 Instead of multi-class classification over the batch, SigLIP treats every image-text pair as a **binary classification problem**.
 
 $$
-\mathcal{L}_{ij}
+\mathbb{L}_{ij}
 =
 y_{ij} \log \sigma(x_i^\top y_j)
 +

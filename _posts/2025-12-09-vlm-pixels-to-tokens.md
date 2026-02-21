@@ -11,7 +11,7 @@ In our [last post](https://cgnarendiran.github.io/blog/vit-pixels-to-tokens/), w
 
 This enables the ViT to look at an image and output a label `class_id: 284` ("Siamese Cat"). All this is good, but while ViTs taught computers to "read" images, they are still essentially mute. 
 
-Meanwhile, in the building next door, Large Language Models (LLMs) like GPT-3 were writing poetry and coding in Python. But they were blind. They had never seen a sunset, only read descriptions of one.
+Meanwhile, in the building next door, NLP scientists were using Large Language Models (LLMs) like GPT-3 were writing poetry and coding in Python. But they were blind. They had never seen a sunset, only read descriptions of one.
 
 The obvious question asked by researchers around 2021 was: **"We have a model that understands vision (ViT) and a model that understands language (LLM). What happens if we introduce them to each other?"**
 
@@ -32,26 +32,36 @@ If you feed ViT output directly into an LLM, it looks like gibberish. It’s lik
 
 Before we could get models to *chat* about images, we had to get them to *agree* on what images were. The breakthrough came from OpenAI in 2021 with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020).
 
-CLIP didn't try to generate text. It played a massive game of "Match the Caption."
+CLIP (Contrastive Language-Image Pretraining) wasn't built to generate text. It played a massive game of "Match the Caption."
 
-Imagine you have a batch of 32 images and 32 text captions.
+Imagine you have a batch of N images and N text captions.
 
 1. Run images through an Image Encoder (like a ViT).
 2. Run texts through a Text Encoder (like a mini-BERT).
 3. **The Goal:** The model must figure out which text belongs to which image.
 
-Mathematically, it maximizes the **dot product** (similarity) between the correct image-text pairs and minimizes it for the incorrect ones. This forces the model to learn a **shared embedding space**.
+Mathematically, it maximizes the **dot product** (similarity) between the correct image-text pairs and minimizes it for the incorrect ones. This forces the model to learn a **shared embedding space**. Essentially,
+
+$$
+\frac{e^{\text{similarity score of a correct pair}}}{\sum_{\text{all incorrect pairs}}e^{\text{similarity score of pairs}}}
+$$
+
+More mathematically,
+
+$$
+\mathcal{L} = \sum_{i=1}^{|\mathcal{B}|}\left(\log\frac{e^{x_{i}y_{i}}}{\sum_{j=1}^{|\mathcal{B}|}e_{x_{i}.\boxed{y_{j}}}}\right) + \sum_{i=1}^{|\mathcal{B}|}\left(\log\frac{e^{x_{i}y_{i}}}{\sum_{j=1}^{|\mathcal{B}|}e_{\boxed{x_{j}}.y_{i}}}\right)
+$$
+
+where $x_i$ is an image feature vector and $y_j$ is a text feature vector. 
 
 ![alt](/images/blog26/clip.png){: .center-image }
 *Figure 1: CLIP architecture. Source: [CLIP paper](https://arxiv.org/abs/2103.00020)*
 
-Now, all of a sudden the vector for "cat" (text) and the vector for a picture of a cat (image) pointed in the same direction. The barrier between image and language was broken.
+Thanks to CLIP, the vector for "cat" (text) and the vector for a picture of a cat (image) pointed in the same direction. The barrier between image and language was broken.
 
-CLIP is powerful, but it is shallow. It learns:
-“This image looks like that sentence.”
+CLIP is powerful, but it is shallow. It learns: “This image looks like that sentence.”
 
-It does NOT learn:
-“This part of the image explains this part of the sentence.”
+It does NOT learn: “This part of the image explains this part of the sentence.”
 
 No token-level interaction. No compositional reasoning. No step-by-step grounding. Two towers. No bridge. Which brings us to actual conversational/generative VLMs.
 
@@ -138,6 +148,11 @@ VLMs are generalist agents.
 * You can show them a dashboard and ask for a summary of trends.
 
 Why do VLMs scale so well? Because language is compressed human knowledge. Every caption encodes: Physics, Culture, Intent, Affordances, Causality. “A chair” is not pixels. It is: “Something you can sit on.” That’s functional semantics. VLMs learn affordances, not just appearances.
+
+## The Evolution:
+There were many variants of VLMs proposed in the research community. 
+
+
 
 ## Conclusion
 

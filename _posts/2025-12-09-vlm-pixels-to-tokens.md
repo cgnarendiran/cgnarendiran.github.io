@@ -49,17 +49,87 @@ $$
 More mathematically,
 
 $$
-\mathcal{L} = \sum_{i=1}^{|\mathcal{B}|}\left(\log\frac{e^{x_{i}y_{i}}}{\sum_{j=1}^{|\mathcal{B}|}e_{x_{i}.\boxed{y_{j}}}}\right) + \sum_{i=1}^{|\mathcal{B}|}\left(\log\frac{e^{x_{i}y_{i}}}{\sum_{j=1}^{|\mathcal{B}|}e_{\boxed{x_{j}}.y_{i}}}\right)
+\mathcal{L} =
+\sum_{i=1}^{|\mathcal{B}|}
+\log
+\frac{e^{x_i^\top y_i / \tau}}
+{\sum_{j=1}^{|\mathcal{B}|} e^{x_i^\top y_j / \tau}}
++
+\sum_{i=1}^{|\mathcal{B}|}
+\log
+\frac{e^{x_i^\top y_i / \tau}}
+{\sum_{j=1}^{|\mathcal{B}|} e^{x_j^\top y_i / \tau}}
+
 $$
 
-where $x_i$ is an image feature vector and $y_j$ is a text feature vector. 
+where $x_i$ is an image feature vector and $y_j$ is a text feature vector, $\mathcal{B}$ is the mini-batch size of images and texts, and $\tau$ is a temperature parameter.
+
+The loss is computed **twice**:
+
+* Image → Text
+* Text → Image
+
+Softmax forces every image to compete against *all other texts in the batch*.
 
 ![alt](/images/blog26/clip.png){: .center-image }
 *Figure 1: CLIP architecture. Source: [CLIP paper](https://arxiv.org/abs/2103.00020)*
 
+
 Thanks to CLIP, the vector for "cat" (text) and the vector for a picture of a cat (image) pointed in the same direction. The barrier between image and language was broken.
 
-CLIP is powerful, but it is shallow. It learns: “This image looks like that sentence.”
+## A better Matchmaker (SigLIP)
+
+CLIP had one major issue. Imagine for a given image there are multiple captions that are relevant:
+
+* "A dog running"
+* "A corgi in a park"
+* "A small brown dog outdoors"
+
+Softmax assumes **only one is correct within the batch**. That normalization term:
+
+$$
+\sum_{j=1}^{|\mathcal{B}|} e^{x_i^\top y_j}
+$$
+
+forces captions to compete with each other.
+
+If two captions are semantically similar (dog vs corgi), they *hurt each other’s probability*. The batch becomes a zero-sum game.
+
+This leads to three problems:
+
+* You need carefully curated batches
+* You need very large batch sizes
+* You must compute the loss twice
+
+Sigmoid Loss for Language-Image Pre-Training (SigLIP) from Google Research asks a radically simpler question:
+
+Instead of “Which caption in this batch matches this image?”
+Why not ask: “Does this image match this caption — yes or no?”
+
+Softmax -> Sigmoid
+
+Instead of multi-class classification over the batch, SigLIP treats every image-text pair as a **binary classification problem**.
+
+$$
+\mathcal{L}_{ij}
+=
+y_{ij} \log \sigma(x_i^\top y_j)
++
+(1 - y_{ij}) \log (1 - \sigma(x_i^\top y_j))
+$$
+
+Where:
+
+* $y_{ij} = 1$ if image $i$ matches text $j$
+* $y_{ij} = 0$ otherwise
+* $\sigma(\cdot)$ is the sigmoid function
+
+
+But here’s the twist. Even SigLIP is still a two-tower model.
+
+CLIP and SigLIP both learn:
+
+“This whole image matches that whole sentence.”
 
 It does NOT learn: “This part of the image explains this part of the sentence.”
 

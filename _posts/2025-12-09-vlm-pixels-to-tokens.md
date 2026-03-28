@@ -43,10 +43,10 @@ Imagine you have a batch of N images and N text captions.
 Mathematically, it maximizes the **dot product** (similarity) between the correct image-text pairs and minimizes it for the incorrect ones. This forces the model to learn a **shared embedding space**. Essentially,
 
 $$
-\frac{e^{\text{similarity score of a correct pair}}}{\sum_{\text{all incorrect pairs}}e^{\text{similarity score of pairs}}}
+\frac{e^{\text{similarity score of a correct pair}}}{\sum_{\text{all pairs}}e^{\text{similarity score of pairs}}}
 $$
 
-More mathematically,
+specifically,
 
 $$
 \mathbb{L} =
@@ -186,26 +186,16 @@ $$
 Now text tokens attend directly to visual tokens. Language can “look” at pixels. This is multimodal grounding part. If you look at the LLaVA paper, you’ll see the training is split into two distinct stages. This is crucial for stability.
 
 ### Stage 1: Vision Pre-training
-* **Goal**: Teach the Vision Encoder to see the world.
-* **Data**: Image-Caption pairs (e.g., "A cat on a mat").
-* **What learns?**: Only the **Vision Encoder**. The Projector and LLM are frozen.
-* **Result**: The Vision Encoder learns to see the world.
+
+The goal of this stage is to teach the Vision Encoder to see the world. Using image-caption pairs (e.g., "A cat on a mat") as training data, only the **Vision Encoder** learns during this phase while the Projector and LLM remain frozen. As a result, the Vision Encoder learns to see the world.
 
 ### Stage 2: Vision Language Alignment
 
-* **Goal:** Teach the "Projector" to translate.
-* **Data:** Simple Image-Caption pairs (e.g., "A cat on a mat").
-* **What learns?** Only the **Projector**. The Vision Encoder and LLM are frozen.
-* **Result:** The LLM stops seeing the image tokens as noise and starts recognizing them as concepts.
+The goal of this stage is to teach the "Projector" to translate. Using simple image-caption pairs (e.g., "A cat on a mat") as training data, only the **Projector** learns during this phase while the Vision Encoder and LLM remain frozen. As a result, the LLM stops seeing the image tokens as noise and starts recognizing them as concepts.
 
 ### Stage 3: Visual Instruction Tuning
 
-* **Goal:** Teach the model to follow instructions and act like a chatbot.
-* **Data:** Complex conversations.
-* *User:* "What is unusual about this image?"
-* *Assistant:* "The man is ironing a sandwich, which is highly atypical..."
-* **What learns?** The **Projector** and the **LLM**.
-* **Result:** A model that can reason, count, and explain visual data.
+The goal of this stage is to teach the model to follow instructions and act like a chatbot. Using complex conversations as training data (e.g., *User:* "What is unusual about this image?" *Assistant:* "The man is ironing a sandwich, which is highly atypical..."), both the **Projector** and the **LLM** learn during this phase. As a result, the model can reason, count, and explain visual data.
 
 ## Why This Matters: The End of "Just Seeing"
 
@@ -220,8 +210,20 @@ VLMs are generalist agents.
 Why do VLMs scale so well? Because language is compressed human knowledge. Every caption encodes: Physics, Culture, Intent, Affordances, Causality. “A chair” is not pixels. It is: “Something you can sit on.” That’s functional semantics. VLMs learn affordances, not just appearances.
 
 ## The Evolution:
-There were many variants of VLMs proposed in the research community. 
 
+There were many variants of VLMs proposed in the research community. Each took a different approach to the same core problem: how to make vision and language work together.
+
+**BLIP and BLIP-2** (Salesforce, 2022-2023) introduced the concept of a **Querying Transformer (Q-Former)** that sits between the frozen vision encoder and frozen LLM. Instead of directly projecting image tokens, the Q-Former learns a set of learnable query tokens that extract the most relevant visual features. This lightweight module (188M parameters) acts as an information bottleneck, compressing visual information while keeping both the vision encoder and LLM frozen. The result? You can swap different LLMs without retraining the entire model.
+
+**Flamingo** (DeepMind, 2022) pioneered the idea of **interleaved multi-image inputs**. Rather than just handling one image at a time, Flamingo can process sequences like: "Here's photo 1, photo 2, and photo 3. What changed?" It introduced **Perceiver Resampler** modules and gated cross-attention layers that allow the LLM to attend to visual information only when needed. This architecture enabled few-shot learning—show it a couple of examples, and it adapts on the fly.
+
+**GPT-4V and Gemini** (OpenAI & Google, 2023) marked the shift to **natively multimodal architectures**. Unlike the "stitched together" approach, these models were trained from scratch with vision and language interleaved from the beginning. The exact architectures remain proprietary, but the performance leap was clear: these models could handle complex spatial reasoning, read dense tables, and even solve geometry problems from textbook diagrams.
+
+**LLaVA-NeXT and Variants** (2024) pushed the boundaries of open-source VLMs by introducing **dynamic high-resolution processing**. Instead of downsampling images to fixed sizes (like 336×336), these models use adaptive tiling—splitting high-res images into multiple crops and processing them in parallel. This allowed models to read small text in screenshots and understand fine-grained details that earlier VLMs would miss.
+
+**DeepSeek-VL** (DeepSeek, 2024) introduced a hybrid vision encoder architecture that combines both **low-resolution semantic features** and **high-resolution detail features**. Instead of relying solely on a single ViT, DeepSeek-VL uses a dual-stream approach: a SigLIP encoder for semantic understanding and a SAM (Segment Anything Model) encoder for fine-grained visual details. This hybrid approach allowed the model to excel at both holistic scene understanding and precise visual grounding tasks, achieving competitive performance with significantly fewer training tokens compared to other open-source alternatives.
+
+The common thread? The community moved from "frozen components glued together" toward **end-to-end trainable systems** that truly understand the interplay between pixels and words. We went from models that could match images to captions, to models that can debug your code by looking at an error screenshot.
 
 
 ## Conclusion

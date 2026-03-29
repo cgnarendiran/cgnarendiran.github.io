@@ -213,15 +213,31 @@ Why do VLMs scale so well? Because language is compressed human knowledge. Every
 
 There were many variants of VLMs proposed in the research community. Each took a different approach to the same core problem: how to make vision and language work together.
 
-**BLIP and BLIP-2** (Salesforce, 2022-2023) introduced the concept of a **Querying Transformer (Q-Former)** that sits between the frozen vision encoder and frozen LLM. Instead of directly projecting image tokens, the Q-Former learns a set of learnable query tokens that extract the most relevant visual features. This lightweight module (188M parameters) acts as an information bottleneck, compressing visual information while keeping both the vision encoder and LLM frozen. The result? You can swap different LLMs without retraining the entire model.
+**BLIP and BLIP-2 (Bootstrapping Language-Image Pre-training, SalesForce 2022-23)**: [BLIP](https://arxiv.org/abs/2201.12086) and [BLIP-2](https://arxiv.org/abs/2301.12597) introduced the concept of a **Querying Transformer (Q-Former)** that sits between the frozen vision encoder and frozen LLM. Instead of directly projecting image tokens, the Q-Former learns a set of learnable query tokens that extract the most relevant visual features. This lightweight module (188M parameters) acts as an information bottleneck, compressing visual information while keeping both the vision encoder and LLM frozen. The result? You can swap different LLMs without retraining the entire model.
 
-**Flamingo** (DeepMind, 2022) pioneered the idea of **interleaved multi-image inputs**. Rather than just handling one image at a time, Flamingo can process sequences like: "Here's photo 1, photo 2, and photo 3. What changed?" It introduced **Perceiver Resampler** modules and gated cross-attention layers that allow the LLM to attend to visual information only when needed. This architecture enabled few-shot learning—show it a couple of examples, and it adapts on the fly.
 
-**GPT-4V and Gemini** (OpenAI & Google, 2023) marked the shift to **natively multimodal architectures**. Unlike the "stitched together" approach, these models were trained from scratch with vision and language interleaved from the beginning. The exact architectures remain proprietary, but the performance leap was clear: these models could handle complex spatial reasoning, read dense tables, and even solve geometry problems from textbook diagrams.
+![alt](/images/blog26/blip-2.png){: .center-image }
+*Figure 2: BLIP-2 architecture. Source: [BLIP-2](https://arxiv.org/abs/2301.12597)*
 
-**LLaVA-NeXT and Variants** (2024) pushed the boundaries of open-source VLMs by introducing **dynamic high-resolution processing**. Instead of downsampling images to fixed sizes (like 336×336), these models use adaptive tiling—splitting high-res images into multiple crops and processing them in parallel. This allowed models to read small text in screenshots and understand fine-grained details that earlier VLMs would miss.
+**Flamingo (DeepMind, 2022)** [Flamingo](https://arxiv.org/abs/2204.14198) pioneered the idea of **interleaved multi-image inputs**. Rather than just handling one image at a time, Flamingo can process sequences like: "Here's photo 1, photo 2, and photo 3. What changed?" It introduced **Perceiver Resampler** modules and gated cross-attention layers that allow the LLM to attend to visual information only when needed. This architecture enabled few-shot learning—show it a couple of examples, and it adapts on the fly.
 
-**DeepSeek-VL** (DeepSeek, 2024) introduced a hybrid vision encoder architecture that combines both **low-resolution semantic features** and **high-resolution detail features**. Instead of relying solely on a single ViT, DeepSeek-VL uses a dual-stream approach: a SigLIP encoder for semantic understanding and a SAM (Segment Anything Model) encoder for fine-grained visual details. This hybrid approach allowed the model to excel at both holistic scene understanding and precise visual grounding tasks, achieving competitive performance with significantly fewer training tokens compared to other open-source alternatives.
+
+![alt](/images/blog26/flamingo.png){: .center-image }
+*Figure 3: Flamingo architecture. Source: [Flamingo](https://arxiv.org/abs/2204.14198)*
+
+
+**GPT-4V and Gemini (OpenAI & Google, 2023)** marked the shift to **natively multimodal architectures**. Unlike the "stitched together" approach, these models were trained from scratch with vision and language interleaved from the beginning. The exact architectures remain proprietary, but the performance leap was clear: these models could handle complex spatial reasoning, read dense tables, and even solve geometry problems from textbook diagrams.
+
+**LLaVA-NeXT and Variants (ByteDance, 2024)** [LLaVA-Next](https://arxiv.org/abs/2407.07895) pushed the boundaries of open-source VLMs by introducing **dynamic high-resolution processing**. Instead of downsampling images to fixed sizes (like 336×336), these models use adaptive tiling—splitting high-res images into multiple crops and processing them in parallel. This allowed models to read small text in screenshots and understand fine-grained details that earlier VLMs would miss.
+
+![alt](/images/blog26/llava-next.png){: .center-image }
+*Figure 3: LLaVA-Next tasks. Source: [LLaVA-Next](https://arxiv.org/abs/2407.07895)*
+
+**DeepSeek-VL and variants (DeepSeek, 2024)**: [Deepseek-VL](https://arxiv.org/abs/2403.05525) introduced a hybrid vision encoder architecture that combines both **low-resolution semantic features** and **high-resolution detail features**. Instead of relying solely on a single ViT, DeepSeek-VL uses a dual-stream approach: a SigLIP encoder for semantic understanding and a SAM (Segment Anything Model) encoder for fine-grained visual details. This hybrid approach allowed the model to excel at both holistic scene understanding and precise visual grounding tasks, achieving competitive performance with significantly fewer training tokens compared to other open-source alternatives. [Deepseek-VL2] then built on top of this with by dividing images into multiple tiles dynamically and achieves stronger fine-grained understanding capabilities compared to DeepSeek-VL.
+
+![alt](/images/blog26/deepseek-vl.png){: .center-image }
+*Figure 3: Deepseek-VL training. Source: [Deepseek-VL](https://arxiv.org/abs/2403.05525)*
+
 
 The common thread? The community moved from "frozen components glued together" toward **end-to-end trainable systems** that truly understand the interplay between pixels and words. We went from models that could match images to captions, to models that can debug your code by looking at an error screenshot.
 
@@ -235,4 +251,3 @@ We have effectively given LLMs eyes. By simply projecting visual vectors into th
 The future isn't just "Computer Vision" anymore. It's **Multimodal AI**.
 
 And now you know. Fin.
-

@@ -13,7 +13,7 @@ This enables the ViT to look at an image and output a label `class_id: 284` ("Si
 
 Meanwhile, in the building next door, NLP scientists were using Large Language Models (LLMs) like GPT-3 were writing poetry and coding in Python. But they were blind. They had never seen a sunset, only read descriptions of one.
 
-The obvious question asked by researchers around 2021 was: **"We have a model that understands vision (ViT) and a model that understands language (LLM). What happens if we introduce them to each other?"**
+The obvious question asked by researchers around 2021 was, "We have a model that understands vision (ViT) and a model that understands language (LLM). What happens if we introduce them to each other?"
 
 Welcome to the era of **Vision-Language Models (VLMs)**. This is the story of how AI learned to see and speak at the same time.
 
@@ -26,19 +26,13 @@ It’s not that simple. Even though both models use the Transformer architecture
 * **The ViT** spits out vectors that represent edges, textures, and shapes.
 * **The LLM** spits out vectors that represent grammar, logic, and vocabulary.
 
-If you feed ViT output directly into an LLM, it looks like gibberish. It’s like trying to plug a Nintendo cartridge into a toaster. We needed a "Rosetta Stone"—a way to align these two worlds.
+If you feed ViT output directly into an LLM, it looks like gibberish. It’s like trying to plug a Nintendo cartridge into a toaster. We needed a "Rosetta Stone" - a guide/projector that bring the two worlds together.
 
 ## The Matchmaker (CLIP)
 
 Before we could get models to *chat* about images, we had to get them to *agree* on what images were. The breakthrough came from OpenAI in 2021 with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020).
 
-CLIP (Contrastive Language-Image Pretraining) wasn't built to generate text. It played a massive game of "Match the Caption."
-
-Imagine you have a batch of N images and N text captions.
-
-1. Run images through an Image Encoder (like a ViT).
-2. Run texts through a Text Encoder (like a mini-BERT).
-3. **The Goal:** The model must figure out which text belongs to which image.
+CLIP (Contrastive Language-Image Pretraining) wasn't built to generate text. It played a massive game of "Match the Caption." Imagine you have a batch of N images and N text captions. The images are run through an Image Encoder (like a ViT), while the texts are run through a Text Encoder (like a mini-BERT). **The goal:** The model must figure out which text belongs to which image.
 
 Mathematically, it maximizes the **dot product** (similarity) between the correct image-text pairs and minimizes it for the incorrect ones. This forces the model to learn a **shared embedding space**. Essentially,
 
@@ -77,73 +71,19 @@ Softmax forces every image to compete against *all other texts in the batch*.
 
 Thanks to CLIP, the vector for "cat" (text) and the vector for a picture of a cat (image) pointed in the same direction. The barrier between image and language was broken.
 
-## A better Matchmaker (SigLIP)
+CLIP's softmax loss had a limitation: it forced captions to compete within a batch, requiring large batch sizes and careful curation. Google's SigLIP improved this by replacing softmax with sigmoid loss, treating each image-text pair as a simple binary classification (match or no match). This made training more efficient and stable.
 
-CLIP had one major issue. Imagine for a given image there are multiple captions that are relevant:
+But here's the key limitation: both CLIP and SigLIP are **two-tower models**. They learn "this whole image matches that whole sentence" but not "this part of the image explains this part of the sentence." No token-level interaction. No compositional reasoning. Two towers, no bridge. Which brings us to actual conversational/generative VLMs.
 
-* "A dog running"
-* "A corgi in a park"
-* "A small brown dog outdoors"
+## The Conversationalist
 
-Softmax assumes **only one is correct within the batch**. That normalization term:
+CLIP was great at matching, but it couldn't write you a Shakespearian style poem about a cat picture. To do that, we needed **Generative VLMs**. This generation of models used **cross-attention** to fuse modalities inside Transformers.
 
-$$
-\sum_{j=1}^{|\mathbb{B}|} e^{x_i^\top y_j}
-$$
-
-forces captions to compete with each other.
-
-If two captions are semantically similar (dog vs corgi), they *hurt each other’s probability*. The batch becomes a zero-sum game.
-
-This leads to three problems:
-
-* You need carefully curated batches
-* You need very large batch sizes
-* You must compute the loss twice
-
-Sigmoid Loss for Language-Image Pre-Training (SigLIP) from Google Research asks a radically simpler question:
-
-Instead of “Which caption in this batch matches this image?”
-Why not ask: “Does this image match this caption — yes or no?”
-
-Softmax -> Sigmoid
-
-Instead of multi-class classification over the batch, SigLIP treats every image-text pair as a **binary classification problem**.
+The current standard architecture for VLMs is quite simple. It’s essentially a "Frankenstein" model stitched together from three parts:
 
 $$
-\mathbb{L}_{ij}
-=
-y_{ij} \log \sigma(x_i^\top y_j)
-+
-(1 - y_{ij}) \log (1 - \sigma(x_i^\top y_j))
-$$
-
-Where:
-
-* $y_{ij} = 1$ if image $i$ matches text $j$
-* $y_{ij} = 0$ otherwise
-* $\sigma(\cdot)$ is the sigmoid function
-
-
-But here’s the twist. Even SigLIP is still a two-tower model.
-
-CLIP and SigLIP both learn:
-
-“This whole image matches that whole sentence.”
-
-It does NOT learn: “This part of the image explains this part of the sentence.”
-
-No token-level interaction. No compositional reasoning. No step-by-step grounding. Two towers. No bridge. Which brings us to actual conversational/generative VLMs.
-
-## The Conversationalist (LLaVA & Friends)
-
-CLIP was great at matching, but it couldn't write you a poem about a salad. To do that, we needed **Generative VLMs**. This generation of models used cross-attention to fuse modalities inside Transformers.
-
-The current standard architecture (popularized by models like [LLaVA](https://arxiv.org/abs/2304.08485)—Large Language and Vision Assistant) is quite simple. It’s essentially a "Frankenstein" model stitched together from three parts:
-
-$$
-Tokens_{vision} = P(V(I))
-Tokens_{text} = E(T)
+Tokens_{vision} = P(V(I)) \\
+Tokens_{text} = E(T) \\
 Output = LLM(Tokens_{vision}; Tokens_{text})
 $$
 
@@ -197,6 +137,38 @@ The goal of this stage is to teach the "Projector" to translate. Using simple im
 
 The goal of this stage is to teach the model to follow instructions and act like a chatbot. Using complex conversations as training data (e.g., *User:* "What is unusual about this image?" *Assistant:* "The man is ironing a sandwich, which is highly atypical..."), both the **Projector** and the **LLM** learn during this phase. As a result, the model can reason, count, and explain visual data.
 
+## The Evolution:
+
+There were many variants of VLMs proposed in the research community. Each took a different approach to the same core problem: how to make vision and language work together.
+
+**BLIP and BLIP-2 (Bootstrapping Language-Image Pre-training, SalesForce 2022-23)**: [BLIP](https://arxiv.org/abs/2201.12086) and [BLIP-2](https://arxiv.org/abs/2301.12597) introduced the concept of a **Querying Transformer (Q-Former)** that sits between the frozen vision encoder and frozen LLM. Instead of directly projecting image tokens, the Q-Former learns a set of learnable query tokens that extract the most relevant visual features. This lightweight module (188M parameters) acts as an information bottleneck, compressing visual information while keeping both the vision encoder and LLM frozen. The result? You can swap different LLMs without retraining the entire model.
+
+
+![alt](/images/blog26/blip-2.png){: .center-image }
+*Figure 2: BLIP-2 architecture. Source: [BLIP-2](https://arxiv.org/abs/2301.12597)*
+
+**Flamingo (DeepMind, 2022)** [Flamingo](https://arxiv.org/abs/2204.14198) pioneered the idea of **interleaved multi-image inputs**. Rather than just handling one image at a time, Flamingo can process sequences like: "Here's photo 1, photo 2, and photo 3. What changed?" It introduced **Perceiver Resampler** modules and gated cross-attention layers that allow the LLM to attend to visual information only when needed. This architecture enabled few-shot learning-show it a couple of examples, and it adapts on the fly.
+
+
+![alt](/images/blog26/flamingo.png){: .center-image }
+*Figure 3: Flamingo architecture. Source: [Flamingo](https://arxiv.org/abs/2204.14198)*
+
+
+**GPT-4V and Gemini (OpenAI & Google, 2023)** marked the shift to **natively multimodal architectures**. Unlike the "stitched together" approach, these models were trained from scratch with vision and language interleaved from the beginning. The exact architectures remain proprietary, but the performance leap was clear: these models could handle complex spatial reasoning, read dense tables, and even solve geometry problems from textbook diagrams.
+
+**LLaVA-NeXT and Variants (ByteDance, 2024)** [LLaVA-Next](https://arxiv.org/abs/2407.07895) pushed the boundaries of open-source VLMs by introducing **dynamic high-resolution processing**. Instead of downsampling images to fixed sizes (like 336×336), these models use adaptive tiling-splitting high-res images into multiple crops and processing them in parallel. This allowed models to read small text in screenshots and understand fine-grained details that earlier VLMs would miss.
+
+![alt](/images/blog26/llava-next.png){: .center-image }
+*Figure 3: LLaVA-Next tasks. Source: [LLaVA-Next](https://arxiv.org/abs/2407.07895)*
+
+**DeepSeek-VL and variants (DeepSeek, 2024)**: [Deepseek-VL](https://arxiv.org/abs/2403.05525) introduced a hybrid vision encoder architecture that combines both **low-resolution semantic features** and **high-resolution detail features**. Instead of relying solely on a single ViT, DeepSeek-VL uses a dual-stream approach: a SigLIP encoder for semantic understanding and a SAM (Segment Anything Model) encoder for fine-grained visual details. This hybrid approach allowed the model to excel at both holistic scene understanding and precise visual grounding tasks, achieving competitive performance with significantly fewer training tokens compared to other open-source alternatives. [Deepseek-VL2] then built on top of this with by dividing images into multiple tiles dynamically and achieves stronger fine-grained understanding capabilities compared to DeepSeek-VL.
+
+![alt](/images/blog26/deepseek-vl.png){: .center-image }
+*Figure 3: Deepseek-VL training. Source: [Deepseek-VL](https://arxiv.org/abs/2403.05525)*
+
+
+The common thread? The community moved from "frozen components glued together" toward **end-to-end trainable systems** that truly understand the interplay between pixels and words. We went from models that could match images to captions, to models that can debug your code by looking at an error screenshot.
+
 ## Why This Matters: The End of "Just Seeing"
 
 We are moving away from specific tools. We used to have one model for "Is this a hotdog?" and another for "Read this receipt."
@@ -209,37 +181,15 @@ VLMs are generalist agents.
 
 Why do VLMs scale so well? Because language is compressed human knowledge. Every caption encodes: Physics, Culture, Intent, Affordances, Causality. “A chair” is not pixels. It is: “Something you can sit on.” That’s functional semantics. VLMs learn affordances, not just appearances.
 
-## The Evolution:
+### OCR and Document Understanding
 
-There were many variants of VLMs proposed in the research community. Each took a different approach to the same core problem: how to make vision and language work together.
+Traditional OCR was a brittle pipeline that would panic at the sight of rotated text or a doctor's handwriting. VLMs? They just read it. Models like GPT-4V don't extract text as a preprocessing step—they **understand text as part of the image**. Show them a code error screenshot, and they don't just OCR the stack trace; they debug it. Show them a receipt, and they know what's a subtotal versus a tip (finally, someone who gets restaurant math). The spatial reasoning and semantic understanding happen in one shot. This is why VLMs can read memes, parse scientific papers with equations, and survive your handwritten notes.
 
-**BLIP and BLIP-2 (Bootstrapping Language-Image Pre-training, SalesForce 2022-23)**: [BLIP](https://arxiv.org/abs/2201.12086) and [BLIP-2](https://arxiv.org/abs/2301.12597) introduced the concept of a **Querying Transformer (Q-Former)** that sits between the frozen vision encoder and frozen LLM. Instead of directly projecting image tokens, the Q-Former learns a set of learnable query tokens that extract the most relevant visual features. This lightweight module (188M parameters) acts as an information bottleneck, compressing visual information while keeping both the vision encoder and LLM frozen. The result? You can swap different LLMs without retraining the entire model.
+### Video Understanding
 
+Videos are just images with a time dimension. Early approaches treated them like flipbooks—run the VLM on each frame separately and pray. This missed the plot. Literally.
 
-![alt](/images/blog26/blip-2.png){: .center-image }
-*Figure 2: BLIP-2 architecture. Source: [BLIP-2](https://arxiv.org/abs/2301.12597)*
-
-**Flamingo (DeepMind, 2022)** [Flamingo](https://arxiv.org/abs/2204.14198) pioneered the idea of **interleaved multi-image inputs**. Rather than just handling one image at a time, Flamingo can process sequences like: "Here's photo 1, photo 2, and photo 3. What changed?" It introduced **Perceiver Resampler** modules and gated cross-attention layers that allow the LLM to attend to visual information only when needed. This architecture enabled few-shot learning—show it a couple of examples, and it adapts on the fly.
-
-
-![alt](/images/blog26/flamingo.png){: .center-image }
-*Figure 3: Flamingo architecture. Source: [Flamingo](https://arxiv.org/abs/2204.14198)*
-
-
-**GPT-4V and Gemini (OpenAI & Google, 2023)** marked the shift to **natively multimodal architectures**. Unlike the "stitched together" approach, these models were trained from scratch with vision and language interleaved from the beginning. The exact architectures remain proprietary, but the performance leap was clear: these models could handle complex spatial reasoning, read dense tables, and even solve geometry problems from textbook diagrams.
-
-**LLaVA-NeXT and Variants (ByteDance, 2024)** [LLaVA-Next](https://arxiv.org/abs/2407.07895) pushed the boundaries of open-source VLMs by introducing **dynamic high-resolution processing**. Instead of downsampling images to fixed sizes (like 336×336), these models use adaptive tiling—splitting high-res images into multiple crops and processing them in parallel. This allowed models to read small text in screenshots and understand fine-grained details that earlier VLMs would miss.
-
-![alt](/images/blog26/llava-next.png){: .center-image }
-*Figure 3: LLaVA-Next tasks. Source: [LLaVA-Next](https://arxiv.org/abs/2407.07895)*
-
-**DeepSeek-VL and variants (DeepSeek, 2024)**: [Deepseek-VL](https://arxiv.org/abs/2403.05525) introduced a hybrid vision encoder architecture that combines both **low-resolution semantic features** and **high-resolution detail features**. Instead of relying solely on a single ViT, DeepSeek-VL uses a dual-stream approach: a SigLIP encoder for semantic understanding and a SAM (Segment Anything Model) encoder for fine-grained visual details. This hybrid approach allowed the model to excel at both holistic scene understanding and precise visual grounding tasks, achieving competitive performance with significantly fewer training tokens compared to other open-source alternatives. [Deepseek-VL2] then built on top of this with by dividing images into multiple tiles dynamically and achieves stronger fine-grained understanding capabilities compared to DeepSeek-VL.
-
-![alt](/images/blog26/deepseek-vl.png){: .center-image }
-*Figure 3: Deepseek-VL training. Source: [Deepseek-VL](https://arxiv.org/abs/2403.05525)*
-
-
-The common thread? The community moved from "frozen components glued together" toward **end-to-end trainable systems** that truly understand the interplay between pixels and words. We went from models that could match images to captions, to models that can debug your code by looking at an error screenshot.
+Modern VLMs like Gemini 1.5 can watch **up to an hour of video** by treating frames as an extended sequence of visual tokens. The key insight: if LLMs can handle 1 million token contexts, why not feed thousands of video frames? Now the model can answer "What happened before the person fell?" or "How many times did the cat knock things off the table?" (critical research). Attention mechanisms capture temporal dependencies naturally—later frames attend to earlier ones, learning cause and effect. We went from "what's in this frame?" to "what just happened and why?"
 
 
 ## Conclusion

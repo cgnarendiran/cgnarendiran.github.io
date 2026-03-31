@@ -185,7 +185,7 @@ Why do VLMs scale so well? Because language is compressed human knowledge. Every
 
 ### OCR and Document Understanding
 
-Traditional OCR was a brittle pipeline that would panic at the sight of rotated text or a doctor's handwriting. Specialized VL-OCR models like [Deepseek-OCR](https://arxiv.org/abs/2510.18234) don't extract text as a preprocessing step—they **understand text as part of the image**. This is completely different from the cascased pipeline of detection and recognition stack that were previously used. Checkout the [OmniDocBench](https://github.com/opendatalab/OmniDocBench) for a comprehensive evaluation of VL-OCR and VLM models.
+Traditional OCR was a brittle pipeline that would panic at the sight of rotated text or a doctor's handwriting. Specialized VL-OCR models like [Deepseek-OCR](https://arxiv.org/abs/2510.18234) don't extract text as a preprocessing step-they **understand text as part of the image**. This is completely different from the cascased pipeline of detection and recognition stack that were previously used. Checkout the [OmniDocBench](https://github.com/opendatalab/OmniDocBench) for a comprehensive evaluation of VL-OCR and VLM models.
 
 Generalist VLMs like Qwen3-VL or Gemini2.5-Pro? They just read it. Show them a code error screenshot, and they don't just OCR the stack trace; they debug it. Show them a receipt, and they know what's a subtotal versus a tip (finally, someone who gets restaurant math). The spatial reasoning and semantic understanding happen in one shot. This is why VLMs can read memes, parse scientific papers with equations, and survive your handwritten notes.
 
@@ -194,10 +194,17 @@ Generalist VLMs like Qwen3-VL or Gemini2.5-Pro? They just read it. Show them a c
 
 ### Video Understanding
 
-Videos are just images with a time dimension. Early approaches treated them like flipbooks—run the VLM on each frame separately and pray. This missed the plot. Literally.
+Videos are just images with a time dimension. Early approaches treated them like flipbooks; run the VLM on each frame separately and pray. This missed the plot. Literally.
 
-Modern VLMs like Gemini 1.5 can watch **up to an hour of video** by treating frames as an extended sequence of visual tokens. The key insight: if LLMs can handle 1 million token contexts, why not feed thousands of video frames? Now the model can answer "What happened before the person fell?" or "How many times did the cat knock things off the table?" (critical research). Attention mechanisms capture temporal dependencies naturally—later frames attend to earlier ones, learning cause and effect. We went from "what's in this frame?" to "what just happened and why?"
+Modern VLMs like Gemini 1.5 can watch **up to an hour of video** by treating frames as an extended sequence of visual tokens. The key insight: if LLMs can handle 1 million token contexts, why not feed thousands of video frames? Now the model can answer "What happened before the person fell?" or "How many times did the cat knock things off the table?" (critical research). Attention mechanisms capture temporal dependencies naturally; later frames attend to earlier ones, learning cause and effect. We went from "what's in this frame?" to "what just happened and why?"
 
+### The Reality Check: Limitations of VLMs
+
+For all their power, VLMs aren't perfect: they're brilliant idiots with expensive taste. They're only as good as their training data (garbage in, garbage out, now with billions of parameters), which means they can confidently perpetuate biases and stereotypes like a problematic uncle at Thanksgiving. 
+
+They'll miss sarcasm entirely (a VLM might describe the "This is fine" dog meme as just "a dog in a burning room" without catching the existential dread). They excel at describing *what* they see but stumble on *why* - sure, that's a person with a trophy, but understanding they just won their first Olympic medal after years of injury? That's deep reasoning territory they haven't conquered yet. 
+
+Oh, and they're computationally ravenous—not everyone has a data center in their pocket, so deploying them on edge devices means brutal trade-offs between speed and accuracy. Finally, keeping visual and textual outputs consistent across dynamic inputs (like video) is like herding cats: the model might nail frame 1 but completely contradict itself by frame 100. TL;DR: VLMs are powerful but flawed, like giving a toddler a PhD.
 
 ## Conclusion
 

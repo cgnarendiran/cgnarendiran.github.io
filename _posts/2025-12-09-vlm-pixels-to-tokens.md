@@ -5,7 +5,7 @@ date:   2025-12-09
 image:  images/blog26/cover.png
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
-*On the cover: Pixels to tokens*
+*On the cover: Decorative*
 
 In our [last post](https://cgnarendiran.github.io/blog/vit-pixels-to-tokens/), we spoke about how the **Vision Transformer (ViT)** took the candy away from CNNs. We learned that if you slice an image into patches and flatten them, you can treat an image just like a sentence. And a sequence of pixel-patches becomes a sequence of tokens.
 
@@ -33,6 +33,8 @@ If you feed ViT output directly into an LLM, it looks like gibberish. It’s lik
 Before we could get models to *chat* about images, we had to get them to *agree* on what images were. The breakthrough came from OpenAI in 2021 with [CLIP: Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020).
 
 CLIP (Contrastive Language-Image Pretraining) wasn't built to generate text. It played a massive game of "Match the Caption." Imagine you have a batch of N images and N text captions. The images are run through an Image Encoder (like a ViT), while the texts are run through a Text Encoder (like a mini-BERT). **The goal:** The model must figure out which text belongs to which image.
+
+** Fun Side: CLIP started off with CNNs as encoders (in the original paper) and later adopted ViTs in most implementations of recent times.
 
 Mathematically, it maximizes the **dot product** (similarity) between the correct image-text pairs and minimizes it for the incorrect ones. This forces the model to learn a **shared embedding space**. Essentially,
 
@@ -183,7 +185,12 @@ Why do VLMs scale so well? Because language is compressed human knowledge. Every
 
 ### OCR and Document Understanding
 
-Traditional OCR was a brittle pipeline that would panic at the sight of rotated text or a doctor's handwriting. VLMs? They just read it. Models like GPT-4V don't extract text as a preprocessing step—they **understand text as part of the image**. Show them a code error screenshot, and they don't just OCR the stack trace; they debug it. Show them a receipt, and they know what's a subtotal versus a tip (finally, someone who gets restaurant math). The spatial reasoning and semantic understanding happen in one shot. This is why VLMs can read memes, parse scientific papers with equations, and survive your handwritten notes.
+Traditional OCR was a brittle pipeline that would panic at the sight of rotated text or a doctor's handwriting. Specialized VL-OCR models like [Deepseek-OCR](https://arxiv.org/abs/2510.18234) don't extract text as a preprocessing step—they **understand text as part of the image**. This is completely different from the cascased pipeline of detection and recognition stack that were previously used. Checkout the [OmniDocBench](https://github.com/opendatalab/OmniDocBench) for a comprehensive evaluation of VL-OCR and VLM models.
+
+Generalist VLMs like Qwen3-VL or Gemini2.5-Pro? They just read it. Show them a code error screenshot, and they don't just OCR the stack trace; they debug it. Show them a receipt, and they know what's a subtotal versus a tip (finally, someone who gets restaurant math). The spatial reasoning and semantic understanding happen in one shot. This is why VLMs can read memes, parse scientific papers with equations, and survive your handwritten notes.
+
+![alt](/images/blog26/deepseek-ocr.png){: .center-image }
+*Figure 3: Deepseek-OCR architecture. Source: [Deepseek-OCR](https://arxiv.org/abs/2510.18234)*
 
 ### Video Understanding
 

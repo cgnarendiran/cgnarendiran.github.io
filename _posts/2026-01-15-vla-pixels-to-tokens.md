@@ -2,7 +2,7 @@
 layout: post
 title:  "VLAs - Pixels to Tokens"
 date:   2025-12-09
-image:  images/blog27/cover.jpg
+image:  images/blog27/cover.png
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
 
@@ -30,7 +30,7 @@ So the question becomes: how do you give the model hands without making it forge
 
 Before we dive into specific models, here's the generic recipe every VLA follows. Three components: a vision encoder that turns pixels into tokens (your old friend the ViT), an LLM backbone that fuses image tokens with language and reasons about what to do, and an action head that turns the LLM's outputs into motor commands. The variants we'll see next differ almost entirely in how that last piece works: discrete token decoding (RT-2, OpenVLA), continuous regression, or denoising-based generation (π₀). Everything else is mostly scale and data.
 
-![alt](https://cgnarendiran.github.io/images/blog27/vla-anatomy.png)
+![alt](https://cgnarendiran.github.io/images/blog27/vla-architecture.png)
 *Figure 1: The generic architecture of a Vision-Language-Action model. Pixels and instruction are tokenized and fused by a VLM backbone; the action head decodes those into motor commands.*
 
 With that template in hand, let's see how the major VLAs of 2023–2025 fill in each box.
@@ -136,7 +136,7 @@ Manipulation VLAs predict end-effector deltas. Driving VLAs predict trajectories
 
 **Alpamayo-R1 (NVIDIA, 2025)**: [Alpamayo-R1](https://arxiv.org/abs/2511.00088) is the closest production-driving VLA to π₀'s design philosophy. A 10B model: Cosmos-Reason VLM backbone plus a 2.3B flow-matching action expert. Inputs are 4 cameras at 10 Hz, and the output is 64 waypoints over 6.4 seconds, parameterized as acceleration + curvature under a unicycle model rather than raw (x, y). Latency is 99 ms on an H100. The interesting part is the training data: 80,000 hours of fleet driving plus 700k *Chain-of-Causation* traces, which are structured causal chains tying scene evidence to driving decisions. Weights are released on Hugging Face under a non-commercial license.
 
-![alt](https://cgnarendiran.github.io/images/blog27/alpamayo.png)
+![alt](https://cgnarendiran.github.io/images/blog27/alpamayo-r1.png)
 *Figure 5: Alpamayo-R1 architecture. Source: [Alpamayo-R1](https://arxiv.org/abs/2511.00088)*
 
 The shared trend across driving VLAs is that serializing waypoints as text (EMMA-style) is fine for benchmarks but hits a precision and latency ceiling, so the field is shifting toward continuous action heads. Open-source contributions like [OpenDriveVLA](https://arxiv.org/abs/2503.23463), [ORION](https://arxiv.org/abs/2503.19755), [CoReVLA](https://arxiv.org/abs/2509.15968), [WiseAD](https://arxiv.org/abs/2412.09951), and [SafeAuto](https://arxiv.org/abs/2503.00211) each take a different angle on the same problem: how to combine VLM-grade reasoning with control-grade latency. Closed-loop benchmarks like Bench2Drive and NAVSIM have largely replaced nuScenes open-loop L2, because the older metrics turned out to be gameable with ego-state shortcuts.

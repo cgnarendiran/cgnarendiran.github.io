@@ -123,7 +123,7 @@ Kind = Take. No personal facts needed.
 
 | # | Post | The stance | Link | Status |
 |---|---|---|---|---|
-| T1 | Olympiad gold, arithmetic failure | Not the same capability. The benchmark that impresses you measures the wrong one. | tokenizers post, once written | Ready |
+| T1 | Olympiad gold, arithmetic failure | Not the same capability. The benchmark that impresses you measures the wrong one. ARC Prize's own 2025 report says ARC-AGI-2 scores hinge on orchestration and compute budget more than on pretraining, and ARC-AGI-3 (2026) went interactive for that reason ([2601.10904](https://arxiv.org/abs/2601.10904)). | tokenizers post, once written | Ready |
 | T2 | You do not need a vector database yet | Under roughly ten thousand chunks, a flat array and cosine beats a vector DB on latency, cost and debuggability. Most RAG stacks are built for a scale the product never reaches. | /blog/hnsw-graph-based-vector-search/ | Ready |
 | T3 | Google was doing RAG all along | Retrieve, rank, generate over top-k is PageRank with an LLM bolted on. Inverted indices still beat embeddings on precision. Hybrid is the default, not a compromise. | /blog/markov-chain-pagerank-and-perplexity/ | Ready |
 | T4 | Stop running OCR on text you already have | Most pipelines rasterise a PDF that has a text layer, then pay a model to read the picture back. You lose structure, reading order and money. | | Ready |
@@ -147,7 +147,7 @@ the post.
 | A3 | Your SSH key is two prime numbers and a padlock | Evergreen. | /blog/primes-and-rsa-encryption/ | Ready |
 | A4 | A city with ten million coffee shops | HNSW in one image. Pairs with T2 as the follow-up. | /blog/hnsw-graph-based-vector-search/ | Ready |
 | A5 | Spider-Man's drones knew about personal space | Velocity obstacles, from the drones posts. | /blog/personal-space-for-drones-part1/ | Ready |
-| A6 | One conductor, a thousand players | MoE routing plus the DeepMind "million experts" paper. | /blog/moe-is-attention-all-you-really-need/ | Ready |
+| A6 | One conductor, a thousand players | In 2025 I called MoE the unsung hero. In September 2026 every open-weight leader is MoE: DeepSeek V4, Qwen3.8, Kimi K3, GLM-5.3, Llama 4 (*verify* each on its model card). Then the DeepMind "million experts" paper as where it goes next. | /blog/moe-is-attention-all-you-really-need/ | Ready after verification; use by 2026-10-06 |
 | A7 | The wrong weather app | Cross-entropy as a bad forecast, second angle. | /blog/cross-entropy-loss/ | Optional |
 
 ### Project stories
@@ -161,6 +161,30 @@ Kind = Angle. Written from the public `_projects/` page only. Read the page firs
 | P3 | A fab and a reward function | _projects/2023-05-15-semiconductor-fab-optimization.md | Ready if the page has a moment |
 | P4 | Pixie | _projects/2020-12-30-project-pixie.md | Ready if the page has a moment |
 | P5 | Domain adaptation for NER | _projects/2020-08-30-unsupervised-domain-adaptation-for-entity-recognition.md | Optional |
+
+---
+
+## Fresh, September 2026
+
+Researched on 2026-09-06 from the last few months of news in Naren's areas. Each row is a take
+with a durable claim hooked on something current; "Use by" is when the hook goes stale. Claims
+marked *verify* came from roundup blogs rather than primary sources; check them before posting.
+The takes job does not exist yet, so these are for writing by hand, or ask for a draft.
+
+| # | Post | The stance | Hook and sources | Kind | Use by | Status |
+|---|---|---|---|---|---|---|
+| F1 | Waymo is end-to-end too | The fight is not end-to-end versus modular. Waymo's own December blog says its driver is trained end-to-end: a Gemini-based VLM, a sensor-fusion encoder for lidar and camera, and a world decoder, with gradients flowing through all three. The real difference is a millisecond-latency fusion path that can override the language model. Ties to /blog/vla-pixels-to-tokens/ | Waymo spent late August saying pure pixels-to-steering "runs the risk of black box failures" ([Axios, 26 Aug](https://www.axios.com/2026/08/26/waymo-ai-shortcut-self-driving); [TechCrunch, 1 Sep](https://techcrunch.com/2026/09/01/waymo-goes-on-offense-ahead-of-teslas-cybercab-launch/)), a week before the Cybercab launched on 3 Sep with about 200 unsupervised cars and a claimed 1M unsupervised miles. Architecture: [understandingai.org, 17 Dec 2025](https://www.understandingai.org/p/waymo-and-teslas-self-driving-systems) | Take | 2026-09-20 | Ready |
+| F2 | Somebody measured whether driving VLAs mean what they say | A reasoning trace in a driving model is decoration until it is tested counterfactually. Cite only the public papers; nothing from Naren's own benchmark until it is out. Ties to the VLA promo's "can it reason about why" | "Is VLA Reasoning Faithful?" ([2605.17268](https://arxiv.org/abs/2605.17268)): 42.5% fidelity, 8.9% hallucination, 53.3% reasoning-action inconsistency, 94 missed pedestrians over 300 inferences. Counter-nuScenes ([2607.16938](https://arxiv.org/abs/2607.16938)) inpaints objects out of scenes to measure their causal pull on the trajectory. Counterfactual VLA, CVPR 2026 ([2512.24426](https://arxiv.org/abs/2512.24426)): 17.6% lower trajectory error, 20.5% fewer collisions when the model reasons about alternatives | Take, then blog row 15 | none | Ready |
+| F3 | One hyperparameter, twenty times less compute | The tricks were the cost, not the architecture. LeVJEPA matches or beats V-JEPA 2 at 5.6 to 20.8x less pretraining compute with one encoder, no teacher, no stop-gradient, one hyperparameter (lambda = 0.02). Ties to the JEPA post and blog row 1 | LeVJEPA ([2608.27395](https://arxiv.org/abs/2608.27395), Aug 2026). LeWorldModel (Mar 2026): about 15M parameters, one GPU for a few hours, planning up to 48x faster than foundation-model world models (*verify* in the paper). "When Does LeJEPA Learn a World Model?" ([2605.26379](https://arxiv.org/abs/2605.26379)) | Take, after the LeJEPA post is out | none | Hold for blog row 1 |
+| F4 | The world model you can download beats the one you can rent | For builders, open weights plus post-training win. Genie 3 sits behind a $200-a-month, US-only, 18+ subscription (*verify* on Google's own page); NVIDIA Cosmos and Tencent HY-World ship as open-licence weights you can run today. Sequel to the June world-models post | Roundups: [introl.com](https://introl.com/blog/world-models-race-agi-2026), [tech-insider.org](https://tech-insider.org/genie-3-vs-marble-vs-nvidia-cosmos-world-models-2026/) | Take | 2026-10-06 | Ready after verification |
+| F5 | Runway called a UI generator a world model | Same one-line test as June: does it predict the consequence of your click, or paint the next frame? A short sequel to "renderers in a costume" | Runway Solaris, "Interface World Model", 1 Sep 2026 (*verify* on Runway's own announcement) | Take | 2026-09-15 | Ready after verification |
+| F6 | The intern now drafts a whole paragraph | The draft model's shape matters more than its size. Block-diffusion drafting proposes a whole block in one pass instead of one token at a time: 3.13x tokens per second on TPU v5p, nearly 6x on math, 2.29x end to end against EAGLE-3's 1.30x on Llama-3.1-8B. Feeds blog row 4's conceit | DFlash, [Google Developers Blog, 4 May 2026](https://developers.googleblog.com/supercharging-llm-inference-on-google-tpus-achieving-3x-speedups-with-diffusion-style-speculative-decoding/) | Angle, after blog row 4 | none | Hold for blog row 4 |
+| F7 | pi0.7 ran an air fryer it had seen twice | Compositional generalisation is the VLA milestone that matters, not new bodies. The internet teaches the model the world, the robot data teaches it its hands, and now the two combine on objects it barely saw | Physical Intelligence pi0.7, 16 Apr 2026 ([humanoidsdaily.com](https://www.humanoidsdaily.com/news/physical-intelligence-unveils-0-7-the-rise-of-compositional-generalization-in-robotics), *verify* on pi.website). Gemini Robotics 2 and ER 2, 30 Jul 2026 ([marktechpost](https://www.marktechpost.com/2026/07/30/google-deepmind-gemini-robotics-2-whole-body-control-dexterity-multi-robot-collaboration/)) | Take | none | Ready after verification |
+| F8 | The first humanoid number that is a price | Humanoids become real when they are billed per hour like labour, and the software that survives an eight-hour shift is what earns it. Figure 03 at BMW at roughly $25 per robot-hour; Chinese firms shipped about 97% of H1 2026 humanoids; Unitree listed on 19 Aug | [technology.org, 18 Jul 2026](https://www.technology.org/2026/07/18/humanoid-robots-in-2026-what-is-actually-deployed/), [evsint.com](https://www.evsint.com/top-8-humanoid-robot-companies-2026/); *verify* both numbers | Take | 2026-10-06 | Lowest priority: closest to the generic robotics-news genre |
+
+**Skipped on purpose:** GPT-6 Astra (3 Sep) and the Qwen3.8 and DeepSeek V4 release posts. The
+model-release genre is the most crowded feed on LinkedIn and expires in a day. Naren's edge is
+the robotics, driving and world-model side, where F1 and F2 sit.
 
 ---
 

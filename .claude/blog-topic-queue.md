@@ -32,10 +32,10 @@ force a rewrite.
 
 | # | Topic | Post file (slug) | Date | Series | Conceit to test first |
 |---|-------|------------------|------|--------|----------------------|
-| 1 | LeJEPA — provable SSL, no heuristics ([2511.08544](https://arxiv.org/abs/2511.08544)) | `lejepa` | **2026-07-15** | **JEPA part 2 — owed by part 1's cliffhanger** | Tear out the interrogation room; one term (SIGReg) replaces the EMA teacher, the stop-grad and the hobbled predictor |
+| 1 | LeJEPA — provable SSL, no heuristics ([2511.08544](https://arxiv.org/abs/2511.08544)) | `lejepa` | **2026-07-15** | **JEPA part 2 — owed by part 1's cliffhanger** | Tear out the interrogation room; one term (SIGReg) replaces the EMA teacher, the stop-grad and the hobbled predictor. Follow-ups exist: LeVJEPA ([2608.27395](https://arxiv.org/abs/2608.27395), Aug 2026, 5.6 to 20.8x less compute than V-JEPA 2) and LeWorldModel (Mar 2026). With this row dated 2026-07-15, cite LeWorldModel freely and mention LeVJEPA only undated in "where things are going", or move the date past August |
 | 2 | Diffusion policy vs. flow matching for robot actions | `diffusion-policy-vs-flow-matching` | | Standalone, follows VLA | A sculptor chipping marble (denoising) vs. a river finding the sea (flow) |
 | 3 | World models as learned simulators — Genie 3, Cosmos | `world-models-learned-simulators` | | Follows JEPA | A dream you can steer; the driving instructor who never runs out of roads |
-| 4 | Speculative decoding | `speculative-decoding` | | Is Attention All You Really Need? | The intern who drafts the email and the boss who only proofreads |
+| 4 | Speculative decoding | `speculative-decoding` | | Is Attention All You Really Need? | The intern who drafts the email and the boss who only proofreads. Punchline: DFlash (Google, May 2026) has the intern draft a whole paragraph in one go, 3.13x tokens per second on TPU |
 | 5 | Quantization — INT8, FP8, NVFP4 and what actually breaks | `quantization-edge-inference` | | Standalone, practical | Packing for a carry-on: what you fold, what you leave, what you regret |
 | 6 | Knowledge distillation | `knowledge-distillation` | | Standalone | The professor's lecture notes vs. the student's crib sheet |
 | 7 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system. Open on speech: audio at sample rate is where quadratic attention breaks first |
@@ -46,6 +46,8 @@ force a rewrite.
 | 12 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
 | 13 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
 | 14 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
+| 15 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
+| 16 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
 
 Rows 2 onward have no date, so they publish on the day they run. Only the backfill rows carry
 one; once LeJEPA is published, the queue is back to normal same-day behaviour.

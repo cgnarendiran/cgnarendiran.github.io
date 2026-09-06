@@ -31,7 +31,7 @@ from `origin/master`, open a PR, self-check it and merge it; none pushes to `mas
   `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
   with a `publish_after` time.
-- **LinkedIn publisher**, weekdays 8:35am Pacific. Runs `.claude/scripts/linkedin_publish.py`,
+- **LinkedIn publisher**, weekdays 16:35 UTC (9:35am PDT, 8:35am PST, always after the 8:30am publish time). Runs `.claude/scripts/linkedin_publish.py`,
   which posts every due outbox file through LinkedIn's Posts API, appends the ledger row and
   deletes the file. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
   environment; setup and the 60-day token renewal are in `.claude/linkedin-api-setup.md`.

@@ -25,7 +25,7 @@
 }
 
 .article-info {
-  font-size: 13px;
+  font-size: $font-size-small;
   line-height: 18px;
   letter-spacing: 0.5px;
   color: $gray;
@@ -55,7 +55,7 @@
 }
 /* Article Card (grid on the blog and projects indexes) */
 .article-card-col {
-  margin-bottom: 45px;
+  margin-bottom: 38px;
 }
 
 .article-card {
@@ -67,8 +67,8 @@
 .article-card__image {
   display: block;
   height: 0;
-  padding-bottom: 60%;
-  margin-bottom: 22px;
+  padding-bottom: 50%;
+  margin-bottom: 16px;
   background-color: $light-gray;
   background-position: center center;
   background-size: cover;
@@ -87,17 +87,17 @@
 }
 
 .article-card__title {
-  margin-bottom: 14px;
-  font-size: 20px;
-  line-height: 1.35;
+  margin-bottom: 10px;
+  font-size: $font-size-h6;
+  line-height: $heading-line-height;
 }
 
 .article-card__excerpt {
   display: -webkit-box;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   overflow: hidden;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: $font-size-small;
+  line-height: 1.6;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
@@ -105,6 +105,6 @@
 /* Pins the date to the bottom so cards in a row line up */
 .article-card .article-info {
   margin-top: auto;
-  font-size: 12px;
+  font-size: $font-size-x-small;
   letter-spacing: 0.4px;
 }

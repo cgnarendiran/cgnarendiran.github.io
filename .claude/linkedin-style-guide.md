@@ -118,6 +118,10 @@ the LinkedIn hook is that image in one line.
 - **Vary the rhythm.** No more than two consecutive paragraphs ending on a fragment aphorism
   ("Worth it." "And the dragons." "My read:"). When every paragraph lands a zinger, the sameness
   is the tell, and the humanizer cannot see it because it works one sentence at a time.
+- **No colon labels.** "My read:", "The dragons:", "Bottom line:" are tags, not sentences. The
+  bet and the dragons are written as sentences: "What I would actually build on is ...", "The
+  catch is that ...". And no "X, not Y" parallelism as the bet ("the result, not the
+  leaderboard"). Naren flagged both in the first LeJEPA promo.
 
 ---
 
@@ -398,6 +402,7 @@ replacement that went live in its place:
 - [ ] At least two first-person sentences about what Naren did or thinks
 - [ ] One number, two at most
 - [ ] No more than two consecutive paragraphs ending on a fragment
+- [ ] No colon-label openers; `python3 .claude/scripts/prose_lint.py --linkedin <file>` exits 0
 - [ ] Zero emoji bullets, at most one 👇, at most one emoticon
 - [ ] Nothing claimed that is not in the post. No invented anecdotes, no role claims
 - [ ] No §9 or blog-guide §13 banned patterns

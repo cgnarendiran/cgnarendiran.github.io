@@ -14,18 +14,18 @@ the outbox file. Setup and the review window are described in `.claude/linkedin-
 Settings, one per line, parsed as `key: value`:
 
 eligible_from: 2026-06-15
-publish_time_local: 08:30
+publish_delay_minutes: 30
 publish_tz: America/Los_Angeles
-publish_days: Mon Tue Wed Thu Fri
 
 `eligible_from` is what keeps the job from working through the whole archive. Set it to
 `2017-01-01` to backfill everything not listed below, one post per run, oldest first.
 
-`publish_time_local` and `publish_days`: the companion sets `publish_after` to the next listed
-day strictly after its run, at that local time. The Sunday run lands on Monday morning and the
-Wednesday run on Thursday morning. Naren's hand-posted promos went out between 03:00 and 14:00
-UTC, so an earlier local time is also reasonable; this is the one line to change, and the
-publisher's cron must run after it.
+`publish_delay_minutes`: the companion sets `publish_after` to its run time plus this many
+minutes. Naren chose no review window (2026-09-06): the companion fires at 17:15 UTC on blog
+days, about half an hour after the post is live, with a retry at 18:15, and the publisher fires
+daily at 16:00, 18:00 and 19:00 UTC and posts anything whose time has passed. So a Sunday or
+Wednesday post is on LinkedIn by 18:00 UTC the same day. To hold a post back, edit its
+`publish_after` on master before the next publisher fire.
 
 The slug is the part of the filename after the date: `_posts/YYYY-MM-DD-<slug>.md`. Exact match,
 not substring. To skip a post for good, add a row for it below with the note `skipped`.

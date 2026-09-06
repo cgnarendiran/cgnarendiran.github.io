@@ -31,6 +31,16 @@ import urllib.parse
 import urllib.request
 import webbrowser
 
+
+# python.org builds of Python on macOS ship without system CA certificates, so HTTPS fails
+# with CERTIFICATE_VERIFY_FAILED. If certifi is importable, use its bundle. Harmless elsewhere.
+if not os.environ.get("SSL_CERT_FILE"):
+    try:
+        import certifi
+        os.environ["SSL_CERT_FILE"] = certifi.where()
+    except ImportError:
+        pass
+
 AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
 TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
 USERINFO_URL = "https://api.linkedin.com/v2/userinfo"

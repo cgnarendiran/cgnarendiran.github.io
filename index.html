@@ -5,17 +5,35 @@ layout: default
 	{% include hero.html %}
 {% endif %}
 
+<div class="container">
+	<div class="row">
+		<div class="col col-12">
+			<div class="home-section-head wow fadeInUp">
+				<h2 class="home-section-title">Latest writing</h2>
+				<a class="home-section-link" href="{{ '/blog/' | relative_url }}">All posts &rarr;</a>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		{% for post in site.posts limit: 6 %}
+			{% include article-content.html style="grid" %}
+		{% endfor %}
+	</div>
+</div>
 
 <div class="container">
 	<div class="row">
 		<div class="col col-12">
-			<!-- begin page -->
-			<article class="page wow fadeInUp" data-wow-delay=".2s">
-				<div class="page__content">
-					
-				</div>
-			</article>
-			<!-- end page -->
+			<div class="home-section-head wow fadeInUp">
+				<h2 class="home-section-title">Selected projects</h2>
+				<a class="home-section-link" href="{{ '/projects/' | relative_url }}">All projects &rarr;</a>
+			</div>
 		</div>
+	</div>
+	<div class="row">
+		{% assign recent_projects = site.projects | sort: 'date' | reverse %}
+		{% for post in recent_projects limit: 2 %}
+			{% include article-content.html style="grid" %}
+		{% endfor %}
 	</div>
 </div>

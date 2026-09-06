@@ -1,9 +1,9 @@
 title: Narendiran Chembu
 # logo: "images/logo.svg" # You can add own logo image.
 logo: images/cg_logo.png
-description: Personal Website
+description: "Narendiran Chembu — Staff ML Engineer. Essays on transformers, diffusion, vector search, world models, and whatever else is worth explaining properly."
 baseurl: "" # The subpath of your site, e.g. /blog
-url: "" # The base hostname & protocol for your site, e.g. http://example.com
+url: "https://cgnarendiran.github.io" # The base hostname & protocol for your site
 
 # Author Settings
 author:
@@ -18,6 +18,7 @@ instagram: https://instagram.com/cgnarendiran/ # Add your Instagram handle
 # pinterest: https://pinterest.com/ # Add your Pinterest handle
 email: cgnarendiran@gmail.com # Add your Email address
 linkedin: https://linkedin.com/in/cgnarendiran/
+github: https://github.com/cgnarendiran
 
 # Hero Section
 hero: true # To enable the section hero, use the value true. To turn off use the value false.
@@ -28,6 +29,9 @@ hero-subtitle: |
   and <a style="color:turquoise"  href="/projects/">projects</a> 
 # Add your hero subtitle
 hero-image: images/ml_bb_6.jpg # Add background image in section hero 
+
+# Fallback social-card image for pages without their own `image:` front matter
+og-image: images/ml_bb_6.jpg
 
 # Footer
 footer-image: images/ml_bb_6.jpg # Add background image in footer

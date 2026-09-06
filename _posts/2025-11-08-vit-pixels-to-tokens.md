@@ -86,7 +86,7 @@ Congratulations! That smoothie is now a "token." We have converted pixels into t
 ## Step 3: The Location Sticker (Positional Embedding)
 Here is the Transformer’s Achilles' heel: It has absolutely no sense of space. If you feed it the puzzle pieces, it doesn't know that the "ears" token belongs above the "whiskers" token. It treats the image like a bag of words.
 
-To fix this, we must add Positional Embeddings. We can add a unique vector, often sine and cosine waves of different frequencies; you can also use RoPE which I have explained in a previous [blog](https://cgnarendiran.github.io/blog/rope-is-attention-all-you-really-need/) to each token that says, "Hey, I belong in row 2, column 3." Now the model knows the geometry.
+To fix this, we must add Positional Embeddings. We can add a unique vector, often sine and cosine waves of different frequencies; you can also use RoPE which I have explained in a previous [blog](/blog/rope-is-attention-all-you-really-need/) to each token that says, "Hey, I belong in row 2, column 3." Now the model knows the geometry.
 
 Essentially,
 

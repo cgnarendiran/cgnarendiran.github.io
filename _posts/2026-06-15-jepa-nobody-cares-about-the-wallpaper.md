@@ -55,7 +55,7 @@ $$
 
 where $x$ is the visible context, $y$ the hidden target, and $z$ the positional information telling the predictor what it's being asked about.
 
-![alt](https://cgnarendiran.github.io/images/blog28/lv_jepa.png) *Figure 1: The JEPA blueprint. Two encoders turn $x$ and $y$ into descriptions $s_x$ and $s_y$, the predictor guesses $\tilde{s}_y$ from $s_x$ plus a latent $z$, and the energy $D(s_y, \tilde{s}_y)$ scores one description against the other. Nothing decodes back to pixels. Source: [A Path Towards Autonomous Machine Intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf)*
+![alt](/images/blog28/lv_jepa.png) *Figure 1: The JEPA blueprint. Two encoders turn $x$ and $y$ into descriptions $s_x$ and $s_y$, the predictor guesses $\tilde{s}_y$ from $s_x$ plus a latent $z$, and the energy $D(s_y, \tilde{s}_y)$ scores one description against the other. Nothing decodes back to pixels. Source: [A Path Towards Autonomous Machine Intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf)*
 
 Notice what disappeared. There is no decoder anywhere. The wallpaper doesn't show up in the loss because the wallpaper doesn't show up at all.
 
@@ -109,7 +109,7 @@ The masking is not a detail, it's the entire contribution, and the ablation is t
 
 The question has to be hard enough that guessing doesn't pay. Any schoolteacher could have told them that.
 
-![alt](https://cgnarendiran.github.io/images/blog28/ijepa.png) *Figure 2: I-JEPA. One context block predicts the representations of several target blocks, with the predictor conditioned on positional tokens shown in colour. Source: [I-JEPA](https://arxiv.org/abs/2301.08243)*
+![alt](/images/blog28/ijepa.png) *Figure 2: I-JEPA. One context block predicts the representations of several target blocks, with the predictor conditioned on positional tokens shown in colour. Source: [I-JEPA](https://arxiv.org/abs/2301.08243)*
 
 ### Step 2: the sketch artist
 
@@ -131,7 +131,7 @@ On ImageNet linear probing with a ViT-L/16, I-JEPA gets **77.5%** against MAE's 
 
 [V-JEPA](https://arxiv.org/abs/2404.08471) (Bardes et al., TMLR 2024) takes the recipe to video. The masks become tubes, a 2D mask extended through every frame of the clip, so the model can't cheat by copying the same patch from next door in time. Training data was **VideoMix2M**, two million videos stitched together from Kinetics-710, Something-Something v2 and HowTo100M.
 
-![alt](https://cgnarendiran.github.io/images/blog28/vjepa.png) *Figure 3: V-JEPA. The context encoder sees a tube-masked clip, the target encoder is an EMA copy fed the unmasked clip, and the stop-grad on the target branch is the thing standing between this and the constant solution. Source: [V-JEPA](https://arxiv.org/abs/2404.08471)*
+![alt](/images/blog28/vjepa.png) *Figure 3: V-JEPA. The context encoder sees a tube-masked clip, the target encoder is an EMA copy fed the unmasked clip, and the stop-grad on the target branch is the thing standing between this and the constant solution. Source: [V-JEPA](https://arxiv.org/abs/2404.08471)*
 
 The number that matters is the frozen-backbone evaluation. No fine-tuning, just a probe on features that never move:
 
@@ -153,7 +153,7 @@ The label-efficiency curve is the real tell though. The fewer labels you hand th
 - Epic-Kitchens-100 action anticipation: **39.7 recall@5**, up 44% relative on PlausiVL's 27.6
 - Aligned with an LLM at 8B: 84.0 on PerceptionTest, 76.9 on TempCompass
 
-![alt](https://cgnarendiran.github.io/images/blog28/ssv2-frozen-eval.png) *Figure 4: Something-Something v2 with a frozen backbone. The classes are things like "pushing something so it falls off the table", so recognizing objects gets you nowhere; you have to have understood the motion. Source: Author*
+![alt](/images/blog28/ssv2-frozen-eval.png) *Figure 4: Something-Something v2 with a frozen backbone. The classes are things like "pushing something so it falls off the table", so recognizing objects gets you nowhere; you have to have understood the motion. Source: Author*
 
 Sit with the anticipation number for a second. The task is to name the verb and the noun of an action one second before it happens, from head-mounted video. Nobody trained the model to do this. It was trained to describe hidden patches, and short-horizon prediction of the future fell out for free.
 
@@ -171,7 +171,7 @@ Our witness can describe the room in beautiful detail. Ask her what's through th
 | 2 | Position, "what's in this hole?" | I-JEPA, V-JEPA, V-JEPA 2 base | No, it's latent inpainting |
 | 3 | State and action, "what if I do X?" | V-JEPA 2-AC, DINO-WM, Dreamer | Yes |
 
-![alt](https://cgnarendiran.github.io/images/blog28/action_conditioning.png) *Figure 5: The whole argument in one picture. Same architecture, same $z$ slot. On the left $z$ carries mask tokens and you get latent inpainting; on the right $z$ carries robot actions and poses, the encoders are frozen, and you get a transition function. Source: [V-JEPA 2](https://arxiv.org/abs/2506.09985)*
+![alt](/images/blog28/action_conditioning.png) *Figure 5: The whole argument in one picture. Same architecture, same $z$ slot. On the left $z$ carries mask tokens and you get latent inpainting; on the right $z$ carries robot actions and poses, the encoders are frozen, and you get a transition function. Source: [V-JEPA 2](https://arxiv.org/abs/2506.09985)*
 
 Which brings us to the part of the paper that earns the label. **V-JEPA 2-AC** freezes the encoder and post-trains a small *action-conditioned* predictor with block-causal attention on **under 62 hours** of unlabeled Droid robot video. Now there's a real transition operator, so you can plan with it.
 

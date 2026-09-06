@@ -6,7 +6,7 @@ title: Blog
 	<div class="row">
 		{% if site.posts.size > 0 %}
 			{% for post in paginator.posts %}
-				{% include article-content.html %}
+				{% include article-content.html style="grid" %}
 			{% endfor %}
 		{% endif %}
 	</div>

@@ -1,3 +1,30 @@
+{% if include.style == "grid" %}
+
+<div class="col col-6 col-t-12 article-card-col">
+  <!-- begin article card -->
+  <div class="article-card wow fadeIn">
+    {% if post.image and post.image != "" %}
+      <a class="article-card__image" href="{{ post.url | prepend: site.baseurl }}"
+        style="background-image: url('{{ post.image | relative_url }}')"
+        aria-label="{{ post.title | escape }}"></a>
+    {% endif %}
+    <div class="article-card__content">
+      <h2 class="article__title article-card__title">
+        <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </h2>
+      <p class="article__excerpt article-card__excerpt">{% if post.description %}{{ post.description }}{% else %}{{ post.content | strip_html | strip_newlines | truncate: 165 }}{% endif %}</p>
+      <div class="article-info">
+        <span class="article__meta">
+          <span class="article__date"><a href="{{ post.url | prepend: site.baseurl }}"><time datetime="{{ post.date | date_to_xmlschema }}">{% assign date_format = site.minima.date_format | default: "%B %-d, %Y" %}{{ post.date | date: date_format }}</time></a></span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <!-- end article card -->
+</div>
+
+{% else %}
+
 <div class="col col-12">
   <!-- begin article -->
   <div class="article wow fadeIn">
@@ -27,3 +54,5 @@
   </div>
   <!-- end article -->
 </div>
+
+{% endif %}

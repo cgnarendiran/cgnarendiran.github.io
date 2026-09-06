@@ -53,3 +53,58 @@
     }
   }
 }
+/* Article Card (grid on the blog and projects indexes) */
+.article-card-col {
+  margin-bottom: 45px;
+}
+
+.article-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.article-card__image {
+  display: block;
+  height: 0;
+  padding-bottom: 60%;
+  margin-bottom: 22px;
+  background-color: $light-gray;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: opacity 0.25s ease;
+
+  &:hover {
+    opacity: 0.82;
+  }
+}
+
+.article-card__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.article-card__title {
+  margin-bottom: 14px;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.article-card__excerpt {
+  display: -webkit-box;
+  margin-bottom: 18px;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 24px;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Pins the date to the bottom so cards in a row line up */
+.article-card .article-info {
+  margin-top: auto;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+}

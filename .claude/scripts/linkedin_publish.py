@@ -18,6 +18,7 @@ Usage:
   linkedin_publish.py --file <outbox.md> [--force] [--ledger .claude/linkedin-ledger.md]
   linkedin_publish.py --dir .claude/linkedin-outbox --list-due
   linkedin_publish.py --dir .claude/linkedin-outbox --publish-due --ledger .claude/linkedin-ledger.md
+  linkedin_publish.py --file <outbox.md> --update urn:li:share:123   replace a live post's text
 
 Environment (or --env-file KEY=VALUE lines):
   LINKEDIN_ACCESS_TOKEN    OAuth token with w_member_social; lives 60 days
@@ -40,6 +41,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 
@@ -228,6 +230,19 @@ def create_post(token, version, author, commentary, image_urn=None, alt=None):
     raise ApiError("createPost", st, body or "")
 
 
+def update_post(token, version, post_urn, commentary):
+    """Replace a live post's commentary. Only the text changes; media stays."""
+    url = f"{API}/rest/posts/{urllib.parse.quote(post_urn, safe='')}"
+    headers = api_headers(token, version)
+    headers["X-RestLi-Method"] = "PARTIAL_UPDATE"
+    st, hd, body = http("POST", url, headers, json.dumps({"patch": {"$set": {"commentary": commentary}}}).encode())
+    if st == 401:
+        raise TokenRejected(body)
+    if st not in (200, 204):
+        raise ApiError("updatePost", st, body)
+    return st
+
+
 # ----- driver -----
 
 def check_file(path, args, now):
@@ -241,6 +256,11 @@ def check_file(path, args, now):
         image_path = os.path.join(args.image_root, meta["image"])
         if not os.path.exists(image_path):
             raise ValueError(f"{path}: image not found at {image_path}")
+    words = len(body.split())
+    if words > 250:
+        warnings.append(f"{words} words; the ceiling is 250")
+    if "?" not in body:
+        warnings.append("no question anywhere in the post; the guide wants one rhetorical question in the first half")
     if "@[Fast Code AI](urn:li:organization:70969206)" not in body:
         warnings.append("no Fast Code AI mention in the body")
     if not re.search(r"https://cgnarendiran\.github\.io/", body):
@@ -295,6 +315,7 @@ def main():
     ap.add_argument("--ledger", help="ledger to append to (and delete the outbox file) on success")
     ap.add_argument("--env-file", help="KEY=VALUE file with the LINKEDIN_* variables")
     ap.add_argument("--image-root", default=".", help="directory the image path is relative to (repo root)")
+    ap.add_argument("--update", metavar="POST_URN", help="with --file: replace that live post's text with the file body; ledger and outbox untouched")
     args = ap.parse_args()
 
     if args.env_file:
@@ -341,6 +362,34 @@ def main():
             print(json.dumps({"error": "LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN must be set"}))
             sys.exit(2)
         env = {"token": token, "urn": urn, "version": os.environ.get("LINKEDIN_API_VERSION", DEFAULT_VERSION)}
+
+    if args.update:
+        if not args.file:
+            print(json.dumps({"error": "--update needs --file"}))
+            sys.exit(2)
+        try:
+            meta, body, when, image_path, warnings = check_file(args.file, args, now)
+            commentary = little_text(body)
+            result = {"file": args.file, "post_urn": args.update, "chars": len(body), "words": len(body.split()),
+                      "commentary_chars": len(commentary), "warnings": warnings}
+            if args.dry_run:
+                result["dry_run"] = True
+                result["commentary"] = commentary
+            else:
+                result["http_status"] = update_post(env["token"], env["version"], args.update, commentary)
+                result["updated"] = True
+                result["post_url"] = f"https://www.linkedin.com/feed/update/{args.update}/"
+        except ValueError as e:
+            print(json.dumps({"file": args.file, "error": str(e)}))
+            sys.exit(2)
+        except TokenRejected as e:
+            print(json.dumps({"error": "token rejected (401); re-run linkedin_auth.py", "detail": str(e)[:300]}))
+            sys.exit(4)
+        except ApiError as e:
+            print(json.dumps({"error": str(e), "where": e.where, "status": e.status}))
+            sys.exit(3)
+        print(json.dumps(result, ensure_ascii=False))
+        sys.exit(0)
 
     published = 0
     for p in files:

@@ -26,16 +26,25 @@
   
   {% include javascripts.html %}
 
-  <!-- Inlcude mathjax support -->
+  <!-- Include mathjax support.
+       SVG output, not HTML-CSS/NativeMML: glyphs are drawn from paths bundled in the JS, so
+       nothing depends on a webfont download or a system script font. HTML-CSS/NativeMML was
+       rendering \mathcal{} as blank space in display and inline math alike.
+       displayMath is declared explicitly because kramdown emits $$...$$ as \[ ... \]. -->
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       tex2jax: {
         inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
         processEscapes: true
+      },
+      SVG: {
+        scale: 100,
+        linebreaks: { automatic: true }
       }
     });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_SVG" type="text/javascript"></script>
     
 </body>
 

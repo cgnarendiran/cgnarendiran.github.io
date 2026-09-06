@@ -3,7 +3,7 @@ layout: post
 title:  "VLMs - Pixels to Tokens"
 date:   2025-12-09
 image:  images/blog26/cover.jpg
-tags:  Tokens Pixels Vision Language Models Computer Vision
+tags: [vision-language-models, multimodal, computer-vision, clip]
 ---
 *On the cover: Pieter Bruegel the Elder, "The Tower of Babel" (1563). Everyone on the site is competent and none of them are mutually intelligible, which is precisely the situation a vision encoder and a language model are in before you put a projection layer between them. [Public domain](https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_d._%C3%84.,_Kunsthistorisches_Museum_Wien,_Gem%C3%A4ldegalerie_-_Turmbau_zu_Babel_-_GG_1026_-_Kunsthistorisches_Museum.jpg), Kunsthistorisches Museum, Vienna.*
 

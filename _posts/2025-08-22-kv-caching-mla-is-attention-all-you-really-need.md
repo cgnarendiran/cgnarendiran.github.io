@@ -3,7 +3,7 @@ layout: post
 title:  "KV Caching & MLA - Is Attention All You Really Need?"
 date:   2025-08-22
 image:  images/blog21/cover.jpeg
-tags:  DeepSeek Attention MLA KV Caching MoE 
+tags: [kv-caching, attention, transformers, efficient-inference, deepseek]
 ---
 *On the cover: MLA Architecture. Credits: Welch Labs*
 

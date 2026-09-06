@@ -6,9 +6,17 @@ title: Blog
 	<div class="row">
 		{% if site.posts.size > 0 %}
 			{% for post in paginator.posts %}
-				{% include article-content.html style="grid" %}
+				{% include article-content.html %}
 			{% endfor %}
 		{% endif %}
 	</div>
 </div>
 {% include pagination.html %}
+
+<div class="container">
+	<div class="row">
+		<div class="col col-12">
+			<p class="blog-browse-tags"><a href="{{ '/tags/' | relative_url }}">Browse all topics &rarr;</a></p>
+		</div>
+	</div>
+</div>

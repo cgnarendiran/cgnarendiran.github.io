@@ -3,7 +3,7 @@ layout: post
 title:  "Personal Space for drones - Part 1"
 date:   2021-07-20
 image:  images/blog8/cover.jpg
-tags:  reciprocal velocity obstacle collision avoidance robotics multi agents
+tags: [robotics, collision-avoidance, multi-agent-systems, drones]
 ---
 *On the cover: Spiderman: Far from home, London bridge fight scene*
 

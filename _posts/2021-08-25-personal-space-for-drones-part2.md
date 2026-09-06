@@ -3,7 +3,7 @@ layout: post
 title:  "Personal Space for drones - Part 2"
 date:   2021-08-25
 image:  images/blog9/cover.gif
-tags:  reciprocal velocity obstacle collision avoidance robotics multi agents
+tags: [robotics, collision-avoidance, multi-agent-systems, drones]
 ---
 *On the cover: Swarm demo scene from Blackmirror: Hated in the Nation*
 

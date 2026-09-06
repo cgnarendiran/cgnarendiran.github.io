@@ -3,7 +3,7 @@ layout: post
 title:  "ViT - Pixels to Tokens"
 date:   2025-11-08
 image:  images/blog25/cover.jpg
-tags:  Tokens Pixels Vision Transformers Computer Vision
+tags: [vision-transformers, computer-vision, transformers, self-supervised-learning]
 ---
 *On the cover: "Blind monks examining an elephant" (Hanabusa Itchō, 1888). Each monk has hold of exactly one patch, and the animal only shows up once you combine them. [Public domain](https://commons.wikimedia.org/wiki/File:Blind_monks_examining_an_elephant.jpg), via the Library of Congress.*
 

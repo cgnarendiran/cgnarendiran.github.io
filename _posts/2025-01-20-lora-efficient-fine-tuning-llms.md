@@ -3,7 +3,7 @@ layout: post
 title:  "LoRA - The Diet Pill for Obese Language Models"
 date:   2025-01-20
 image:  images/blog16/cover.png
-tags:  lora fine-tuning llm language-models parameter-efficient efficient-training
+tags: [lora, fine-tuning, llms, efficient-training]
 ---
 *On the cover: The concept of low-rank adaptation visualized as dimension reduction*
 

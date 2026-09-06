@@ -3,7 +3,7 @@ layout: project
 title:  Autonomous Ground Vehicle - 13th in Global Competition on debut stint
 date:   2017-09-01
 image:  images/project4/cover.jpeg
-tags:   cfi abhiyaan igvc
+tags: [robotics, autonomous-vehicles, competition]
 ---
 This project was started off at Center For Innovation (CFI, IITM) with the aim to understand and develop autonomous vehicles. We called us 'Team Abhiyaan' and represented IIT Madras in the 25th Annual International Ground Vehicle Competition (IGVC), one of the biggest unmanned ground vehicle competitions in the world for university students. This competition was held at Oakland University in Michigan, USA (2-5th June).
 

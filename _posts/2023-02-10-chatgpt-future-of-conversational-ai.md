@@ -3,7 +3,7 @@ layout: post
 title:  "ChatGPT - The Conversational Wizard"
 date:   2023-02-10
 image:  images/blog12/cover.png
-tags:  chatgpt nlp ai language models gpt3 bert openai microsoft bard google
+tags: [llms, nlp, openai, generative-ai]
 ---
 *On the cover: ChatGPT's response to the prompt "What is the meaning of life?"*
 

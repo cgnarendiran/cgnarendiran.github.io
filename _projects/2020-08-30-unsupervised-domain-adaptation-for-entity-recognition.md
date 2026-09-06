@@ -3,7 +3,7 @@ layout: project
 title:  Unsupervised domain adaptation for entity recognition
 date:   2020-08-30
 image:  images/project7/cover.png
-tags:   attention transformers bert transfer learning lstm entity recognition ner 
+tags: [named-entity-recognition, domain-adaptation, transformers, nlp, transfer-learning]
 ---
 *On the cover: A sample t-SNE representations of final hidden state mean pooled along sequence dimensions of pure loss-centric adaptation of BERT on source(CONLL) vs target(Enron, SciTech) domains. Pure loss centric techniques are found to be harmful to the final performance of the models*
 

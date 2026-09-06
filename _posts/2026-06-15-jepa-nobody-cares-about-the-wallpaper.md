@@ -3,7 +3,7 @@ layout: post
 title:  "JEPA - Nobody Cares About the Wallpaper"
 date:   2026-06-15
 image:  images/blog28/cover.jpg
-tags:  JEPA Self-Supervised Learning World Models Video Representation Collapse
+tags: [jepa, self-supervised-learning, world-models, representation-learning]
 ---
 *On the cover: A police sketch in progress, drawn from a description rather than a photograph*
 

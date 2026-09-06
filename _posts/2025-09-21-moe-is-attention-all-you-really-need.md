@@ -3,7 +3,7 @@ layout: post
 title:  "MoE - Is Attention All You Really Need?"
 date:   2025-09-21
 image:  images/blog23/cover.jpg
-tags:  DeepSeek MoE Mixture of Experts LLMs
+tags: [mixture-of-experts, transformers, llms, efficient-inference, deepseek]
 ---
 *On the cover: A bunch of different robots who are expert at different tasks*
 

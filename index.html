@@ -16,7 +16,7 @@ layout: default
 	</div>
 	<div class="row">
 		{% for post in site.posts limit: 6 %}
-			{% include article-content.html style="grid" %}
+			{% include article-content.html %}
 		{% endfor %}
 	</div>
 </div>
@@ -33,7 +33,7 @@ layout: default
 	<div class="row">
 		{% assign recent_projects = site.projects | sort: 'date' | reverse %}
 		{% for post in recent_projects limit: 2 %}
-			{% include article-content.html style="grid" %}
+			{% include article-content.html %}
 		{% endfor %}
 	</div>
 </div>

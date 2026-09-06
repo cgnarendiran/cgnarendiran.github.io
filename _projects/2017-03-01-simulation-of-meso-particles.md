@@ -3,7 +3,7 @@ layout: project
 title:  Simulation of mesoparticles in microchannels (Dissipative Particle Dynamics)
 date:   2017-03-01
 image:  images/project1/cover.png
-tags:   blood rbc
+tags: [fluid-dynamics, simulation, healthcare, research]
 ---
 Human Blood is composed of blood cells (also called corpuscles) suspended in blood plasma. Study of human blood and its flow in blood vessels is crucial for diagnosis, pathology and design of biomedical devices. Study of deformative properties and flow of RBCs and cancer cells in minute vessels have peaked the interest of biologists and pathologists, since affected cells differ in their behavior compared to the healthy cells. In this thesis, we use FORTRAN codes to model the RBCs in micro flow domain. We use Velocity Verlet algorithm for time integration.
 

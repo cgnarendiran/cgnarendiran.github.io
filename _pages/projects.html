@@ -8,7 +8,7 @@ permalink: /projects/
 		{% if site.projects.size > 0 %}
 		{% assign sortedProjects = site.projects | sort: 'date'  | reverse %}
 			{% for post in sortedProjects %}
-				{% include article-content.html style="grid" %}
+				{% include article-content.html %}
 			{% endfor %}
 		{% endif %}
 	</div>

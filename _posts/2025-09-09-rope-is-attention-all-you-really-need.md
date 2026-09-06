@@ -3,7 +3,7 @@ layout: post
 title:  "RoPE - Is Attention All You Really Need?"
 date:   2025-09-09
 image:  images/blog22/cover.jpeg
-tags:  DeepSeek RoPE Rotary Positional Encoding LLMs
+tags: [positional-encoding, attention, transformers, llms, deepseek]
 ---
 *On the cover: A RoPE, essentially*
 

@@ -3,7 +3,7 @@ layout: project
 title:  Evaporative fuel spray - droplet model
 date:   2016-11-15
 image:  images/project3/cover.jpeg
-tags:   droplet model ilass
+tags: [fluid-dynamics, simulation, research]
 ---
 An approach for including evaporation in a model for predicting spray penetration
 

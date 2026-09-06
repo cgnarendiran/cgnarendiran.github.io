@@ -1,10 +1,83 @@
-/* Tag Page */
-.archive-title {
-  margin-bottom: 80px;
-  padding-left: 15px;
-  border-left: 7px solid $brand-color;
-  
-  @media only screen and (max-width: $mobile) {
-    margin-bottom: 50px;
+/* Tag index (/tags/) */
+.tags-intro {
+  margin-bottom: 30px;
+  font-size: $font-size-small;
+  color: $gray;
+}
+
+.tag-cloud {
+  margin-bottom: 60px;
+}
+
+.tag-cloud__item {
+  display: inline-block;
+  margin: 0 6px 8px 0;
+  padding: 4px 10px;
+  font-family: $heading-font-family;
+  font-size: $font-size-small;
+  line-height: 1.6;
+  color: $text-color;
+  border: 1px solid $border-color;
+  border-radius: 3px;
+  transition: all .15s ease;
+
+  &:hover {
+    color: #fff;
+    background-color: $brand-color;
+    border-color: $brand-color;
   }
+}
+
+.tag-cloud__count {
+  margin-left: 6px;
+  font-size: $font-size-x-small;
+  color: $gray;
+}
+
+.tag-cloud__item:hover .tag-cloud__count {
+  color: #fff;
+}
+
+.tag-group__title {
+  /* the header is fixed, so anchored headings need room above them */
+  scroll-margin-top: 90px;
+  margin-bottom: 18px;
+  padding-left: 12px;
+  font-size: $font-size-h4;
+  border-left: 5px solid $brand-color;
+}
+
+.tag-group__list {
+  margin-bottom: 50px;
+}
+
+.tag-group__item {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.tag-group__date {
+  display: inline-block;
+  min-width: 78px;
+  font-size: $font-size-x-small;
+  letter-spacing: 0.4px;
+  color: $gray;
+}
+
+.tag-group__kind {
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: $font-size-x-small;
+  color: $gray;
+  border: 1px solid $border-color;
+  border-radius: 3px;
+}
+
+/* Link from the blog index to the tag index */
+.blog-browse-tags {
+  margin-top: -20px;
+  margin-bottom: 60px;
+  font-family: $heading-font-family;
+  font-size: $font-size-small;
+  text-align: center;
 }

@@ -3,7 +3,7 @@ layout: post
 title:  "Guided Diffusion Models - Part 2"
 date:   2022-12-01
 image:  images/blog11/cover.jpg
-tags:  diffusion dalle midjourney imagen generation guidance ai vision
+tags: [diffusion-models, image-generation, generative-ai, computer-vision]
 ---
 *On the cover: Midjourney's creation for the prompt "Sun Goddess artful"*
 

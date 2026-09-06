@@ -3,7 +3,7 @@ layout: project
 title:  Aqueous Dispersions of Lipid Nanoparticles wet hydrophobic surfaces (Substantiation of empirical adsorption time scales using simulation)
 date:   2016-08-20
 image:  images/project2/cover.jpeg
-tags:   cubosomes ncl
+tags: [molecular-dynamics, simulation, nanoparticles, research]
 ---
 Efficient delivery of aqueous sprays to hydrophobic surfaces is the key technological challenge in a wide variety of applications, including pesticide delivery to plants. To account for losses due to bouncing of pesticide sprays off hydrophobic leaf surfaces, large excess of pesticide is typically employed, resulting in environmentally hazardous run-offs that contaminate soil and ground water.
 

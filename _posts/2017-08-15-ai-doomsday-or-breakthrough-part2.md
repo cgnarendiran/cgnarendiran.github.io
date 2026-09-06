@@ -3,7 +3,7 @@ layout: post
 title:  "Artificial Intelligence: Doomsday or Breakthrough - Part 2"
 date:   2017-08-15
 image:  images/blog2/cover.jpg
-tags:  Artificial Intelligence AI doomsday breakthrough singularity reinforcement learning openai exmachina turing test convolutionals neural networks
+tags: [ai-safety, deep-learning, openai, essay]
 ---
 This post is a continuation of part one: [READ PART 1 HERE][part1]
 

@@ -5,7 +5,7 @@ date:   2025-11-08
 image:  images/blog25/cover.jpg
 tags:  Tokens Pixels Vision Transformers Computer Vision
 ---
-*On the cover: Decorative*
+*On the cover: "Blind monks examining an elephant" (Hanabusa Itchō, 1888). Each monk has hold of exactly one patch, and the animal only shows up once you combine them. [Public domain](https://commons.wikimedia.org/wiki/File:Blind_monks_examining_an_elephant.jpg), via the Library of Congress.*
 
 For nearly a decade, if you wanted a computer to identify a cat in a picture, you had one reliable tool: The Convolutional Neural Network (CNN). CNNs were the undisputed kings of Computer Vision. They were dependable, they understood that pixels next to each other usually relate to each other (locality), and they didn't ask for much other than a decent GPU and some ImageNet data.
 

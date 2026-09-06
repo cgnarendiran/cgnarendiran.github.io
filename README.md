@@ -1,104 +1,96 @@
-# Reked is a minimal and responsive blog theme for Jekyll. It is focused on the content, speed, simplicity
+# cgnarendiran.github.io
 
-### Features
+The personal site of **Narendiran Chembu** — a technical blog and a project portfolio.
 
-* 100% responsive and clean theme
-* Optimized for mobile devices
-* Minimal design
-* Valid HTML5 code
-* Post sharing
-* Image Zoom
-* MailChimp Form Widget
-* Supports Disqus Comments
-* Supports Google Analytics
-* Ionicons
-* Google Fonts
+**Live at [cgnarendiran.github.io](https://cgnarendiran.github.io)**
 
-* * *
+Mostly long-form explainers on machine learning: how a thing actually works, with the real
+numbers, the ablation that proves the claim, and one extended metaphor carried from the first
+line to the last. 27 posts since 2017, plus 14 project write-ups.
 
-### Demo
+Several run as series:
 
-Check the theme in action [Demo](https://reked.netlify.com/)
+- **Pixels to Tokens** — [ViT](https://cgnarendiran.github.io/blog/vit-pixels-to-tokens/) → [VLMs](https://cgnarendiran.github.io/blog/vlm-pixels-to-tokens/) → [VLAs](https://cgnarendiran.github.io/blog/vla-pixels-to-tokens/) → [JEPA](https://cgnarendiran.github.io/blog/jepa-nobody-cares-about-the-wallpaper/)
+- **Is Attention All You Really Need?** — [KV Caching & MLA](https://cgnarendiran.github.io/blog/kv-caching-mla-is-attention-all-you-really-need/), [RoPE](https://cgnarendiran.github.io/blog/rope-is-attention-all-you-really-need/), [MoE](https://cgnarendiran.github.io/blog/moe-is-attention-all-you-really-need/)
 
-The main page would look like this:
+## How it's built
 
-![Main page preview](https://github.com/artemsheludko/reked/blob/master/images/reked-preview.jpg?raw=true)
+Jekyll, deployed by GitHub Pages straight from `master` — **there is no CI workflow, so pushing
+to `master` publishes the site.** Content changes go through a pull request.
 
-* * *
+- Markdown is rendered by **kramdown**; math by **MathJax 2.7.9** with SVG output
+- Blog posts live in `_posts/`, published at `/blog/:title/`, paginated 12 to a page
+- Projects are a Jekyll **collection** in `_projects/`, published at `/projects/:title/`
+- Styles are SCSS under `_sass/`, inlined into `<head>` at build time — there is no separate
+  stylesheet request and no JS build step
 
-### Deployment
+```
+_posts/        blog posts             _sass/      SCSS partials
+_projects/     project write-ups      _layouts/   page shells
+_pages/        standalone pages       _includes/  shared partials
+images/        blogNN/ and projectNN/ .claude/    automation config (never served)
+```
 
-To run the theme locally, navigate to the theme directory and run `bundle install` to install the dependencies, then run `jekyll serve` or `bundle exec jekyll serve` to start the Jekyll server.
+## Running it locally
 
-I would recommend checking the [Deployment Methods](https://jekyllrb.com/docs/deployment-methods/) page on Jekyll website.
+```bash
+bundle install                # first time, or after Gemfile changes
+bundle exec jekyll serve      # http://localhost:4000, rebuilds on save
+bundle exec jekyll build      # output to _site/ (gitignored)
+```
 
-## Stackbit
+A full build takes roughly 30 seconds. There are no tests and no linters.
 
-This theme is ready to import into Stackbit. It can be deployed to Netlify and you can connect any headless CMS including Forestry, NetlifyCMS, DatoCMS, Sanity or Contentful.
+**Ruby version caveat.** The Gemfile is unpinned, so `bundle install` resolves to Jekyll 4.x,
+which needs Ruby >= 3.0. macOS ships Ruby 2.6, on which `bundle install` fails building `ffi`.
+Until a modern Ruby is installed, build with a user-installed Jekyll 3.9.5 outside bundler:
 
-[![Create with Stackbit](https://assets.stackbit.com/badge/create-with-stackbit.svg)](https://app.stackbit.com/create?theme=https://github.com/artemsheludko/reked)
+```bash
+PATH="$HOME/.gem/ruby/2.6.0/bin:$PATH" JEKYLL_NO_BUNDLER_REQUIRE=true jekyll build
+```
 
-* * *
+## Writing a post
 
-### Posts
+```yaml
+---
+layout: post
+title:  "JEPA - Nobody Cares About the Wallpaper"
+date:   2026-09-05
+image:  images/blog28/cover.jpg
+tags:  JEPA Self-Supervised Learning World Models
+---
+*On the cover: a police sketch in progress*
+```
 
-To create a new post, you can create a new markdown file inside the \_posts directory by following the [recommended file structure](https://jekyllrb.com/docs/posts/#creating-post-files).
+A few conventions that are easy to get wrong:
 
-      ---
-      layout: post
-      title: "Welcome to Jekyll!"
-      date: 2018-08-23 16:04:00 +0300
-      image: 03.jpg
-      tags: Jekyll
-      ---
+- **Image directories are numbered, not named.** The Nth post uses `images/blogNN/`, the Nth
+  project `images/projectNN/`. Check `ls images | grep blog` before creating one.
+- `image:` is repo-relative with no leading slash. Body figures use the **absolute production
+  URL**, so they won't render locally until pushed.
+- `tags:` is a bare space-separated list — each word becomes its own tag, not a YAML array.
+- **Display math is `$$ ... $$`.** Not `\[ \]` — kramdown strips the backslash before MathJax
+  sees the page. Inline is `$...$`.
 
+## Known gap: tag pages 404 in production
 
-You can set the tags and the post image.
+`_config.yml` enables `jekyll/tagging`, which is **not** on the GitHub Pages plugin allowlist,
+so it is silently skipped on the live build. All 130 `/tag/<tag>/` pages generate locally and
+return 404 in production, which means every tag link on a post page is dead. Fixing it needs a
+GitHub Actions build, or dropping the plugin. Don't assume tag links work because they resolve
+on a local server.
 
-Add post images to **/images/** directory.
+## Automation
 
-For tags, try to not add space between two words, for example, `Ruby on Rails`, could be something like (`ruby-on-rails`, `Ruby_on_Rails`, or `Ruby-on-Rails`).
+`.claude/` holds the config for a scheduled agent that drafts one post a week and opens it as a
+pull request — a topic queue, a writing style guide, and a vendored editing skill. Nothing in
+that directory is ever served: Jekyll ignores dot-directories, which is deliberate.
 
-* * *
+---
 
-### Disqus Comments
+## Credits
 
-Reked Theme comes with Disqus comments enabled.
-
-Open `_config.yml` file, and change the `mr-brown` value on line 30 with your [Disqus account shortname](https://help.disqus.com/customer/portal/articles/466208).
-
-      Comment Section (Disqus)
-      disqus-identifier: mr-brown # Add your shortname for Disqus Comment. For example mr-brown
-
-
-That’s all you need to setup Disqus from the theme side. If you get any issue regarding that comments are unable to load. First, make sure you have [registered your website with Disqus (Step 1)](https://help.disqus.com/customer/portal/articles/466182-publisher-quick-start-guide).
-
-And also check [Disqus troubleshooting guide](https://help.disqus.com/customer/portal/articles/472007-i-m-receiving-the-message-%22we-were-unable-to-load-disqus-%22) if you still have issues.
-
-* * *
-
-### Google Analytics
-
-To integrate Google Analytics, open `_config.yml`, and add your Google Analytics identifier.
-
-    # Google Analytics
-    google-analytics: \# Add your identifier. For example UA-99631805-1
-
-
-* * *
-
-### Update favicon
-
-You can find the current favicon (favicon.ico) inside the theme root directory, just replace it with your new favicon.
-
-* * *
-
-### License
-
-Mit License
-
-* * *
-
-### Support
-
-If you’d like to support me so I can continue to provide free content and themes you can become my sponsor on <a href="https://www.patreon.com/artemsheludko" target="_blank">Patreon</a>.
+Built on the [**Reked**](https://github.com/artemsheludko/reked) Jekyll theme by
+[Artem Sheludko](https://github.com/artemsheludko), MIT licensed, and adapted since — the card
+grid, the projects collection, MathJax support and the SCSS are all local changes. This README
+replaces the theme's original one; see `LICENSE.txt`.

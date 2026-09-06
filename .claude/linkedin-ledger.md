@@ -46,3 +46,4 @@ Naren wrote these himself. Listed so a backfill never re-posts them.
 
 | Slug | Blog date | Postbeam post id | Scheduled for | Run date (UTC) | Notes |
 |---|---|---|---|---|---|
+| jepa-nobody-cares-about-the-wallpaper | 2026-06-15 | 29021 | not scheduled | 2026-09-06 | approved, not scheduled: Postbeam subscription required. Test run stalled at an Edit permission prompt before it could write this row; added by hand |

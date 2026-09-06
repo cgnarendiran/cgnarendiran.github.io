@@ -8,3 +8,4 @@ Gemfile.lock
 .claude/worktrees/
 # LinkedIn OAuth token written by .claude/scripts/linkedin_auth.py
 .claude/linkedin.env
+__pycache__/

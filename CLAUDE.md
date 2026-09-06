@@ -135,7 +135,7 @@ Key points when adding content:
   buttons and "Recent posts" widget, `project.html` has them commented out. Disqus and the
   MailChimp newsletter are commented out everywhere and disabled in `_config.yml`.
 - `_includes/article-content.html` — the shared card for every index. It expects a `post`
-  variable in scope and takes no parameters. Used by the home page (6 posts + 2 projects),
+  variable in scope and takes no parameters. Used by the home page (4 posts + 2 projects),
   `/blog/` (paginated, 12 per page via `jekyll-paginate`) and `/projects/` (all, unpaginated).
   Card styles live at the bottom of `_sass/4-layouts/_home-page.scss`; the two-up layout is
   just the theme's own grid classes (`col-6` desktop, `col-t-12` below 768px), so no new grid

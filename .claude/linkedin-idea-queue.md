@@ -14,8 +14,8 @@ can read it through the Notion connector if that is ever wired up.
 
 ## What works and what doesn't
 
-Judged on Naren's ten published LinkedIn posts and on the LinkedIn form, not on reach: Postbeam's
-analytics have not synced for any post yet, so nothing here is ranked by numbers.
+Judged on Naren's ten published LinkedIn posts and on the LinkedIn form, not on reach: there is
+no engagement data in hand yet, so nothing here is ranked by numbers.
 
 **Works**
 
@@ -91,7 +91,11 @@ of those get a second angle below.
 - **Project story rows** are written from the linked `_projects/` page only. Read the page first;
   if it has no concrete moment, mark the row `Thin` and move on.
 - Publish time and zone come from the settings block in `.claude/linkedin-ledger.md`.
-- After pushing to Postbeam, the row moves to Posted with the Postbeam id.
+- The job writes the post to `.claude/linkedin-outbox/<slug>.md` exactly as the companion job
+  does. The publisher job posts it on the next weekday morning and records it in
+  `.claude/linkedin-ledger.md`; the row here then moves to Posted with the LinkedIn post URN.
+- Every post follows `.claude/linkedin-style-guide.md`, including the length, hook, question and
+  first-person rules that came out of the first JEPA promo (guide §11).
 
 ---
 
@@ -190,5 +194,5 @@ counting math.
 
 ## Posted
 
-| # | Post | Kind | Postbeam id | Scheduled for | Run date (UTC) | Notes |
+| # | Post | Kind | Post id | Published (UTC) | Run date (UTC) | Notes |
 |---|---|---|---|---|---|---|

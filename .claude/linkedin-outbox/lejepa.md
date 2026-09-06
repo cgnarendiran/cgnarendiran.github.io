@@ -8,17 +8,17 @@ publish_after: 2026-09-07T08:30:00-07:00
 source: blog-companion
 ---
 
-A master smith quenches at a temperature his grandfather picked and hammers the billet three hundred times. Ask which step matters and he cannot tell you.
+A master smith quenches at a temperature his grandfather picked and hammers the billet three hundred times. Ask him which step matters and he cannot tell you.
 
-That was self-supervised learning for five years: an EMA teacher, a stop-gradient, a deliberately weak predictor, a schedule somebody tuned. Remove any one of them and the run flatlines on day two, and nobody could tell you why.
+That was self-supervised learning for five years: an EMA teacher, a stop-gradient, a deliberately weak predictor, and a schedule somebody tuned once and never touched again. Skip one and the run flatlines two days in.
 
-So why not drop the charms and see what breaks? Because you cannot read the loss: it falls whether the model is learning or quietly collapsing onto one answer for everything.
+So why not drop the charms and see what breaks? Because you cannot read the loss. It falls whether the model is learning or quietly collapsing onto one answer for everything, so the only way to find out is to finish the run and probe it.
 
-LeJEPA swaps the lot for one term. Cast a part before anyone tells you what it bolts to and you pour it equally strong in every direction. The load comes from an angle you did not pick, and embeddings have the same problem: the downstream task points somewhere nobody has told you about yet. The shape that survives it is an isotropic Gaussian. You cannot X-ray an ingot, so LeJEPA core-samples instead, a thousand random directions every step, each shadow tested for normality.
+LeJEPA swaps the lot for one term. Cast a part before anyone tells you what it bolts to and you pour it equally strong in every direction, because the load will come from an angle you did not pick. Embeddings work the same way, and the shape that is equally strong in every direction is an isotropic Gaussian. You cannot X-ray an ingot, so LeJEPA core-samples it: a thousand random directions a step, each shadow tested against a bell curve (the test dates from 1936, written by two statisticians with no GPUs between them).
 
 The training loss now tracks probe accuracy at 94%+ Spearman, so you can pick a model without labels. That is the bit I would actually build on.
 
-The heuristics are not really gone though. The theorem fixes the shape of the embedding cloud and says nothing about what should count as two views of the same image, and that is still 2 global crops, 6 local crops and a stack of colour jitter thresholds inherited from DINO and never re-derived. Given a choice of which half to put a proof under, I would have picked that one.
+The catch is that the heuristics are not really gone. It still trains on crops and colour jitter lifted wholesale from DINO, and the theorem says nothing about what should count as two views of the same thing.
 
 I broke it all down. Part 2 of the JEPA two-parter:
 https://cgnarendiran.github.io/blog/lejepa/

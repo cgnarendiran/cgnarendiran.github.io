@@ -10,7 +10,7 @@ tags:  Tokens Pixels Vision Language Models Computer Vision
 
 *On the cover: perception, solved. Grasping, still two euros a go. Moravec's paradox in an arcade, and the reason the honest-cons section of this post exists. Photo by [Nlan86](https://commons.wikimedia.org/wiki/File:A_Claw_Crane_game_machine_containing_unicorn_plushes_in_Trouville,_France,_Sept_2011.jpg), CC BY-SA 3.0.*
 
-In our [last post](https://cgnarendiran.github.io/blog/vlm-pixels-to-tokens/), we taught a Transformer to see *and* speak. We bolted a vision encoder onto an LLM, projected pixel-patches into the language space, and tricked the text model into hallucinating a vision system. The result was a model that can look at a picture of your fridge and write you a thousand words on apples.
+In our [last post](/blog/vlm-pixels-to-tokens/), we taught a Transformer to see *and* speak. We bolted a vision encoder onto an LLM, projected pixel-patches into the language space, and tricked the text model into hallucinating a vision system. The result was a model that can look at a picture of your fridge and write you a thousand words on apples.
 
 Lovely. Now ask it to actually pick up the apple.
 
@@ -32,7 +32,7 @@ Before we dive into specific models, here's the generic recipe every VLA follows
 
 The variants we'll see next differ almost entirely in how that last piece works: discrete token decoding (RT-2, OpenVLA), continuous regression, or denoising-based generation (π₀). Everything else is mostly scale and data.
 
-![alt](https://cgnarendiran.github.io/images/blog27/vla-architecture.png)
+![alt](/images/blog27/vla-architecture.png)
 *Figure 1: The generic architecture of a Vision-Language-Action model (shown for autonomous driving, but applicable for robotics as well). Pixels and instruction are tokenized and fused by a VLM backbone; the action head decodes those into motor commands or trajectory waypoints.*
 
 With that template in hand, let's see how the major VLAs of 2023–2025 fill in each box.
@@ -63,7 +63,7 @@ Here's where it gets interesting. If you fine-tune only on robot data, the VLM f
 
 The ablation is striking: with co-fine-tuning, generalization to unseen tasks jumps from 52% to 63%. Train from scratch on the smaller 5B model without web pretraining and it collapses to 9%. Without the web scale, nothing transfers.
 
-![alt](https://cgnarendiran.github.io/images/blog27/rt2.png)
+![alt](/images/blog27/rt2.png)
 *Figure 2: RT-2 architecture. Source: [RT-2](https://arxiv.org/abs/2307.15818)*
 
 The emergent behaviors are where RT-2 stops looking like a control policy and starts looking like a strange new kind of intelligence. "Move the can on top of the heart" works, even though there are no hearts in the robot data. "Move the banana to the sum of two plus one" works. Multilingual instructions work. None of this is in the demonstrations; it leaks in from the web.
@@ -78,10 +78,10 @@ The architecture is RT-2's recipe with a few sharpenings. The big one is vision:
 
 The rest is familiar: same 256-bin discretization per action dimension, same token-overwriting trick on Llama-2 7B's vocabulary. One tweak that matters is that bin edges are placed at the 1st–99th percentile per dimension instead of min/max, so outliers don't compress the resolution you actually use. Training ran on the Open X-Embodiment dataset, ~970K trajectories from 22 different robots assembled by 21+ labs. The model never sees a single robot; it sees the whole zoo. Training takes 64 A100s for 14 days.
 
-![alt](https://cgnarendiran.github.io/images/blog27/openvla.png)
+![alt](/images/blog27/openvla.png)
 *Figure 3: OpenVLA architecture. Source: [OpenVLA](https://arxiv.org/abs/2406.09246)*
 
-The killer feature is [LoRA](https://cgnarendiran.github.io/blog/lora-efficient-fine-tuning-llms/) fine-tuning for new robots. Got a new arm? You don't need to retrain 7B parameters. A rank-32 LoRA adapter (97.6M params, 1.4% of the model) trains on a single A100 for 10–15 hours and matches full fine-tuning. Inference at 4-bit quantization runs ~6 Hz on a single RTX 4090, so a generalist robot policy now fits on a hobbyist's GPU.
+The killer feature is [LoRA](/blog/lora-efficient-fine-tuning-llms/) fine-tuning for new robots. Got a new arm? You don't need to retrain 7B parameters. A rank-32 LoRA adapter (97.6M params, 1.4% of the model) trains on a single A100 for 10–15 hours and matches full fine-tuning. Inference at 4-bit quantization runs ~6 Hz on a single RTX 4090, so a generalist robot policy now fits on a hobbyist's GPU.
 
 OpenVLA's honest weakness is that it doesn't co-train with web data the way RT-2 did. It manipulates better and generalizes semantically worse. Pick your poison.
 
@@ -117,7 +117,7 @@ At inference, start from pure noise and integrate forward with Euler steps. Ten 
 
 If you've seen diffusion, this is its straight-line cousin. Compared to diffusion's curvy paths, flow matching's paths are linear, so you need fewer steps. Compared to autoregressive token decoding, you get all 50 × 18 = 900 continuous values in 10 parallel forward passes of a small action expert. That's how π₀ gets to 50 Hz.
 
-![alt](https://cgnarendiran.github.io/images/blog27/pi0.png)
+![alt](/images/blog27/pi0.png)
 *Figure 4: π₀ architecture. Source: [π₀ paper](https://arxiv.org/abs/2410.24164)*
 
 ### Action chunking
@@ -138,7 +138,7 @@ Robot manipulation VLAs predict end-effector deltas. Driving VLAs on the other h
 
 **Alpamayo-R1 (NVIDIA, 2025)**: [Alpamayo-R1](https://arxiv.org/abs/2511.00088) is the closest production-driving VLA to π₀'s design philosophy. A 10B model: Cosmos-Reason 8B VLM backbone plus a 2.3B flow-matching action expert. Inputs are 4 cameras at 10 Hz, and the output is 64 waypoints over 6.4 seconds, parameterized as acceleration + curvature under a unicycle model rather than raw (x, y). Latency is 99 ms on an H100. The interesting part is the training data: 80,000 hours of fleet driving plus 700k *Chain-of-Causation* traces, which are structured causal chains tying scene evidence to driving decisions. Weights are released on [HuggingFace](https://huggingface.co/nvidia/Alpamayo-1.5-10B) under a non-commercial license.
 
-![alt](https://cgnarendiran.github.io/images/blog27/alpamayo-r1.png)
+![alt](/images/blog27/alpamayo-r1.png)
 *Figure 5: Alpamayo-R1 architecture. Source: [Alpamayo-R1](https://arxiv.org/abs/2511.00088)*
 
 The shared trend across driving VLAs is that serializing waypoints as text (EMMA-style) is fine for benchmarks but hits a precision and latency ceiling, so the field is shifting toward continuous action heads. Open-source contributions like [OpenDriveVLA](https://arxiv.org/abs/2503.23463), [ORION](https://arxiv.org/abs/2503.19755), [CoReVLA](https://arxiv.org/abs/2509.15968), [WiseAD](https://arxiv.org/abs/2412.09951), and [SafeAuto](https://arxiv.org/abs/2503.00211) each take a different angle on the same problem: how to combine VLM-grade reasoning with control-grade latency. Closed-loop (as in act in the environment and observe the results) benchmarks like Bench2Drive and NAVSIM have largely replaced nuScenes open-loop (just the regression error over trajectories) L2, because the older metrics turned out to be gameable with ego-state shortcuts.

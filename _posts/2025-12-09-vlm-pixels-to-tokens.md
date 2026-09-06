@@ -7,7 +7,7 @@ tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
 *On the cover: Pieter Bruegel the Elder, "The Tower of Babel" (1563). Everyone on the site is competent and none of them are mutually intelligible, which is precisely the situation a vision encoder and a language model are in before you put a projection layer between them. [Public domain](https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_d._%C3%84.,_Kunsthistorisches_Museum_Wien,_Gem%C3%A4ldegalerie_-_Turmbau_zu_Babel_-_GG_1026_-_Kunsthistorisches_Museum.jpg), Kunsthistorisches Museum, Vienna.*
 
-In our [last post](https://cgnarendiran.github.io/blog/vit-pixels-to-tokens/), we spoke about how the **Vision Transformer (ViT)** took the candy away from CNNs. We learned that if you slice an image into patches and flatten them, you can treat an image just like a sentence. And a sequence of pixel-patches becomes a sequence of tokens.
+In our [last post](/blog/vit-pixels-to-tokens/), we spoke about how the **Vision Transformer (ViT)** took the candy away from CNNs. We learned that if you slice an image into patches and flatten them, you can treat an image just like a sentence. And a sequence of pixel-patches becomes a sequence of tokens.
 
 This enables the ViT to look at an image and output a label `class_id: 284` ("Siamese Cat"). All this is good, but while ViTs taught computers to "read" images, they are still essentially mute. 
 

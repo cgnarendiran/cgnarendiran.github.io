@@ -1,0 +1,54 @@
+---
+layout: null
+---
+{%- comment -%}
+  Hand-written Atom feed, deliberately NOT jekyll-feed.
+
+  jekyll-feed is allowlisted on GitHub Pages but is not installed locally, and with
+  JEKYLL_NO_BUNDLER_REQUIRE=true an uninstalled plugin makes the local build fail outright
+  (the cloud sandbox lacks it too). This template needs no plugin, so local and production
+  build byte-identical output. See CLAUDE.md before "helpfully" replacing it.
+
+  Post bodies use root-relative paths, which break in a feed reader, so src="/ and href="/
+  are rewritten to absolute URLs below.
+{%- endcomment -%}
+{%- assign abs_src = 'src="' | append: site.url | append: '/' -%}
+{%- assign abs_href = 'href="' | append: site.url | append: '/' -%}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">{{ site.title }}</title>
+  <subtitle type="text">{{ site.description }}</subtitle>
+  <id>{{ '/feed.xml' | absolute_url }}</id>
+  <link rel="self" type="application/atom+xml" href="{{ '/feed.xml' | absolute_url }}"/>
+  <link rel="alternate" type="text/html" href="{{ '/' | absolute_url }}"/>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <author>
+    <name>{{ site.author.name }}</name>
+    {%- if site.email %}<email>{{ site.email }}</email>{% endif %}
+    <uri>{{ '/about/' | absolute_url }}</uri>
+  </author>
+  <rights>© {{ site.time | date: '%Y' }} {{ site.author.name }}</rights>
+  <generator uri="https://jekyllrb.com/">Jekyll</generator>
+{%- for post in site.posts limit: 15 %}
+  <entry>
+    <title type="html">{{ post.title | strip_html | normalize_whitespace | xml_escape }}</title>
+    <id>{{ post.url | absolute_url | xml_escape }}</id>
+    <link rel="alternate" type="text/html" href="{{ post.url | absolute_url | xml_escape }}"/>
+    <published>{{ post.date | date_to_xmlschema }}</published>
+    <updated>{{ post.date | date_to_xmlschema }}</updated>
+    <author><name>{{ site.author.name }}</name></author>
+    {%- if post.description %}
+    <summary type="html">{{ post.description | strip_html | normalize_whitespace | xml_escape }}</summary>
+    {%- else %}
+    <summary type="html">{{ post.content | strip_html | normalize_whitespace | truncate: 300 | xml_escape }}</summary>
+    {%- endif %}
+    {%- if post.image %}
+    <media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="{{ post.image | absolute_url | xml_escape }}"/>
+    {%- endif %}
+    {%- for tag in post.tags %}
+    <category term="{{ tag | xml_escape }}"/>
+    {%- endfor %}
+    <content type="html" xml:base="{{ post.url | absolute_url | xml_escape }}">{{ post.content | replace: 'src="/', abs_src | replace: 'href="/', abs_href | xml_escape }}</content>
+  </entry>
+{%- endfor %}
+</feed>

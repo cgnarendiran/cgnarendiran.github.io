@@ -59,6 +59,13 @@ one; once LeJEPA is published, the queue is back to normal same-day behaviour.
 - Figures come from `.claude/scripts/fetch_arxiv_figures.py`, which only downloads them when the
   paper's licence permits republishing. Anything it refuses gets drawn with matplotlib and
   captioned `Source: Author`.
+- Figures are written to `images/blogNN/` with **root-relative** paths in the markdown
+  (`/images/blogNN/foo.png`) and **descriptive alt text** — never the literal string `alt`.
+- Before opening the PR, run `.claude/scripts/optimize_images.py --check images/blogNN`. If it
+  exits non-zero, run it again with `--apply --to-webp`, update the affected image paths in the
+  post, and re-check. A figure over 150 KB or 1600 px does not ship.
+- Tags come from `.claude/tag-vocabulary.md`: a bracket list of 3-6 lowercase hyphenated terms.
+  Adding a new term means adding it to that file in the same PR.
 - The job opens a PR against `master`, self-checks it, and merges it if every check passes. It
   never pushes to `master` directly.
 - Slug matching is a substring test against `_posts/`. Keep slugs distinctive enough not to

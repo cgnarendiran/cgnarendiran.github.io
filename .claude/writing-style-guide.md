@@ -88,24 +88,25 @@ prediction); a lazy witness whose description fits everyone.
 
 ## 3. Skeleton of a post
 
-Series entries follow this closely. Standalone posts drop steps 3–4 and open on the conceit.
+Series entries follow this closely. Standalone posts drop steps 2–3 and open on the conceit.
 
 | # | Section | Notes |
 |---|---|---|
-| 1 | `# Title` | |
-| 2 | `*On the cover: …*` | Italic. A description, a credit, or a joke. "Decorative" is acceptable |
-| 3 | Recap of previous post | Linked, one paragraph, ends on the limitation motivating this post |
-| 4 | The deflating turn | 1–2 short lines puncturing that win |
-| 5 | "Welcome to the era of **X**." | Bold the term, then one thesis line: "This is the story of how…" |
-| 6 | `## The problem` | Why the obvious fix fails. Often opens "You might think…" |
-| 7 | The generic recipe | Abstract template before any named model |
-| 8 | Named models, 2–4 | Each with a nicknamed heading |
-| 9 | `## The Evolution` | Bulleted survey of variants, each with a figure |
-| 10 | `## Why this matters` | Zoom out |
-| 11 | `## Where things are going` | 3–4 named trends |
-| 12 | `## The honest cons` | Real limitations, blunt |
-| 13 | `## Conclusion` | One paragraph, callback to the conceit and the series thesis |
-| 14 | `And now you know. Fin.` | **Always** |
+| 1 | `*On the cover: …*` | Italic. A description, a credit, or a joke. "Decorative" is acceptable |
+| 2 | Recap of previous post | Linked, one paragraph, ends on the limitation motivating this post |
+| 3 | The deflating turn | 1–2 short lines puncturing that win |
+| 4 | "Welcome to the era of **X**." | Bold the term, then one thesis line: "This is the story of how…" |
+| 5 | `## The problem` | Why the obvious fix fails. Often opens "You might think…" |
+| 6 | The generic recipe | Abstract template before any named model |
+| 7 | Named models, 2–4 | Each with a nicknamed heading |
+| 8 | `## The Evolution` | Bulleted survey of variants, each with a figure |
+| 9 | `## Why this matters` | Zoom out |
+| 10 | `## Where things are going` | 3–4 named trends |
+| 11 | `## The honest cons` | Real limitations, blunt |
+| 12 | `## Conclusion` | One paragraph, callback to the conceit and the series thesis |
+| 13 | `And now you know. Fin.` | **Always** |
+
+**There is no body `# Title`.** `_layouts/post.html` already renders the front-matter title as the page's `<h1>`; adding one in the body gives the page two `<h1>`s and leaks the heading into the card excerpt on `/blog/`. The first in-body heading is always `##`.
 
 ### The opening formula
 
@@ -282,10 +283,18 @@ Numbered steps with joke names: `### Step 1: The Butcher Shop (Patchification)`,
 
 **Format, exactly:**
 ```markdown
-![alt](https://cgnarendiran.github.io/images/blog27/rt2.png) *Figure 2: RT-2 architecture. Source: [RT-2](https://arxiv.org/abs/2307.15818)*
+![RT-2 co-fine-tunes a vision-language model on robot trajectories and web data](/images/blog27/rt2.png) *Figure 2: RT-2 architecture. Source: [RT-2](https://arxiv.org/abs/2307.15818)*
 ```
 
-- Alt text is literally `alt`. Caption is italic, same line.
+- **Paths are root-relative** (`/images/blogNN/foo.png`), never the absolute production URL.
+  An absolute URL fetches from the live site during local preview, so a new figure cannot be
+  checked before it ships.
+- **Alt text describes the image.** Never the literal string `alt`, never `Image`. A screen
+  reader reads the alt and then the caption, so do not simply repeat the caption: drop the
+  `Figure N:` prefix and the `Source: …` clause, drop `$math$`, and keep it under ~125
+  characters. For a figure that carries an argument, say what the image *looks like* — the
+  caption already says what it means.
+- Caption is italic, same line, after the image.
 - Pattern: `Figure N: <what it shows>. Source: [<name>](<link>)`
 - **`Source: Author`** when the plot is self-made. He does make his own matplotlib figures —
   `binary_pe.png`, `sinusoidal_pe.png`, `vector_rotation.png`, `rope.png`. Worth doing again: a
@@ -296,8 +305,32 @@ Numbered steps with joke names: `### Step 1: The Butcher Shop (Patchification)`,
   > rather than their absolute positions. Source: Author*
 - Captions can carry jokes: *"If it looks complicated, that's because it is. The researchers didn't
   make it complex just to confuse you, but I'm not ruling it out either."*
-- GIFs are used freely (`orca_demo.gif`, `map_zoom.gif`, `brownian_motion.gif`, `two-robot-dance.gif`).
+- **Never hotlink.** Download the image into `images/blogNN/` or do not use it. Medium and
+  ResearchGate URLs rot and block hotlinking.
 - **Every named architecture gets a figure.** ViT has 6, VLM 5, VLA 5, Guided Diffusion 2 has 8.
+
+**Image budget** — the site serves these on every page load, so weight is not free:
+
+| | limit |
+|---|---|
+| body figure | ≤1600 px wide, ≤150 KB |
+| cover | ≤1600 px wide, ≤200 KB |
+| format | WebP for screenshots and diagrams; JPEG for photographs |
+
+Run `.claude/scripts/optimize_images.py --check images/blogNN` before opening the PR.
+
+**Animations.** No GIF over 1 MB — a 40 MB GIF is not a figure, it is an outage. Anything
+longer than a second or two becomes an MP4, written as raw HTML at column 0 with the caption
+on the line below:
+
+```html
+<video class="center-image" autoplay loop muted playsinline preload="metadata"
+       poster="/images/blogNN/thing-poster.jpg"
+       aria-label="What the clip shows, in one sentence."><source src="/images/blogNN/thing.mp4" type="video/mp4"></video>
+*Figure 4: Caption, same as any other figure.*
+```
+
+`aria-label` is the video's alt text and follows the same rule.
 
 **Known defect to avoid:** figure numbers repeat in several posts (the VLM post has three "Figure 3",
 Guided Diffusion 1 has three). Number them correctly.
@@ -475,3 +508,14 @@ deliberate and should survive any proofread.
 - [ ] Conclusion restates the series thesis with the new capability
 - [ ] Ends with **"And now you know. Fin."**
 - [ ] No banned patterns from §13
+
+**Mechanics** (cheap to check, expensive to fix after publish):
+
+- [ ] Tags come from `.claude/tag-vocabulary.md`, 3–6 of them, bracket list —
+      `tags: [a, b, c]`, never a bare space-separated string
+- [ ] `description:` present, 110–155 characters, a claim about the post — not the
+      `*On the cover: …*` line and not the opening joke
+- [ ] Every image has descriptive alt text; none of them says `alt` or `Image`
+- [ ] No body `# Title` — the layout renders the front-matter title as the `<h1>`
+- [ ] Image paths root-relative (`/images/…`); cross-links use `/blog/<slug>/`
+- [ ] `.claude/scripts/optimize_images.py --check images/blogNN` passes

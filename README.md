@@ -57,7 +57,8 @@ layout: post
 title:  "JEPA - Nobody Cares About the Wallpaper"
 date:   2026-09-05
 image:  images/blog28/cover.jpg
-tags:  JEPA Self-Supervised Learning World Models
+description: "One sentence about what the post argues. 110-155 characters."
+tags: [jepa, self-supervised-learning, world-models, representation-learning]
 ---
 *On the cover: a police sketch in progress*
 ```
@@ -66,9 +67,14 @@ A few conventions that are easy to get wrong:
 
 - **Image directories are numbered, not named.** The Nth post uses `images/blogNN/`, the Nth
   project `images/projectNN/`. Check `ls images | grep blog` before creating one.
-- `image:` is repo-relative with no leading slash. Body figures use the **absolute production
-  URL**, so they won't render locally until pushed.
-- `tags:` is a bare space-separated list — each word becomes its own tag, not a YAML array.
+- `image:` is repo-relative with no leading slash. Body figures use **root-relative** paths
+  (`/images/blog28/foo.png`), as do cross-links between posts (`/blog/<slug>/`) — an absolute
+  URL would fetch from the live site during local preview.
+- Alt text describes the image; never the literal string `alt`.
+- `tags:` is a YAML flow list drawn from `.claude/tag-vocabulary.md`, 3-6 per post,
+  lowercase and hyphenated. A bare space-separated string splits on whitespace, so
+  `Self-Supervised Learning` would become two tags.
+- `description:` is required — it is the meta description and the card excerpt.
 - **Display math is `$$ ... $$`.** Not `\[ \]` — kramdown strips the backslash before MathJax
   sees the page. Inline is `$...$`.
 

@@ -55,3 +55,4 @@ The publisher appends rows here; keep this table last in the file.
 | Slug | Blog date | Post id | Published (UTC) | Run date (UTC) | Notes |
 |---|---|---|---|---|---|
 | jepa-nobody-cares-about-the-wallpaper | 2026-06-15 | urn:li:share:7502284468947320832 | 2026-09-06T08:39Z | 2026-09-06 | blog-companion via LinkedIn API |
+| lejepa | 2026-07-15 | urn:li:share:7502452735359909888 | 2026-09-06T19:48Z | 2026-09-06 | blog-companion via LinkedIn API |

@@ -38,12 +38,14 @@ force a rewrite.
 | 4 | Speculative decoding | `speculative-decoding` | | Is Attention All You Really Need? | The intern who drafts the email and the boss who only proofreads |
 | 5 | Quantization — INT8, FP8, NVFP4 and what actually breaks | `quantization-edge-inference` | | Standalone, practical | Packing for a carry-on: what you fold, what you leave, what you regret |
 | 6 | Knowledge distillation | `knowledge-distillation` | | Standalone | The professor's lecture notes vs. the student's crib sheet |
-| 7 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system |
+| 7 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system. Open on speech: audio at sample rate is where quadratic attention breaks first |
 | 8 | Test-time compute and reasoning models | `test-time-compute` | | Standalone | Paying for thinking by the minute |
 | 9 | GRPO and RLVR — what replaced RLHF | `grpo-rlvr` | | Follows the 2023 RLHF post | The exam that grades itself |
 | 10 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
 | 11 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
 | 12 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
+| 13 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
+| 14 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
 
 Rows 2 onward have no date, so they publish on the day they run. Only the backfill rows carry
 one; once LeJEPA is published, the queue is back to normal same-day behaviour.

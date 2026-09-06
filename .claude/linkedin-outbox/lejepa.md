@@ -4,7 +4,7 @@ title: LeJEPA - Good in Every Direction
 blog_date: 2026-07-15
 image: images/blog29/cover.jpg
 alt: a poured melt, cored along two dozen random directions at once. Decorative, and also roughly what SIGReg does a thousand times a step.
-publish_after: 2026-09-07T08:30:00-07:00
+publish_after: 2026-09-06T12:45:45-07:00
 source: blog-companion
 ---
 

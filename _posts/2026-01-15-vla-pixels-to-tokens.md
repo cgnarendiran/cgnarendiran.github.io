@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "VLAs - Pixels to Tokens"
-date:   2025-12-09
+date:   2026-01-15
 image:  images/blog27/cover.png
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---

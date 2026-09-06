@@ -20,20 +20,30 @@ Most work here is authoring content in `_posts/` and `_projects/`, not changing 
 
 ## Automation
 
-Two cloud routines (claude.ai/code/routines) write content on a schedule. Both work from
-`origin/master`, open a PR, self-check it and merge it; neither pushes to `master` directly.
+Three cloud routines (claude.ai/code/routines) write and publish content on a schedule. All work
+from `origin/master`, open a PR, self-check it and merge it; none pushes to `master` directly.
 
 - **Blog job**, Sun + Wed 9:15am Pacific. Reads `.claude/blog-topic-queue.md` and
   `.claude/writing-style-guide.md`, writes the next queued post into `_posts/` and
   `images/blogN/`, and moves the queue row to Published. Figures come from
   `.claude/scripts/fetch_arxiv_figures.py`.
-- **LinkedIn job**, Sun + Wed 12:15pm Pacific, three hours later. Reads
-  `.claude/linkedin-ledger.md` and `.claude/linkedin-style-guide.md`, writes a companion post for
-  the oldest eligible blog post not yet in the ledger, schedules it on LinkedIn through the
-  Postbeam connector for the next weekday morning, and records the Postbeam id in the ledger.
+- **LinkedIn companion job**, Sun + Wed 12:15pm Pacific. Reads `.claude/linkedin-ledger.md` and
+  `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
+  not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
+  with a `publish_after` time.
+- **LinkedIn publisher**, weekdays 8:35am Pacific. Runs `.claude/scripts/linkedin_publish.py`,
+  which posts every due outbox file through LinkedIn's Posts API, appends the ledger row and
+  deletes the file. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
+  environment; setup and the 60-day token renewal are in `.claude/linkedin-api-setup.md`.
 
-Both jobs run the vendored `humanizer` skill in `.claude/skills/`. `.claude/` is a dot-directory,
-so Jekyll never serves any of it.
+The gap between the companion run and the publisher run is the review window: edit the outbox
+file to change a post, delete it and add a ledger row to veto it.
+
+Cloud sandbox facts learned the hard way: the egress proxy blocks cgnarendiran.github.io, so
+liveness is checked through the GitHub Pages deployment record; and the Edit and Write tools
+prompt for permission on `.claude/` paths, so routines change those files through Bash. Both
+jobs run the vendored `humanizer` skill in `.claude/skills/`. `.claude/` is a dot-directory, so
+Jekyll never serves any of it.
 
 ## Commands
 

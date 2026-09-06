@@ -1,9 +1,15 @@
 # LinkedIn post ledger
 
-The LinkedIn job reads this file. It picks the **oldest** post in `_posts/` whose front-matter
-date is on or after `eligible_from` and whose slug appears in neither table below, writes a
-LinkedIn post for it following `.claude/linkedin-style-guide.md`, schedules it through Postbeam,
-and appends a row to the "Posted by the job" table in the same run. One post per run.
+Two jobs share this file.
+
+The **companion job** picks the oldest post in `_posts/` whose front-matter date is on or after
+`eligible_from` and whose slug appears in neither table below nor in `.claude/linkedin-outbox/`,
+writes a LinkedIn post for it following `.claude/linkedin-style-guide.md`, and commits it to
+`.claude/linkedin-outbox/<slug>.md` with a `publish_after` time. One post per run.
+
+The **publisher job** runs `.claude/scripts/linkedin_publish.py`, which posts every due outbox
+file through LinkedIn's Posts API, appends a row to the "Posted by the job" table, and deletes
+the outbox file. Setup and the review window are described in `.claude/linkedin-api-setup.md`.
 
 Settings, one per line, parsed as `key: value`:
 
@@ -15,14 +21,14 @@ publish_days: Mon Tue Wed Thu Fri
 `eligible_from` is what keeps the job from working through the whole archive. Set it to
 `2017-01-01` to backfill everything not listed below, one post per run, oldest first.
 
-`publish_time_local` and `publish_days`: the job schedules the post for the next listed day
-strictly after the run, at that local time. The Sunday run lands on Monday morning and the
-Wednesday run on Thursday morning, which leaves a window to edit or delete the post in Postbeam
-before it goes out. Naren's hand-posted promos went out between 03:00 and 14:00 UTC, so an
-earlier local time is also reasonable; this is the one line to change.
+`publish_time_local` and `publish_days`: the companion sets `publish_after` to the next listed
+day strictly after its run, at that local time. The Sunday run lands on Monday morning and the
+Wednesday run on Thursday morning. Naren's hand-posted promos went out between 03:00 and 14:00
+UTC, so an earlier local time is also reasonable; this is the one line to change, and the
+publisher's cron must run after it.
 
 The slug is the part of the filename after the date: `_posts/YYYY-MM-DD-<slug>.md`. Exact match,
-not substring.
+not substring. To skip a post for good, add a row for it below with the note `skipped`.
 
 ---
 
@@ -44,6 +50,7 @@ Naren wrote these himself. Listed so a backfill never re-posts them.
 
 ## Posted by the job
 
-| Slug | Blog date | Postbeam post id | Scheduled for | Run date (UTC) | Notes |
+The publisher appends rows here; keep this table last in the file.
+
+| Slug | Blog date | Post id | Published (UTC) | Run date (UTC) | Notes |
 |---|---|---|---|---|---|
-| jepa-nobody-cares-about-the-wallpaper | 2026-06-15 | 29021 | not scheduled | 2026-09-06 | approved, not scheduled: Postbeam subscription required. Test run stalled at an Edit permission prompt before it could write this row; added by hand |

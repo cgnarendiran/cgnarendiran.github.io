@@ -43,6 +43,15 @@ mailchimp: "" # Add your MailChimp form identifier. For example - blogenjoyfreed
 
 # Build settings
 markdown: kramdown
+
+# Keep repo-only docs out of the built site. Without this, root-level .md files
+# are rendered as pages (CLAUDE.md was live at /CLAUDE/).
+exclude:
+  - CLAUDE.md
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
 permalink: pretty
 plugins:
   - jekyll-paginate

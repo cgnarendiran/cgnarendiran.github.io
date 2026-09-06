@@ -12,6 +12,7 @@ by post. Latest is `blog28`. **Next post folder: `images/blog29/`.**
 
 | # | Post | Date | Kind |
 |---|---|---|---|
+| 29 | LeJEPA - Good in Every Direction | Jul 2026 | Series explainer, part 2 of 2 |
 | 28 | JEPA - Nobody Cares About the Wallpaper | Jun 2026 | Series explainer, part 1 of 2 |
 | 27 | VLAs - Pixels to Tokens | Dec 2025 | Series explainer |
 | 26 | VLMs - Pixels to Tokens | Dec 2025 | Series explainer |
@@ -160,6 +161,14 @@ forgot what YOLO does", "my favorite scene", "I really liked the examples he use
 > "Lovely. Now ask it to actually pick up the apple."
 > "Pick your poison." / "No soda straws required." / "Bad weather app -> more wet clothes."
 > "Don't trust this friend :p"
+
+**This device is occasional, not the default paragraph shape.** Roughly one paragraph in six
+should end on a short line; the LeJEPA draft shipped at one in three and read as portentous. See
+§18, which is the single most important section in this guide for sounding human.
+
+**And notice what those landing lines actually are.** Every one is a joke or a concrete fact.
+None is a maxim. "Pick your poison" is a joke; "The superstition moved house, it did not leave
+town" is a fortune cookie. The maxim is the tell.
 
 **Verbs are physical and slightly violent.** Slice, shove, smash, beat, bolt on, slap, take a
 cleaver to, squash, glue, stitch, smuggle. Never "leverage", "utilize", "facilitate".
@@ -417,6 +426,14 @@ Rules observed:
 
 **Never end on the honesty section.** It goes before the conclusion so the post lands on synthesis.
 
+**In a series, this section is where repetition hides.** The archive varies its heading on
+purpose (`The honest cons`, `The Hangover`, `The Reality Check`, `Common Doubt`, `The honest
+weakness`) and you must too: reusing the previous entry's heading verbatim is a defect. Reusing
+its *argument* is a worse one. Part 2 of JEPA originally opened its cons with "the superstition
+moved house" — which is part 1's con ("collapse is still managed by superstition") wearing a
+hat. Before drafting this section, read the previous post's and write down what it already
+conceded. Your cons must be the ones that are new *because* of what this post just explained.
+
 ---
 
 ## 13. Banned patterns
@@ -506,8 +523,12 @@ deliberate and should survive any proofread.
 - [ ] Honest-cons section, placed before the conclusion
 - [ ] Cross-links to earlier posts, using `/blog/<slug>/` form
 - [ ] Conclusion restates the series thesis with the new capability
-- [ ] Ends with **"And now you know. Fin."**
+- [ ] Ends with **"And now you know. Fin."** — as a sentence with a verb, not a verbless coda
 - [ ] No banned patterns from §13
+- [ ] No banned patterns from §18, and the landing-line count is roughly one paragraph in six
+- [ ] Honest-cons heading and arguments differ from the previous post's (§12)
+- [ ] At least two jokes attached to the maths (§18), and the conceptual-equation move used once
+- [ ] No point is made twice; nothing is signposted with "we'll come back to that"
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -519,3 +540,100 @@ deliberate and should survive any proofread.
 - [ ] No body `# Title` — the layout renders the front-matter title as the `<h1>`
 - [ ] Image paths root-relative (`/images/…`); cross-links use `/blog/<slug>/`
 - [ ] `.claude/scripts/optimize_images.py --check images/blogNN` passes
+
+---
+
+## 18. The six sentence shapes that give the game away
+
+Every one of these was caught by Naren in the published LeJEPA post (blog29), after that draft
+had already passed §13, the humanizer skill and the whole of §17. §13 catches *vocabulary*.
+These are **structures**, they survive a vocabulary check untouched, and they are what actually
+makes a reader say "this was written by a model". His verdict on the worst of them was
+"you have to understand that nobody writes like this."
+
+The common root: the model reaching for **the register of profundity**. Short, balanced,
+verbless, quotable. Real people writing fast do not compose aphorisms at the end of every
+thought, and they especially do not do it seven times in one post.
+
+**1. The maxim landing.** A paragraph that closes on a short quotable fragment.
+> ✗ "Everybody keeps hammering." / "This one hands you a gauge." / "The superstition moved house, it did not leave town."
+>
+> **Test:** could it go on a poster? Then cut it, or replace it with a joke. Landing lines in
+> the archive are jokes ("Never break the spaghetti. Ever.") or facts. Never wisdom.
+
+**2. The verbless triptych**, usually in the conclusion.
+> ✗ "Same blade at the end of it. No moon, no midnight, no counting to three hundred. Just a gauge, and something to hold it against."
+>
+> That is free verse. Compare the archive: "Now fire that missile at John Connor. Boo-yeah!",
+> "you're on your way to become the next Mysterio." Verbs, full sentences, usually a joke.
+> **A conclusion is a person talking, not a poem.**
+
+**3. Enumeration theatre.** Announcing a count, then marching through it in parallel.
+> ✗ "Three things care. The first is… The second is… The third is the one that actually hurts."
+>
+> Merge them, vary the openings, drop the count. The portentous twist on the last item
+> ("the one that actually hurts") is the giveaway.
+
+**4. Negate, then reveal.**
+> ✗ "So the barrier to entry was never really the compute. It was that you had to be able to afford being wrong a hundred times."
+> ✗ "'Without the heuristics' is oversold, and the gap is not small."
+>
+> Say the thing once, in one sentence, with the concrete image in it.
+
+**5. Anaphora pairs.** Two or three clauses opening identically.
+> ✗ "Could be a hinge. Could be a bracket taking a load straight down."
+> ✗ "Skip one and the blade cracks in the fire. Skip another and nothing happens at all."
+>
+> Fine once in a post as a deliberate beat. Twice is a tic; the draft had four.
+
+**6. The clever quantifier.** A wry abstract measurement standing in for a fact.
+> ✗ "for reasons that took a small literature to half-explain"
+>
+> Name the papers, or say the real thing: "the papers explaining *why* came out years
+> afterwards, written by people who had been shipping it the whole time."
+
+### The humour that should be there instead
+
+Cutting shapes 1–6 empties the slots where the jokes belong, so **fill them**. The LeJEPA draft
+had wit (dry irony, "a debugging tool that got written up as a feature") and no *jokes*. Wit is
+what a model produces by default; it reads as AI. The archive is goofier, more specific, more
+self-deprecating:
+
+> "GPT-4 is rumored to have 1.76 trillion parameters, which is approximately the same as the
+> number of times I've contemplated whether my coffee needs another shot of espresso. The
+> answer, by the way, is always yes."
+
+**Maths is where this blog is funniest, and it is the easiest thing to forget.** Per post, aim
+for at least two of:
+
+- A joke about a specific constant. *"Seventeen. Not sixteen, not twenty. Somebody ran the ablation over 5, 17 and 41 and came back with 17, and I have more faith in that number than in any round one."*
+- A joke about scale, with a real unit. *"34 floats per direction, whether the global batch is 512 images or 512,000 — less traffic than your laptop spends telling a server it is still awake."*
+- An affectionate insult aimed at the model (§6d), landing after the mechanism. *"These models are lazy animals. Leave a free lunch in the loss and gradient descent will have found it before you have finished typing `wandb.init`."*
+- A joke about the researchers, never unkind. *"published in 1936 by two statisticians with, I am confident, no GPUs between them."*
+- A caption joke (§8). *"If it looks complicated, that's because it is. The researchers didn't make it complex just to confuse you, but I'm not ruling it out either."*
+
+And use the **conceptual equation** (§7): the formula in words, then `specifically,`, then the
+real one. It is a signature move, it is funny in its own dry way, and the LeJEPA draft shipped
+without it.
+
+### How to check
+
+Mechanical, and worth running on every draft:
+
+```bash
+# landing-line density: aim for roughly 1 paragraph in 6, not 1 in 3
+python3 - <<'EOF'
+import re
+t = open("_posts/YYYY-MM-DD-slug.md").read().split("---\n",2)[2]
+ps = [p.strip() for p in t.split("\n\n")
+      if p.strip() and not p.startswith(("#","|","$$","!["))]
+land = [re.split(r'(?<=[.!?]) ', p.replace("\n"," "))[-1] for p in ps
+        if len(re.split(r'(?<=[.!?]) ', p.replace("\n"," "))) > 1
+        and len(re.split(r'(?<=[.!?]) ', p.replace("\n"," "))[-1].split()) <= 12]
+print(f"{len(land)}/{len(ps)} paragraphs end short")
+for l in land: print("   ", l)
+EOF
+```
+
+Then read that list. **Every line in it must be a joke or a fact.** Any that reads like advice,
+wisdom or a moral is the defect this section exists to catch.

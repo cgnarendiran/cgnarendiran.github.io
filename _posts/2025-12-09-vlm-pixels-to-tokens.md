@@ -2,10 +2,10 @@
 layout: post
 title:  "VLMs - Pixels to Tokens"
 date:   2025-12-09
-image:  images/blog26/cover.png
+image:  images/blog26/cover.jpg
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
-*On the cover: Decorative*
+*On the cover: "Blind monks examining an elephant" (Hanabusa Itchō, 1888). Each monk gets exactly one patch, and none of them gets the picture. Fusing those partial views into the single word "elephant" is the whole job of a VLM. [Public domain](https://commons.wikimedia.org/wiki/File:Blind_monks_examining_an_elephant.jpg), via the Library of Congress.*
 
 In our [last post](https://cgnarendiran.github.io/blog/vit-pixels-to-tokens/), we spoke about how the **Vision Transformer (ViT)** took the candy away from CNNs. We learned that if you slice an image into patches and flatten them, you can treat an image just like a sentence. And a sequence of pixel-patches becomes a sequence of tokens.
 

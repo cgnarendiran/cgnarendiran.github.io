@@ -33,22 +33,21 @@ force a rewrite.
 
 | # | Topic | Post file (slug) | Date | Series | Conceit to test first |
 |---|-------|------------------|------|--------|----------------------|
-| 1 | Diffusion policy vs. flow matching for robot actions | `diffusion-policy-vs-flow-matching` | | Standalone, follows VLA | A sculptor chipping marble (denoising) vs. a river finding the sea (flow) |
-| 2 | World models as learned simulators — Genie 3, Cosmos | `world-models-learned-simulators` | | Follows JEPA | A dream you can steer; the driving instructor who never runs out of roads. Now with three production examples: Wayve GAIA-3 (15B, evaluation not just data), the Waymo World Model on Genie 3, XPeng X-World; and WorldLens ([2512.10958](https://arxiv.org/abs/2512.10958)) for how to grade the simulator itself |
-| 3 | Speculative decoding | `speculative-decoding` | | Is Attention All You Really Need? | The intern who drafts the email and the boss who only proofreads. Punchline: DFlash (Google, May 2026) has the intern draft a whole paragraph in one go, 3.13x tokens per second on TPU |
+| 1 | World models as learned simulators — Genie 3, Cosmos | `world-models-learned-simulators` | | Follows JEPA | A dream you can steer; the driving instructor who never runs out of roads. Now with three production examples: Wayve GAIA-3 (15B, evaluation not just data), the Waymo World Model on Genie 3, XPeng X-World; and WorldLens ([2512.10958](https://arxiv.org/abs/2512.10958)) for how to grade the simulator itself |
+| 2 | Speculative decoding | `speculative-decoding` | | Is Attention All You Really Need? | The intern who drafts the email and the boss who only proofreads. Punchline: DFlash (Google, May 2026) has the intern draft a whole paragraph in one go, 3.13x tokens per second on TPU |
+| 3 | GRPO and RLVR — what replaced RLHF | `grpo-rlvr` | | Follows the 2023 RLHF post | The exam that grades itself |
 | 4 | Quantization — INT8, FP8, NVFP4 and what actually breaks | `quantization-edge-inference` | | Standalone, practical | Packing for a carry-on: what you fold, what you leave, what you regret |
 | 5 | Knowledge distillation | `knowledge-distillation` | | Standalone | The professor's lecture notes vs. the student's crib sheet |
 | 6 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system. Open on speech: audio at sample rate is where quadratic attention breaks first |
 | 7 | Test-time compute and reasoning models | `test-time-compute` | | Standalone | Paying for thinking by the minute |
-| 8 | GRPO and RLVR — what replaced RLHF | `grpo-rlvr` | | Follows the 2023 RLHF post | The exam that grades itself |
-| 9 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
-| 10 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
-| 11 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
-| 12 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
-| 13 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
-| 14 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
-| 15 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
-| 16 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
+| 8 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
+| 9 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
+| 10 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
+| 11 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
+| 12 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
+| 13 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
+| 14 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
+| 15 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
 
 No queue row carries a date any more, so every remaining topic publishes on the day it runs. The
 backfill that spread JEPA and LeJEPA across June and July is done.

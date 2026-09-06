@@ -43,7 +43,7 @@ hashtags. None of them end with "Fin."
 
 | # | Beat | Notes |
 |---|---|---|
-| 1 | **Hook** | One or two lines, under 200 characters before the first blank line. LinkedIn cuts the preview at roughly 210 characters, so the hook has to work on its own |
+| 1 | **Hook** | One or two lines, under 200 characters before the first blank line. LinkedIn cuts the preview at roughly 210 characters, so the hook has to work on its own. It names the concrete object of the conceit (police sketch, coffee shops, a paperweight) and makes sense to someone who never opens the link. Never lift the blog's opening line: the blog had three paragraphs to set the image up, the post has one sentence. "A witness never paints you the room" failed this; "Ask a witness to describe a suspect and you get a police sketch" passes |
 | 2 | **The setup** | Two to four short lines. What everybody believed, or what the last post achieved |
 | 3 | **The idea in plain words** | One paragraph. The blog's conceit compressed to one image, then the mechanism in one or two sentences. No equations |
 | 4 | **One concrete thing** | A number, an ablation, a failure. "Eats 16GB of VRAM for a 2GB checkpoint." "256-bin discretization has no chance at threading a USB cable" |
@@ -110,6 +110,14 @@ the LinkedIn hook is that image in one line.
 - **Rhetorical question, answered at once.** "So what do we do? We take a shortcut. More
   precisely, we route."
 - **The one-line test.** "Does it predict consequences?" Then the verdict.
+- **Ask something.** At least one rhetorical question in the first half, answered at once: "So why
+  hasn't everyone switched?" / "Sounds amazing, right?" / "So what do we do?" A post with no
+  question in it reads like a summary.
+- **One number.** "Eats 16GB of VRAM for a 2GB checkpoint." Two at most. The first JEPA promo
+  dumped five numbers into four sentences and read like a benchmark table.
+- **Vary the rhythm.** No more than two consecutive paragraphs ending on a fragment aphorism
+  ("Worth it." "And the dragons." "My read:"). When every paragraph lands a zinger, the sameness
+  is the tell, and the humanizer cannot see it because it works one sentence at a time.
 
 ---
 
@@ -119,7 +127,9 @@ the LinkedIn hook is that image in one line.
   harness.
 - "imo", "pretty much", "insanely", "Oppa", "yeesh". A person typing fast.
 - First person for opinion and bets: "My bet", "what I'm noticing", "I broke it all down". "We"
-  for the field and for the walkthrough.
+  for the field and for the walkthrough. At least two "I" sentences per post: what Naren did
+  (wrote it, went back to basics, noticed something) and what he thinks. What §8 bans is
+  invented events, not the first person.
 - One emoticon at most, `:p` or `:)`, and only on a lighter topic. No emoji bullets, no 🚀, no 👀.
   One 👇 before the link is the only surviving emoji and even that is optional now.
 - Affectionate insults toward models, never toward people or papers. Fei-Fei Li gets "the
@@ -139,8 +149,9 @@ the LinkedIn hook is that image in one line.
   bullets are retired.
 - **Names, not links.** Mention papers and models by name. The only URL in the post is the blog
   link. No arXiv links, no shorteners.
-- **Length: 180 to 320 words, hard ceiling 2,200 characters.** The recent promos run 200 to 340
-  words.
+- **Length: 120 to 220 words, target 170, hard stop at 250 (about 1,600 characters).** RoPE is
+  170 words, KV Caching 150, VLA 340, and that one is the ceiling, not the norm. The first JEPA
+  promo was written to an older 320-word ceiling and read like a summary.
 
 ---
 
@@ -200,7 +211,8 @@ Everything in §13 of the blog guide, plus the LinkedIn strain of the same disea
 - Broetry: one-word lines all the way down. The staccato triplet is one move, not the whole post.
 - "In this post, I explore..." abstract voice. It's a post, not a paper abstract.
 - Engagement bait: "comment X and I'll send you", "repost if", "follow for more"
-- Ending on a question to the audience. His posts end on the link and the tags.
+- Ending on a question to the audience ("Thoughts?"). His posts end on the link and the tags.
+  Rhetorical questions inside the post are required (§4); this rule is about the last line.
 
 ---
 
@@ -314,11 +326,65 @@ reading of the other side, a one-line test, a verdict. Note "the realest", "imo"
 off a table", and that the typos ("Most things out there are wearing", "comes close") survived.
 Don't manufacture typos, but don't polish the voice out either.
 
+### The RoPE promo (October 2025), the length to aim for
+
+170 words. Three questions, two "I" sentences, one running joke, one pointer line. Drop the
+emoji, which are 2025-era, and keep everything else.
+
+> "Attention is All You Need"… but did we really pay attention to this part?
+>
+> We've all read the paper.
+> We've all nodded at those weird sine–cosine Positional Embedding equations at the end of the
+> Model Architecture section.
+>
+> But if you're honest, you probably thought:
+> - Why sine for even and cosine for odd indices?
+> - What's that random 10,000 doing there?
+> - And why is the index i sitting inside the exponent like it owns the place?
+>
+> Most of us just shrugged and said,
+> "Eh, I know what Q, K, and V are… that's enough, right?"
+>
+> But those two little equations hide a ton of intuition about how Transformers actually
+> understand order and why Rotary Positional Embeddings (RoPE) were the next big twist. I broke
+> it all down in my new blog:
+>
+> https://lnkd.in/gRzYVxrg
+>
+> #PositionalEmbeddings #RoPE #Attention #Transformers #AI @Fast Code AI
+
+### The JEPA promo, before and after (September 2026)
+
+The routine's first draft ran 320 words and opened "A witness never paints you the room. She
+says: tall, grey coat, walked with a limp." Naren's verdict: reads like AI, too long, and the
+first sentence is in limbo without the words "police sketch". It had five numbers in one
+paragraph, no question, one "I", and eleven paragraphs each ending on a zinger. The 209-word
+replacement that went live in its place:
+
+> Ask a witness to describe a suspect and you get a police sketch: tall, grey coat, walked with a limp. Ask her to paint the whole room and you get a mess.
+>
+> For a decade, computer vision asked for the painting. Masked autoencoders hide 75% of an image and demand the missing pixels back, wallpaper included. Most of those pixels are noise, so the model burns its capacity predicting noise.
+>
+> JEPA asks for the sketch instead. Two encoders describe what they see, a small predictor guesses one description from the other, and the loss never touches a pixel.
+>
+> So why hasn't everyone switched? Because two witnesses graded on agreement can just agree to say "a person, probably" about everything. Zero loss, nothing learned. Every JEPA carries three tricks to stop that, and nobody has proven the tricks are enough.
+>
+> Still, it works. V-JEPA 2's frozen encoder plus under 62 hours of robot video lets a Franka arm pick things up in a lab it never trained in.
+>
+> I wrote up the whole idea, the collapse problem, and where the tricks come from. Part 1 of two:
+> https://cgnarendiran.github.io/blog/jepa-nobody-cares-about-the-wallpaper/
+>
+> Part 2 is LeJEPA, where someone finally shows up with a proof. Stay tuned.
+>
+> #JEPA #SelfSupervisedLearning #WorldModels #ComputerVision #AI
+> @Fast Code AI
+
 ---
 
 ## 12. Pre-schedule checklist
 
-- [ ] Hook under 200 characters before the first blank line, readable on its own
+- [ ] First sentence names the concrete object of the conceit and stands alone for a cold reader
+- [ ] Hook under 200 characters before the first blank line
 - [ ] Opens on the post's conceit or absurd image, not on "I wrote a post"
 - [ ] The mechanism in plain words. No equations, no markdown
 - [ ] One concrete number or failure from the post
@@ -327,7 +393,11 @@ Don't manufacture typos, but don't polish the voice out either.
 - [ ] Pointer line, then the canonical URL on its own line
 - [ ] Series line if the post is part of a series
 - [ ] 4 to 6 hashtags, then the Fast Code AI mention
-- [ ] 180 to 320 words, under 2,200 characters
+- [ ] 120 to 220 words, never above 250
+- [ ] At least one rhetorical question in the first half, answered at once
+- [ ] At least two first-person sentences about what Naren did or thinks
+- [ ] One number, two at most
+- [ ] No more than two consecutive paragraphs ending on a fragment
 - [ ] Zero emoji bullets, at most one 👇, at most one emoticon
 - [ ] Nothing claimed that is not in the post. No invented anecdotes, no role claims
 - [ ] No §9 or blog-guide §13 banned patterns

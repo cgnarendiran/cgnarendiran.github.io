@@ -39,12 +39,17 @@ no subscription. The cost is one browser login every 60 days.
 1. At https://claude.ai/code, under environments, create one named `linkedin-publisher`.
    Keep the default environment for the blog job untouched; its Trusted network setting is what
    lets the blog job reach arXiv.
-2. Network access: **Custom**, allowing `api.linkedin.com`, `www.linkedin.com`, `github.com`
-   and `api.github.com`. The Trusted default blocks LinkedIn.
-3. Environment variables: `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_PERSON_URN`,
-   `LINKEDIN_TOKEN_EXPIRES`, with the values from step 4 above. Use the credential store if the
-   plan offers one.
-4. Point the LinkedIn publisher routine at this environment and enable it.
+2. Network access: **Custom**, with two lines in Allowed domains: `api.linkedin.com` and
+   `www.linkedin.com`. GitHub traffic takes its own proxy and needs no entry. Leave the
+   package-manager checkbox off; the script is stdlib only. The Trusted default blocks LinkedIn.
+3. Environment variables, `.env` format, one per line: `LINKEDIN_ACCESS_TOKEN`,
+   `LINKEDIN_PERSON_URN`, `LINKEDIN_TOKEN_EXPIRES`, with the values from step 4 above. Any
+   session in this environment can read them, which is why the publisher gets its own
+   environment. Pro and Max also offer API credentials that the agent proxy attaches without the
+   session seeing the key; the script would need to stop sending its own Authorization header for
+   that, so treat it as a later hardening step, after the first cloud run works.
+4. Open the LinkedIn publisher routine at https://claude.ai/code/routines, pick this environment
+   in its environment selector, and enable it.
 
 ## Every 60 days
 
@@ -60,6 +65,8 @@ Outbox files wait until the token is refreshed; nothing is lost.
   has passed.
 - To change a post, edit the file on master before then. To veto it, delete the file and add a
   ledger row for the slug with the note `skipped`, so the companion does not write it again.
+- To change a post after it went out, put the new text in an outbox-format file and run
+  `linkedin_publish.py --file <file> --update <post urn>`. Only the text changes; the image stays.
 
 ## Limits worth knowing
 

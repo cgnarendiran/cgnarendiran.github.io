@@ -3,7 +3,7 @@ layout: project
 title:  Legal Research Assistant
 date:   2025-07-10
 image:  images/project14/cover.png
-tags:   Legal Research Assistant RAG AI Summarization Australia
+tags: [rag, retrieval, legal, llms, summarization]
 ---
 *On the cover: Legal Research Assistant Platform*
 

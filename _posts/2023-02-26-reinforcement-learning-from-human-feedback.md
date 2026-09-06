@@ -3,7 +3,7 @@ layout: post
 title:  "RLHF: Teaching robots right and wrong"
 date:   2023-02-26
 image:  images/blog13/cover.jpg
-tags:   openai inverse imitation reinforcement learning human feedback rlhf
+tags: [rlhf, reinforcement-learning, alignment, imitation-learning]
 ---
 *On the cover: Screenshot from the movie "Ron's gone wrong" where a kid teaches his pet robot how to behave socially*
 

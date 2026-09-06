@@ -3,7 +3,7 @@ layout: post
 title:  "Padlocks to Prime Numbers - RSA Encryption and SSH"
 date:   2025-05-10
 image:  images/blog18/cover.webp
-tags:  primes rsa encryption python
+tags: [cryptography, number-theory, python]
 ---
 *On the cover: RSA Encryption*
 

@@ -3,7 +3,7 @@ layout: post
 title:  "Kill John Connor using Kalman filter"
 date:   2021-04-25
 image:  images/blog6/cover.jpg
-tags:  kalman filter gaussian ai state estimate bayesian
+tags: [kalman-filter, state-estimation, bayesian-inference, probability]
 ---
 *On the cover: T-X Terminator from Terminator3: Rise of the Machines (2003)*
 

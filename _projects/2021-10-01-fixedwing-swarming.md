@@ -3,7 +3,7 @@ layout: project
 title:  Fixedwing swarming
 date:   2020-12-31
 image:  images/project10/cover.png
-tags:   fixedwing swarming robotics ros ros2 collision avoidance uav 
+tags: [robotics, drones, collision-avoidance, multi-agent-systems, ros]
 ---
 *On the cover: Four fixedwing UAVs swarming on QGCS (QGround Control Station, by PX4)*
 

@@ -3,7 +3,7 @@ layout: project
 title:  Semiconductor Fab Optimization using Reinforcement Learning
 date:   2023-05-15
 image:  images/project11/cover.jpg
-tags:   reinforcement-learning semiconductor manufacturing optimization RL dashboard
+tags: [reinforcement-learning, semiconductor, manufacturing, optimization]
 ---
 *On the cover: Visualization of wafer lots in a semiconductor fab*
 

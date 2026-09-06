@@ -3,7 +3,7 @@ layout: post
 title:  "Popular models for object detection - a brief study"
 date:   2021-04-14
 image:  images/blog5/cover.jpg
-tags:  AI object detection rcnn yolo anchor boxes fcn cnn deep learning
+tags: [object-detection, computer-vision, cnn, deep-learning]
 ---
 *On the cover: YOLO v5 applied on an Avengers Endgame poster; oh also, Rocket wouldn't like being called a 'dog' huehue*
 

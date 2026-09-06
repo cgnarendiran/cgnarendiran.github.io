@@ -3,7 +3,7 @@ layout: post
 title:  "Artificial Intelligence: Doomsday or Breakthrough - Part 1"
 date:   2017-08-12
 image:  images/blog1/cover.png
-tags:  Artificial Intelligence AI doomsday breakthrough singularity reinforcement learning openai go dota2
+tags: [ai-safety, reinforcement-learning, openai, essay]
 ---
 "Will humanity solve Intelligence?", is a lingering question of this century. Also the much less likely, "Is singularity a possible threat?" sits in a corner. What people miss out is that creating a self-aware sentient being is no less task than that of a human playing God. Now, why exactly do we bother ourselves with creating Artificial Intelligence? It could be as abstract as this, "The reason why anyone who would do this if they could, would be because that they could" quoting Rick, from Rick and Morty. As a robotics and AI enthusiast myself, the possibility of creating a system capable of adapting to changes, thinking like us and breaking the barrier of nature's evolution thrills me.
 

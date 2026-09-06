@@ -3,7 +3,7 @@ layout: project
 title:  Generating synthetic medical data
 date:   2019-07-30
 image:  images/project6/cover.png
-tags:   ctcue lstm dbc dutch healthcare 
+tags: [synthetic-data, healthcare, lstm, nlp]
 ---
 *On the cover: CtCue Logo; All rights reserved by CtCue B.V Nedtherlands*
 

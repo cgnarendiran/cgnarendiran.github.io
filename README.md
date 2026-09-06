@@ -78,13 +78,12 @@ A few conventions that are easy to get wrong:
 - **Display math is `$$ ... $$`.** Not `\[ \]` — kramdown strips the backslash before MathJax
   sees the page. Inline is `$...$`.
 
-## Known gap: tag pages 404 in production
+## Tags
 
-`_config.yml` enables `jekyll/tagging`, which is **not** on the GitHub Pages plugin allowlist,
-so it is silently skipped on the live build. All 130 `/tag/<tag>/` pages generate locally and
-return 404 in production, which means every tag link on a post page is dead. Fixing it needs a
-GitHub Actions build, or dropping the plugin. Don't assume tag links work because they resolve
-on a local server.
+Tags resolve to `/tags/#<tag>`, a single plugin-free index page. The site previously used
+`jekyll/tagging`, which is not on the GitHub Pages plugin allowlist — it was skipped on the
+live build, so every `/tag/<tag>/` page 404'd in production while resolving locally. The
+vocabulary is in `.claude/tag-vocabulary.md`.
 
 ## Automation
 

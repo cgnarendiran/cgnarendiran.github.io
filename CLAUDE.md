@@ -10,14 +10,13 @@ GitHub Pages directly from the `master` branch of `cgnarendiran/cgnarendiran.git
 (no CI workflow) — pushing to `master` publishes. `README.md` describes this site; the
 upstream theme's original readme was replaced in `9cba132`.
 
-**Known production gap:** `_config.yml` enables `jekyll/tagging`, which is *not* on GitHub
-Pages' plugin allowlist, so it is silently skipped on the live build. The 124 `/tag/<tag>/`
-pages generate locally but 404 in production, which means every tag link rendered on a post
-page is dead. Don't assume tag links work just because they resolve on a local server.
-
-The agreed fix is to drop the plugin and add a plugin-free `/tags/` index page that works on
-the stock GitHub Pages build, so local and production finally match. Until that lands, tags
-authored in the new format are still correct — only the link targets are pending.
+**Tags resolve to `/tags/#<tag>`, not `/tag/<tag>/`.** The site used `jekyll/tagging`, which
+is not on GitHub Pages' plugin allowlist, so it was silently skipped on the live build and all
+130 generated `/tag/<tag>/` pages 404'd in production while resolving locally. The plugin is
+gone; `tags.html` is a plugin-free index that iterates `site.posts | concat: site.projects`
+(`site.tags` is posts-only, so projects would otherwise be invisible). Local and production now
+build the same site — keep it that way, and be wary of any plugin that is not installed
+locally.
 
 Most work here is authoring content in `_posts/` and `_projects/`, not changing code.
 
@@ -136,13 +135,16 @@ Key points when adding content:
   buttons and "Recent posts" widget, `project.html` has them commented out. Disqus and the
   MailChimp newsletter are commented out everywhere and disabled in `_config.yml`.
 - `_includes/article-content.html` — the shared card for every index. It expects a `post`
-  variable in scope and takes one parameter: `{% include article-content.html style="grid" %}`
-  renders the compact two-column card (`.article-card`, cover image on top, no tags), while
-  omitting `style` renders the original full-width list row (image floated left, tags, author).
-  `/blog/` (paginated, 12 per page via `jekyll-paginate`) and `/projects/` (all, unpaginated)
-  use the grid; the generated tag pages still use the list. Card styles live at the bottom of
-  `_sass/4-layouts/_home-page.scss`; the two-up layout is just the theme's own grid classes
-  (`col-6` desktop, `col-t-12` below 768px), so no new grid system was introduced.
+  variable in scope and takes no parameters. Used by the home page (6 posts + 2 projects),
+  `/blog/` (paginated, 12 per page via `jekyll-paginate`) and `/projects/` (all, unpaginated).
+  Card styles live at the bottom of `_sass/4-layouts/_home-page.scss`; the two-up layout is
+  just the theme's own grid classes (`col-6` desktop, `col-t-12` below 768px), so no new grid
+  system was introduced. `/tags/` has its own compact list markup, styled in
+  `_sass/4-layouts/_tag-page.scss`.
+- `_includes/seo.html` — title, description, Open Graph, Twitter card and favicon tags.
+- `feed.xml` — a hand-written Atom feed, deliberately not `jekyll-feed`: that plugin is not
+  installed locally, and an uninstalled plugin fails the build under
+  `JEKYLL_NO_BUNDLER_REQUIRE`. Do not swap it for the plugin.
 - `_includes/head.html` inlines `_includes/main.scss` through Jekyll's `scssify` filter —
   **there is no separate stylesheet request**. `main.scss` is only a table of contents of
   `@import`s into `_sass/{0-settings,1-tools,2-base,3-modules,4-layouts}`; edit the

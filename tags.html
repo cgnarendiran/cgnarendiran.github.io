@@ -1,0 +1,38 @@
+---
+layout: page
+title: Tags
+permalink: /tags/
+---
+{%- comment -%}
+  Plugin-free tag index. site.tags covers posts only, so posts and projects are
+  concatenated by hand and filtered per tag. There is no /tag/<tag>/ page and no
+  tagging plugin: jekyll-tagging is not on the GitHub Pages allowlist, so those
+  pages 404'd in production while resolving locally. See CLAUDE.md.
+{%- endcomment -%}
+{%- assign docs = site.posts | concat: site.projects -%}
+{%- assign all_tags = "" | split: "" -%}
+{%- for d in docs -%}{%- if d.tags -%}{%- assign all_tags = all_tags | concat: d.tags -%}{%- endif -%}{%- endfor -%}
+{%- assign all_tags = all_tags | uniq | sort_natural -%}
+
+<p class="tags-intro">{{ all_tags.size }} tags across {{ docs.size }} posts and projects.</p>
+
+<div class="tag-cloud">
+  {%- for tag in all_tags -%}
+    {%- assign tagged = docs | where_exp: "d", "d.tags contains tag" -%}
+    <a class="tag-cloud__item" href="#{{ tag | slugify }}">{{ tag }}<span class="tag-cloud__count">{{ tagged.size }}</span></a>
+  {%- endfor -%}
+</div>
+
+{%- for tag in all_tags -%}
+  {%- assign tagged = docs | where_exp: "d", "d.tags contains tag" | sort: "date" | reverse -%}
+<h2 class="tag-group__title" id="{{ tag | slugify }}">{{ tag }}</h2>
+<ul class="tag-group__list list-reset">
+  {%- for d in tagged %}
+  <li class="tag-group__item">
+    <time class="tag-group__date" datetime="{{ d.date | date_to_xmlschema }}">{{ d.date | date: "%b %Y" }}</time>
+    <a href="{{ d.url | relative_url }}">{{ d.title }}</a>
+    {%- if d.collection == "projects" %} <span class="tag-group__kind">Project</span>{% endif -%}
+  </li>
+  {%- endfor %}
+</ul>
+{%- endfor -%}

@@ -3,7 +3,7 @@ layout: post
 title:  "Quaternions - a necessary evil"
 date:   2021-06-20
 image:  images/blog7/cover.jpg
-tags:  quaternions rotation transformation euler angles
+tags: [quaternions, rotations, robotics]
 ---
 *On the cover: Quaternion [Julia fractals](http://paulbourke.net/fractals/quatjulia/)*
 

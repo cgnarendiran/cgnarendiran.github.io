@@ -3,7 +3,7 @@ layout: post
 title:  "VLAs - Pixels to Tokens"
 date:   2026-01-15
 image:  images/blog27/cover.jpg
-tags:  Tokens Pixels Vision Language Models Computer Vision
+tags: [vision-language-action, robotics, multimodal, embodied-ai]
 ---
 
 # VLAs - Pixels to Actions

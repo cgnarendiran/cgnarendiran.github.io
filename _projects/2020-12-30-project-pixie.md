@@ -3,7 +3,7 @@ layout: project
 title:  Project Pixie
 date:   2020-12-30
 image:  images/project8/cover.png
-tags:   pixie autonomous robotics nvidia isaac ros segmentation croprow 
+tags: [robotics, segmentation, ros, agriculture, computer-vision]
 ---
 *On the cover: Robot Pixie in front of de campus Almkerk*
 

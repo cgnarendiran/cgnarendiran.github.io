@@ -3,7 +3,7 @@ layout: project
 title:  Crop Row Detection pipeline
 date:   2020-12-31
 image:  images/project9/cover.png
-tags:   pixie autonomous robotics nvidia isaac ros segmentation croprow 
+tags: [computer-vision, segmentation, agriculture, robotics]
 ---
 *On the cover: Final results after segmentation by SegNet and HoughCNet followed by probabilistic Hough Line Transform on a sample Bean field image*
 

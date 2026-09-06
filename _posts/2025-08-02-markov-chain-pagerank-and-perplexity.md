@@ -3,7 +3,7 @@ layout: post
 title:  "Markov Chain - The connection between Nuclear Bombs, Google Search, and Perplexity"
 date:   2025-08-02
 image:  images/blog20/cover.webp
-tags:  markov chain pagerank perplexity
+tags: [markov-chains, pagerank, probability, information-theory]
 ---
 *On the cover: A Nuclear Bomb Explosion*
 

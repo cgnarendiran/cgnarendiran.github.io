@@ -3,7 +3,7 @@ layout: post
 title:  Sleepless nights in the US
 date:   2017-12-06
 image:  images/blog4/cover.jpg
-tags:   work autonomous vehicle car robotics self-driving igvc usa
+tags: [robotics, autonomous-vehicles, competition, personal]
 ---
 It was a dream for almost everyone in the team to visit the States. I was all curious to see for myself as to what makes it so desirable: the free enterprise? the liberties that people enjoy? Well whatever it was.. we were en route to America, half way across the world from India! By team here, I mean the team Abhiyaan, the robotics team from IIT Madras who are self-driven to make self-drives. I was fortunate to be part of such a wonderful and fun group.
 

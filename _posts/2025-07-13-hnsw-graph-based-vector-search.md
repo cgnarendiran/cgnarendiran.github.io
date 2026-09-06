@@ -3,7 +3,7 @@ layout: post
 title:  "HNSW - Finding Needles in Vector Haystacks"
 date:   2025-07-13
 image:  images/blog19/cover.jpg
-tags:  vector search hnsw
+tags: [hnsw, vector-search, retrieval, graph-algorithms]
 ---
 *On the cover: HNSW graph depiction. Credits: [Marqo](https://www.marqo.ai/blog/understanding-recall-in-hnsw-search)*
 

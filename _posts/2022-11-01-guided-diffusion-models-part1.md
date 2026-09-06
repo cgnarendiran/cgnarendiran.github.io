@@ -3,7 +3,7 @@ layout: post
 title:  "Guided Diffusion Models - Part 1"
 date:   2022-11-01
 image:  images/blog10/cover.png
-tags:  diffusion dalle midjourney imagen generation guidance ai vision
+tags: [diffusion-models, image-generation, generative-ai, computer-vision]
 ---
 *On the cover: Midjourney's creation for the prompt "Astronauts exploring an alien red planet"*
 

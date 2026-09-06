@@ -3,7 +3,7 @@ layout: project
 title:  Embodied Cognition
 date:   2018-06-17
 image:  images/project5/cover.jpg
-tags:   cfi embodied cognition robotics 
+tags: [robotics, embodied-ai, reinforcement-learning, research]
 ---
 *On the cover: Pioneer 3Dx as base, CoolArm1000 7DoF and a mounted kinect sensor*
 

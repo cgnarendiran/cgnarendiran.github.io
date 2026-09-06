@@ -6,3 +6,6 @@ Gemfile.lock
 *.DS_Store
 # Claude Code scratch worktrees - large, local-only, never publishable
 .claude/worktrees/
+# LinkedIn OAuth token written by .claude/scripts/linkedin_auth.py
+.claude/linkedin.env
+__pycache__/

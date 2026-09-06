@@ -2,13 +2,13 @@
 layout: post
 title:  "VLAs - Pixels to Tokens"
 date:   2026-01-15
-image:  images/blog27/cover.png
+image:  images/blog27/cover.jpg
 tags:  Tokens Pixels Vision Language Models Computer Vision
 ---
 
 # VLAs - Pixels to Actions
 
-*On the cover: Pixels to actions*
+*On the cover: a player piano roll mid-performance. Lyrics printed down the right margin, motor commands punched through the middle, one sequence driving a machine with hands. The song is "Parade of the Wooden Soldiers." Photo by [Draconichiaro](https://commons.wikimedia.org/wiki/File:PlayerPianoRoll.jpg), CC BY-SA 4.0.*
 
 In our [last post](https://cgnarendiran.github.io/blog/vlm-pixels-to-tokens/), we taught a Transformer to see *and* speak. We bolted a vision encoder onto an LLM, projected pixel-patches into the language space, and tricked the text model into hallucinating a vision system. The result was a model that can look at a picture of your fridge and write you a thousand words on apples.
 

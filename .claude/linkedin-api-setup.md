@@ -57,12 +57,14 @@ Re-run step 4 and update the three variables in the environment. The publisher w
 report when fewer than 10 days remain and stops with exit code 4 once the token is rejected.
 Outbox files wait until the token is refreshed; nothing is lost.
 
-## The review window
+## Timing
 
-- The companion job commits `.claude/linkedin-outbox/<slug>.md` with a `publish_after` time,
-  the next weekday at the ledger's `publish_time_local`.
-- The publisher runs on weekdays a few minutes after that time and posts every file whose time
-  has passed.
+- The companion job fires at 17:15 UTC on blog days (retry 18:15), about half an hour after the
+  post is live, and commits `.claude/linkedin-outbox/<slug>.md` with `publish_after` set to its
+  run time plus `publish_delay_minutes` (30).
+- The publisher fires daily at 16:00, 18:00 and 19:00 UTC and posts every file whose time has
+  passed, so the LinkedIn post lands the same day. There is no day-long review window, by
+  Naren's choice; the window is the gap to the next publisher fire.
 - To change a post, edit the file on master before then. To veto it, delete the file and add a
   ledger row for the slug with the note `skipped`, so the companion does not write it again.
 - To change a post after it went out, put the new text in an outbox-format file and run

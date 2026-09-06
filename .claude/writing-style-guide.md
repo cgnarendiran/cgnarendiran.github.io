@@ -529,6 +529,7 @@ deliberate and should survive any proofread.
 - [ ] Honest-cons heading and arguments differ from the previous post's (§12)
 - [ ] At least two jokes attached to the maths (§18), and the conceptual-equation move used once
 - [ ] No point is made twice; nothing is signposted with "we'll come back to that"
+- [ ] `python3 .claude/scripts/prose_lint.py _posts/<file>` exits 0, and its warnings were read
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -592,6 +593,16 @@ thought, and they especially do not do it seven times in one post.
 > Name the papers, or say the real thing: "the papers explaining *why* came out years
 > afterwards, written by people who had been shipping it the whole time."
 
+**7. The negation triplet.** Rule-of-three padding in a black turtleneck.
+> ✗ "no teacher, no stop-gradient, no predictor, no schedules" / "No labels, no held-out probe, no waiting three days"
+>
+> List the items with commas and a verb, or keep the one that matters.
+
+**8. The colon label.** A paragraph that opens with a tag instead of a clause.
+> ✗ "My read: that gauge is the result, not the leaderboard." / "The dragons: the augmentation stack is still lifted from DINO."
+>
+> Naren flagged both in the LeJEPA LinkedIn draft. The bet and the dragons are sentences: "What I would actually build on is the gauge." / "The catch is that the augmentation stack is still DINO's."
+
 ### The humour that should be there instead
 
 Cutting shapes 1–6 empties the slots where the jokes belong, so **fill them**. The LeJEPA draft
@@ -618,7 +629,16 @@ without it.
 
 ### How to check
 
-Mechanical, and worth running on every draft:
+Mechanical, and worth running on every draft. First the lint, which must exit 0:
+
+```bash
+python3 .claude/scripts/prose_lint.py _posts/YYYY-MM-DD-slug.md
+```
+
+It fails on negation triplets, a second staccato run, a second run of short paragraph closes,
+and three or more verbless fragments; it warns on arch commentary, colon labels, too few asides
+or questions, and a landing-line ratio above one in four (`--linkedin` tightens it for posts).
+Then the landing-line list, which is the part a script cannot judge:
 
 ```bash
 # landing-line density: aim for roughly 1 paragraph in 6, not 1 in 3

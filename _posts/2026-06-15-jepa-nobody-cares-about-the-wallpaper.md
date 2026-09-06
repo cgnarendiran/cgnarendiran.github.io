@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "JEPA - Nobody Cares About the Wallpaper"
-date:   2026-09-05
+date:   2026-06-15
 image:  images/blog28/cover.jpg
 tags:  JEPA Self-Supervised Learning World Models Video Representation Collapse
 ---

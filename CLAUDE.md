@@ -18,6 +18,23 @@ assume tag links work just because they resolve on a local server.
 
 Most work here is authoring content in `_posts/` and `_projects/`, not changing code.
 
+## Automation
+
+Two cloud routines (claude.ai/code/routines) write content on a schedule. Both work from
+`origin/master`, open a PR, self-check it and merge it; neither pushes to `master` directly.
+
+- **Blog job**, Sun + Wed 9:15am Pacific. Reads `.claude/blog-topic-queue.md` and
+  `.claude/writing-style-guide.md`, writes the next queued post into `_posts/` and
+  `images/blogN/`, and moves the queue row to Published. Figures come from
+  `.claude/scripts/fetch_arxiv_figures.py`.
+- **LinkedIn job**, Sun + Wed 12:15pm Pacific, three hours later. Reads
+  `.claude/linkedin-ledger.md` and `.claude/linkedin-style-guide.md`, writes a companion post for
+  the oldest eligible blog post not yet in the ledger, schedules it on LinkedIn through the
+  Postbeam connector for the next weekday morning, and records the Postbeam id in the ledger.
+
+Both jobs run the vendored `humanizer` skill in `.claude/skills/`. `.claude/` is a dot-directory,
+so Jekyll never serves any of it.
+
 ## Commands
 
 ```bash

@@ -16,11 +16,11 @@ So why not drop the charms and see what breaks? Because you cannot read the loss
 
 LeJEPA swaps the lot for one term. Cast a part before anyone tells you what it bolts to and you pour it equally strong in every direction. The load comes from an angle you did not pick. Embeddings, same. You cannot X-ray an ingot, so it core-samples: random directions, test each shadow.
 
-The training loss now tracks probe accuracy at 94%+ Spearman, so you can pick a model without labels. My read: that gauge is the result, not the leaderboard.
+The training loss now tracks probe accuracy at 94%+ Spearman, so you can finally pick a model without labels. That is the bit I would actually build on.
 
-The dragons: "without the heuristics" is oversold. The augmentation stack is still lifted wholesale from DINO. The superstition moved house, it did not leave town.
+The heuristics are not really gone though, since it still trains on crops and colour jitter lifted wholesale from DINO. The superstition moved house, it did not leave town.
 
-I wrote up the isotropy argument and where it still leans on folklore. Part 2 of the JEPA two-parter:
+I wrote up the isotropy argument and the slicing test. Part 2 of the JEPA two-parter:
 https://cgnarendiran.github.io/blog/lejepa/
 
 #LeJEPA #JEPA #SelfSupervisedLearning #RepresentationLearning #AI

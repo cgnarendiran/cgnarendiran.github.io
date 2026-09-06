@@ -12,7 +12,7 @@ by post. Latest is `blog28`. **Next post folder: `images/blog29/`.**
 
 | # | Post | Date | Kind |
 |---|---|---|---|
-| 28 | JEPA - Nobody Cares About the Wallpaper | Sep 2026 | Series explainer, part 1 of 2 |
+| 28 | JEPA - Nobody Cares About the Wallpaper | Jun 2026 | Series explainer, part 1 of 2 |
 | 27 | VLAs - Pixels to Tokens | Dec 2025 | Series explainer |
 | 26 | VLMs - Pixels to Tokens | Dec 2025 | Series explainer |
 | 25 | ViT - Pixels to Tokens | Nov 2025 | Series explainer |

@@ -55,3 +55,10 @@ $font-size-h5:  18px;
 $font-size-h6:  16px;
 
 $heading-line-height: 1.2;
+
+// Small text. Both sizes already existed as literals in the theme --
+// 13px in the pagination and footer copyright, 12px in the (currently
+// disabled) newsletter styles -- and are named here so layouts can
+// reference them instead of repeating the number.
+$font-size-small:   13px;
+$font-size-x-small: 12px;

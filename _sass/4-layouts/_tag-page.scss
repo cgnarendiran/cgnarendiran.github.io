@@ -73,11 +73,12 @@
   border-radius: 3px;
 }
 
-/* Link from the blog index to the tag index */
+/* Link from the top of the blog index to the tag index */
 .blog-browse-tags {
-  margin-top: -20px;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
+  padding-bottom: 18px;
   font-family: $heading-font-family;
   font-size: $font-size-small;
-  text-align: center;
+  text-align: right;
+  border-bottom: 1px solid $border-color;
 }

@@ -44,7 +44,7 @@ vocabulary — a reader clicking `computer-vision` wants both.
 
 ## Maths and foundations
 
-`probability` · `information-theory` · `loss-functions` · `bayesian-inference` ·
+`probability` · `information-theory` · `game-theory` · `loss-functions` · `bayesian-inference` ·
 `markov-chains` · `pagerank` · `optimization` · `cryptography` · `number-theory` ·
 `quaternions` · `rotations` · `kalman-filter` · `state-estimation`
 

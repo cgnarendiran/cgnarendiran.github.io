@@ -56,3 +56,4 @@ The publisher appends rows here; keep this table last in the file.
 |---|---|---|---|---|---|
 | jepa-nobody-cares-about-the-wallpaper | 2026-06-15 | urn:li:share:7502284468947320832 | 2026-09-06T08:39Z | 2026-09-06 | blog-companion via LinkedIn API |
 | lejepa | 2026-07-15 | urn:li:share:7502452735359909888 | 2026-09-06T19:48Z | 2026-09-06 | blog-companion via LinkedIn API |
+| solving-chess-paths-nodes | 2026-09-07 | urn:li:share:7502931553073827840 | 2026-09-08T03:31Z | 2026-09-08 | manual via LinkedIn API |

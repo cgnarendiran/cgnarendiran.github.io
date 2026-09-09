@@ -58,3 +58,4 @@ The publisher appends rows here; keep this table last in the file.
 | lejepa | 2026-07-15 | urn:li:share:7502452735359909888 | 2026-09-06T19:48Z | 2026-09-06 | blog-companion via LinkedIn API |
 | solving-chess-paths-nodes | 2026-09-07 | urn:li:share:7502931553073827840 | 2026-09-08T03:31Z | 2026-09-08 | manual via LinkedIn API |
 | world-models-learned-simulators | 2026-09-09 | urn:li:share:7503513730584821761 | 2026-09-09T18:04Z | 2026-09-09 | blog-companion via LinkedIn API |
+| speculative-decoding | 2026-09-09 | urn:li:share:7503528834714103809 | 2026-09-09T19:04Z | 2026-09-09 | blog-companion via LinkedIn API |

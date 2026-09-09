@@ -1,43 +1,49 @@
 ---
 layout: post
-title:  "World Models - The Backlot That Never Runs Out of Street"
+title:  "World Models - The Film Set That Never Runs Out of Street"
 date:   2026-09-09
 image:  images/blog31/cover.jpg
 description: "Learned simulators generate the street instead of building it. Genie 3, Cosmos and GAIA-3 all look right, and looking right is the cheap part."
 tags: [world-models, simulation, synthetic-data, autonomous-vehicles, embodied-ai]
 ---
 
-*On the cover: a studio backlot, the left half nailed together by carpenters and the right half generated. Decorative, and also the whole argument.*
+*On the cover: a film set, the left half built by carpenters and the right half generated. Decorative, and also the whole argument.*
 
-The [VLA post](/blog/vla-pixels-to-tokens/) ended on an accounting problem. Language models ate the internet, robots have a few thousand hours of somebody wiggling a joystick, and the gap between those two piles is about five orders of magnitude. Nobody closes that by hiring more people to drive forklifts.
+The [VLA post](/blog/vla-pixels-to-tokens/) ended on an accounting problem. Language models ate the internet. Robots have a few thousand hours of somebody wiggling a joystick. The gap between those two piles is about five orders of magnitude, and nobody closes it by hiring more people to drive forklifts.
 
-So the obvious move is to stop collecting the world and start generating it.
+So you stop collecting the world and start generating it instead.
 
-Which is how we ended up here: a model with billions of parameters whose actual job, on any given Tuesday, is to remember whether the bakery sign said BAKERY forty seconds ago.
+Which leaves us here: a model with billions of parameters whose job, on a good day, is to remember whether the shop sign said BAKERY forty seconds ago.
 
-Welcome to the era of **learned simulators**. This is the story of how the film set stopped being built by carpenters and started being hallucinated one frame at a time, and what that trade actually costs.
+Welcome to the era of **learned simulators**. This is the story of how the film set stopped being built by carpenters and started being drawn by a neural network, one frame at a time.
 
-The image to hold on to is a studio backlot. Old Hollywood built New York in Burbank: a row of façades with props behind them, and if the actor walks around the corner he is in a car park. It works because the camera only ever looks one way. Every simulator ever written is that lot. The only question is who builds it, and how deep it goes before you hit the scaffolding.
+Picture the set properly, because the rest of this post runs on it. Old Hollywood built New York inside a studio in Burbank. A row of building fronts, painted, propped up from behind with scaffolding, and nothing behind them at all. Walk through a door and you are in a car park. It works because the camera only ever looks one way, and the street only has to hold up for one shot.
+
+Every simulator ever written is that same street, and the only questions worth asking are who builds it and how long it holds up.
 
 ## The street the carpenters built
 
-You might think the answer is to build the lot properly. That is what a classical simulator does: somebody models the road surface, somebody else models the traffic light, a third person writes the script where the cyclist swerves at 14 metres (the 14 came from a ticket, not from physics), and every asset in the scene exists because a human put it there.
+You might think the answer is to build the street properly. That is what a classical simulator does. Somebody models the road, somebody models the traffic light, somebody writes the script where the cyclist swerves at 14 metres (the 14 came from a ticket, not from physics). Every object in the scene is there because a person put it there.
 
-It works, and it does not scale, for the boring reason that a person has to think of the thing first.
+It works. It does not scale, because a person has to think of the thing first.
 
-Waymo's own list of what they wanted and could not stage is the best advertisement for the alternative: a tornado, a flooded street, an elephant standing in the road. You are not going to build an elephant asset on the off-chance. And the tail is where the driving problem lives, since the easy 99.9% of miles was solved years ago and the remaining bit is entirely made of things nobody expected.
+Waymo's own wish list makes the point: a tornado, a flooded street, an elephant standing in the road. Nobody is going to model an elephant on the off-chance. And the tail is where the driving problem lives now, since the easy 99.9% of miles was solved years ago and what is left is made of things nobody expected.
 
-There is a second bill, quieter and worse. What the carpenters build looks like what they built, which is not what a camera sees. The lighting is too clean, the tarmac too uniform, the pedestrians walk like puppets, and a perception model trained on that gets a nasty surprise the first time it sees a real road. Half the field's effort went into papering over that gap.
+There is a second bill. What carpenters build looks like what carpenters build, which is not what a camera sees. The light is too clean, the road too even, the pedestrians walk like puppets. Train a perception model on that and it gets a shock the first time it sees a real road.
 
-So: what if the lot were generated by something that had watched a very large amount of real footage?
+So what if you had the street generated by something that had watched an enormous amount of real footage?
 
 ## The generic recipe
 
-Every model in this post is built out of the same three pieces, and it is worth having them straight before any brand names turn up.
+Every model in this post is the same three pieces, and it is worth having them straight before any brand names turn up.
 
-A **tokeniser** squashes a frame from a million-odd pixels down to a few thousand latent tokens, exactly the way a [ViT](/blog/vit-pixels-to-tokens/) chops an image into patches, except this one compresses along time as well. A **dynamics model**, which is a transformer, reads the tokens so far and predicts the tokens of the next moment. And then there is the **action**: a slot in the input where you put what the agent just did, which is the only thing separating a world model from a video generator.
+A **tokeniser** takes one frame, a million-odd pixels, and squashes it down to a few thousand numbers, the way a [ViT](/blog/vit-pixels-to-tokens/) chops an image into patches. This one squashes along time too, so a run of frames becomes a single small block.
 
-In words, the thing being learned is:
+A **dynamics model** is a transformer that reads the blocks so far and predicts the next one.
+
+An **action** is a slot in the input where you put what the agent just did. That slot is the only thing separating a world model from a video generator.
+
+In words, what the model learns is this:
 
 $$
 \text{next description of the world} = f(\text{every description so far},\ \text{what you just did})
@@ -49,63 +55,67 @@ $$
 \hat{z}_{t+1} = f_\theta(z_{t-k:t},\, a_t), \qquad x_{t+1} = \mathcal{D}(\hat{z}_{t+1})
 $$
 
-where $z_t$ is the latent description of frame $t$, $a_t$ is the action, $k$ is how far back the context window reaches, $f_\theta$ is the dynamics model and $\mathcal{D}$ is the decoder that turns a latent back into something you can look at. Then you feed the frame you just made back in as the frame you look at, and go again.
+where $z_t$ is the squashed description of frame $t$, $a_t$ is the action, $k$ is how far back the context window reaches, $f_\theta$ is the dynamics model, and $\mathcal{D}$ is the decoder that turns a description back into a picture. Then you feed the frame you just drew back in as the frame you look at, and go round again.
 
-![Four boxes in a row, frame to tokeniser to dynamics model to decoder, with an action feeding the dynamics model and the output looping back to its input](/images/blog31/recipe.png) *Figure 1: The whole family, in four boxes. The action slot at the bottom is the entire difference between a simulator and a very expensive screensaver. Source: Author*
+![Four boxes in a row, frame to tokeniser to dynamics model to decoder, with an action feeding the dynamics model and the output looping back to its input](/images/blog31/recipe.png) *Figure 1: The whole family, in four boxes. The action slot at the bottom is the difference between a simulator and a very expensive screensaver. Source: Author*
 
-Notice there is no geometry anywhere in that. Nothing in those boxes holds a mesh or runs a physics engine, and nobody has fitted a NeRF or a cloud of gaussians to the scene. The street stays put across frames only because the model can still see the earlier frames.
+Notice what is missing. There is no geometry in there anywhere. Nothing in those boxes holds a 3D model of the street, and nobody has fitted a NeRF or a cloud of gaussians to it. The street stays where you left it only because the model can still see the earlier frames.
 
-## Genie: the lot that draws itself
+## Genie: the set that draws itself
 
-[Genie](https://arxiv.org/abs/2402.15391) (Bruce et al., DeepMind, 2024) is where the recipe got its shape. 11B parameters, trained on unlabelled internet videos of 2D platformer games, and the clever part is the middle piece: a **latent action model** that infers what button must have been pressed between two frames, since nobody uploads their keystrokes with their Let's Play. The codebook holds eight actions. Somebody sat down, considered every platformer ever made, and concluded the genre is eight buttons wide, and they were not wrong.
+[Genie](https://arxiv.org/abs/2402.15391) (Bruce et al., DeepMind, 2024) is where the recipe got its shape: 11B parameters, trained on unlabelled internet video of 2D platformer games.
 
-[**Genie 3**](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/) (DeepMind, August 2025) is the one that made everyone sit up. 720p at 24 frames a second, interactive, generated in real time from a text prompt, and consistent for a few minutes rather than the 10 to 20 seconds Genie 2 managed. It takes **promptable world events**, which is the director shouting "now make it rain" mid-take. DeepMind also dropped their SIMA agent into generated warehouses and gave it goals like walking to the red forklift, and it walked to the red forklift (a low bar, until you remember the forklift did not exist ten seconds earlier).
+The clever bit is the middle. Nobody uploads their keystrokes along with their Let's Play, so the model has to work out for itself what button must have been pressed between one frame and the next. That is the **latent action model**, and its codebook holds eight actions. Somebody sat down, considered every platformer ever made, and concluded the genre is eight buttons wide. They were not wrong.
 
-**NOTE:** there is no Genie 3 paper. There is a blog post, some very good videos, and no architecture. Everything above is what DeepMind chose to say, and I am reporting it as such, not as something anybody outside the building has checked.
+[**Genie 3**](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/) (DeepMind, August 2025) is the one everybody has seen. 720p at 24 frames a second, generated in real time from a text prompt, and you can walk around in it. It stays consistent for a few minutes, where Genie 2 managed 10 to 20 seconds. It also takes **promptable world events**, which is the director shouting "now make it rain" halfway through the take. DeepMind dropped their SIMA agent into a generated warehouse and told it to walk to the red forklift, and it walked to the red forklift (a low bar, until you remember the forklift did not exist ten seconds earlier).
+
+**NOTE:** there is no Genie 3 paper. There is a blog post, some very good videos, and no architecture. Everything above is what DeepMind chose to say, not something anybody outside the building has checked.
 
 ## Why the street forgets
 
-Genie 3's consistency is emergent, in the specific sense that nothing in the system is storing the street. The model has no map. It has a context window, and the bakery stays where you left it for exactly as long as the frames containing the bakery are still in it.
+Genie 3 has no map of the street. It has a context window, and the bakery stays where you left it for exactly as long as the frames containing the bakery are still inside it.
 
 So how long is that? Get a calculator out, because this is the number the whole illusion rests on.
 
-Take 720p, so 1280 x 720 pixels, at 24 frames a second. Run it through a tokeniser at NVIDIA's published Cosmos rates, 8x spatial and 8x temporal compression. Spatially you get $1280/8 = 160$ by $720/8 = 90$, so 14,400 tokens per latent frame. Temporally, 24 frames a second becomes 3 latent frames. That is:
+Take 720p, so 1280 by 720 pixels, at 24 frames a second. Squash it with a tokeniser at NVIDIA's published Cosmos rates: 8x smaller in each direction on screen, 8x fewer frames. Across the picture you get $1280/8 = 160$ by $720/8 = 90$, so 14,400 numbers per squashed frame. Along time, 24 frames a second becomes 3. Multiply:
 
 $$
 160 \times 90 \times 3 = 43{,}200 \ \text{tokens per second of video}
 $$
 
-One minute of walking down a street is **2.6 million tokens**. The whole of *War and Peace* is about 750,000 tokens, so a minute of generated pavement costs three copies of a Russian novel, and unlike the novel you have to attend over all of it on every frame.
+One minute of street is 2.6 million tokens. The whole of *War and Peace* is about 750,000, so a minute of generated pavement costs three Russian novels, and the model has to read all of it again for every frame it draws.
 
-![Log-scale plot of tokens against seconds of video for two compression settings, crossing a one-million-token line at 23 and 93 seconds](/images/blog31/consistency_budget.png) *Figure 2: How fast video eats a context window. A million-token context buys you 23 seconds of 720p at the gentler compression setting and 93 at the aggressive one. Which is roughly the number everybody reports as their consistency horizon, and I do not think that is a coincidence. Source: Author*
+![Log-scale plot of tokens against seconds of video for two compression settings, crossing a one-million-token line at 23 and 93 seconds](/images/blog31/consistency_budget.png) *Figure 2: How fast video eats a context window. A million-token context buys you 23 seconds of 720p at the gentler setting and 93 at the harder one. Which is roughly the horizon everybody reports, and I do not think that is a coincidence. Source: Author*
 
-Crank the tokeniser to 16x spatially and it drops to 10,800 tokens a second, which is 648,000 a minute, and now a million-token context holds about a minute and a half. That is the trade the whole field is running: compress harder and the street stays put longer, but the detail you threw away is detail the model can no longer put back. This is the [KV cache](/blog/kv-caching-mla-is-attention-all-you-really-need/) problem wearing a hard hat.
+Squash harder, 16x instead of 8x, and it drops to 10,800 tokens a second, or 648,000 a minute, so a million-token context now holds a minute and a half. That is the trade everyone is making. Squash harder and the street stays put for longer, but the detail you threw away is detail the model can no longer put back. This is the [KV cache](/blog/kv-caching-mla-is-attention-all-you-really-need/) problem in a hard hat.
 
-Fall off the end of the window and the model does not crash. It confabulates, politely, from whatever is still in view.
+Run off the end of the window and nothing crashes. The model just makes something up out of whatever is still on screen.
 
-![Three panels of the same shopfront: first with a red BAKERY sign and a tree to the right, then the camera turned away, then the sign green and misspelt with the tree on the other side](/images/blog31/drift.png) *Figure 3: What running out of context looks like from inside. Nothing has broken. The model is generating a perfectly plausible street, which is the problem, since a plausible street is not the street you were standing in. Source: Author*
+![Three panels of the same shopfront: first with a red BAKERY sign and a tree to the right, then the camera turned away, then the sign green and misspelt with the tree on the other side](/images/blog31/drift.png) *Figure 3: What running out of context looks like from the inside. Nothing is broken. The model is drawing a perfectly reasonable street, which is the problem, because it is not the street you were standing in. Source: Author*
 
-## Cosmos: the lot you can download
+## Cosmos: the set you can download
 
-[Cosmos](https://arxiv.org/abs/2501.03575) (NVIDIA, January 2025) took the same recipe and industrialised it. Diffusion models at 7B and 14B, autoregressive ones at 4B and 12B, trained on 20 million hours of video on a cluster of 10,000 H100s over three months, and the weights are out under an open licence.
+[Cosmos](https://arxiv.org/abs/2501.03575) (NVIDIA, January 2025) took the same recipe and industrialised it. Diffusion models at 7B and 14B, autoregressive ones at 4B and 12B, trained on 20 million hours of video on a cluster of 10,000 H100s over three months. The weights are out under an open licence.
 
 Twenty million hours is a shade over 2,280 years of footage. To watch it end to end you would have to have started in the third century BC and never once gone to bed.
 
-The tokeniser is the part I would steal. Cosmos compresses 8x or 16x spatially and 4x or 8x temporally, up to 2048x in total, and NVIDIA measured it running 12x faster than the tokenisers it replaced while looking better. Nobody has ever been promoted for a tokeniser, which is a shame, because every number in the previous section came out of a tokeniser decision.
+The tokeniser is the part I would steal. Cosmos squashes 8x or 16x on screen and 4x or 8x along time, up to 2048x in total, and NVIDIA measured it running 12x faster than the tokenisers it replaced while looking better. Nobody has ever been promoted for a tokeniser, which is a shame, because every number in the last section came out of a tokeniser decision.
 
-The framing NVIDIA chose is the one that stuck: a **world foundation model**, pretrained on everything, fine-tuned by you into a simulator for whatever your particular robot has to survive.
+NVIDIA's framing is the one that stuck: a **world foundation model**, pretrained on everything, fine-tuned by you into a simulator for whatever your own robot has to survive.
 
-## The driving lot, and who it is really for
+## The driving set, and who it is really for
 
-Driving is where the money is, so driving is where this got serious fastest. And who is the customer for a generated street, exactly? For the first few years everybody assumed it was the perception team, hungry for training frames.
+Driving is where the money is, so driving is where this got serious fastest. And who is the customer for a generated street? For the first few years everybody assumed it was the perception team, hungry for training frames.
 
-Wayve's line runs [GAIA-1](https://arxiv.org/abs/2309.17080) (9B, 2023) to [GAIA-2](https://arxiv.org/abs/2503.20523) (March 2025), which swaps in latent diffusion, generates all the cameras at once so they agree with each other, and conditions on a properly structured pile of inputs: ego speed and steering curvature, 3D boxes for every other agent, weather, time of day, lane counts, speed limits, crossings, traffic lights. The conditioning list reads like an order form, which is exactly the point of it.
+Wayve's line runs [GAIA-1](https://arxiv.org/abs/2309.17080) (9B, 2023) to [GAIA-2](https://arxiv.org/abs/2503.20523) (March 2025). GAIA-2 swaps in latent diffusion, draws all the cameras at once so they agree with each other, and lets you specify the scene properly: ego speed and steering curvature, 3D boxes for every other car, weather, time of day, lane counts, speed limits, crossings, traffic lights. The conditioning list reads like an order form, which is exactly the point of it.
 
-Then **GAIA-3 (December 2025)** doubles the parameters to 15B, doubles the tokeniser, trains on ten times the data, and does something more interesting than either: it changes jobs. GAIA-3 is pitched at *evaluation* rather than data generation, and the number Wayve reports is a fivefold drop in the rejection rate of synthetic tests, meaning five times fewer generated scenarios that their own engineers threw out as not worth grading a driver on.
+Then **GAIA-3 (December 2025)** doubles the parameters to 15B, doubles the tokeniser and trains on ten times the data. More interesting than any of that, it changes jobs. GAIA-3 is pitched at *evaluation* rather than data generation, and the number Wayve reports is a fivefold drop in the rejection rate of synthetic tests, meaning five times fewer generated scenarios that their own engineers threw out as not worth grading a driver on.
 
-**Waymo World Model (February 2026)** takes Genie 3, adapts it to driving, and adds the sensor nobody else generates: lidar alongside camera, so the whole stack sees a coherent world rather than a pretty picture. **XPENG X-World (April 2026)** is the least glamorous and possibly the most telling, since it is already sitting inside a production loop doing closed-loop simulation, online reinforcement learning and data synthesis, with a caching trick that skips the parts of the scene that did not change for a 2.7x speedup on denoising.
+**Waymo World Model (February 2026)** takes Genie 3 and adapts it to driving. It adds the sensor nobody else generates: lidar alongside camera, so the whole stack sees one coherent world instead of a pretty picture.
 
-![Timeline of nine world models from GAIA-1 in 2023 to X-World in 2026, colour coded by domain](/images/blog31/lineage.png) *Figure 4: Three years of it. The interesting migration is not left to right, it is that the driving row keeps arriving at evaluation while the games row is still talking about generation. Source: Author*
+**XPENG X-World (April 2026)** is the least glamorous and possibly the most telling. It is already inside a production loop, doing closed-loop simulation, online reinforcement learning and data synthesis. It also ships a caching trick that skips the parts of a scene that did not change, worth a 2.7x speedup on denoising.
+
+![Timeline of nine world models from GAIA-1 in 2023 to X-World in 2026, colour coded by domain](/images/blog31/lineage.png) *Figure 4: Three years of it. The interesting move is not left to right, it is that the driving row keeps arriving at evaluation while the games row is still talking about generation. Source: Author*
 
 | Model | What you steer it with | What it is for | Verdict |
 |---|---|---|---|
@@ -116,46 +126,46 @@ Then **GAIA-3 (December 2025)** doubles the parameters to 15B, doubles the token
 | Waymo World Model | Prompts, driving inputs, scene layout | Camera and lidar scenarios | Only one generating the whole sensor suite |
 | Dreamer 4 | Mouse and keyboard | Training a policy inside it | The only one with a policy to show for it |
 
-## Does anybody actually learn to drive on a backlot?
+## Does anybody actually learn to drive on a film set?
 
-Every generated frame in this post is worth precisely nothing unless something learns from it, so here is the existence proof.
+Every frame in this post is worth nothing unless something learns from it, so here is the result that says something does.
 
-[Dreamer 4](https://arxiv.org/abs/2509.24527) (Hafner et al., 2025) trains an agent by reinforcement learning *inside* its own world model, a process they call imagination training, and the result is the first agent to mine diamonds in Minecraft purely from offline data (no environment interaction means exactly that: the policy never once played the actual game). That task is over 20,000 mouse and keyboard actions deep, from raw pixels. It beats OpenAI's VPT offline agent using **100x less data**, and the world model runs at 21 frames a second on a single H100, somewhere between 13x and 26x faster than the competition.
+[Dreamer 4](https://arxiv.org/abs/2509.24527) (Hafner et al., 2025) trains an agent by reinforcement learning *inside* its own world model, which they call imagination training. The agent is the first to mine diamonds in Minecraft from offline data alone (no environment interaction means exactly that: the policy never once played the actual game). That task runs more than 20,000 mouse and keyboard actions deep, from raw pixels. It beats OpenAI's VPT offline agent on **100x less data**, and the world model runs at 21 frames a second on a single H100, somewhere between 13x and 26x faster than the competition.
 
-An agent that has never touched the game rehearses entirely on the backlot, walks onto the real set and mines a diamond. That is the result the whole field is chasing.
+A policy that never touched the game rehearsed entirely inside a model of it, then went out and mined a diamond in the real thing. That is the result the whole field is chasing.
 
 Now the ablation, and it is not a kind one.
 
-[Physics-IQ](https://arxiv.org/abs/2501.09038) (Motamed et al., 2025) is 396 real-world videos testing whether generative video models have got the faintest idea about fluids, optics, solid mechanics, magnetism and heat. The best model scored **29.5 out of 100** against the physical-variance ceiling. The finding that matters more than the score is that physical understanding turns out to be *uncorrelated with visual realism*. The prettiest model is not the one that gets the collision right, and there is no version of the leaderboard where it is.
+[Physics-IQ](https://arxiv.org/abs/2501.09038) (Motamed et al., 2025) is 396 real videos that test whether generative video models have the faintest idea about fluids, optics, solid mechanics, magnetism and heat. The best model scored **29.5 out of 100**. Worse than the score is what sits behind it: how well a model does on physics has nothing to do with how real its videos look. The prettiest model is not the one that gets the collision right, and there is no version of the leaderboard where it is.
 
-Which is the backlot doing exactly what a backlot does. It was optimised, by construction, to survive a camera pointed at it. Nothing in that objective ever asked whether the wall would hold if you leaned on it.
+Which is the set doing what a set does. It was built to survive a camera pointed at it. Nothing in that job description asks whether the wall holds when you lean on it.
 
 ## Where things are going
 
-**GAIA-3 and X-World**: both landed in the evaluation loop rather than the training set, which is a much harder ask, since a training set can be wrong 5% of the time and a test rig cannot.
+**GAIA-3 and X-World**: both landed in the evaluation loop rather than the training set, which is the harder job, since a training set can be wrong 5% of the time and a test rig cannot.
 
-**WorldLens (CVPR 2026)**: somebody had to grade the grader, and [WorldLens](https://arxiv.org/abs/2512.10958) is the first benchmark that looks at a driving world model across five axes at once: generation, reconstruction, action-following, downstream task and human preference. They collected 26,808 human-annotated entries with written reasons attached, then distilled an auto-evaluator off them, which is how you get a continuity supervisor that scales.
+**WorldLens (CVPR 2026)**: somebody had to grade the grader. On a film set, continuity is the person who checks the coffee cup is still half full in the next shot, and [WorldLens](https://arxiv.org/abs/2512.10958) is the first benchmark doing that job for driving models. It scores them on five things at once: generation, reconstruction, action-following, downstream task and human preference. The authors collected 26,808 human ratings with written reasons attached, then distilled an automatic scorer off them.
 
-**Real time on one GPU**: Dreamer 4's 21 fps and XPENG's 2.7x denoising cache are the same trend arriving from opposite ends. A simulator you can only run in a batch job overnight is a dataset with extra steps.
+**Real time on one GPU**: Dreamer 4's 21 fps and XPENG's 2.7x cache are the same trend arriving from opposite ends. A simulator you can only run overnight in a batch job is a dataset with extra steps.
 
-**LeWorldModel and the JEPA camp**: [LeWorldModel](https://arxiv.org/abs/2603.19312) and the [JEPA](/blog/jepa-nobody-cares-about-the-wallpaper/) line hold that generating pixels at all is a waste of a perfectly good GPU, and that a world model should predict the description and never draw the room. Both camps are now shipping. Neither has beaten the other on anything that would settle it.
+**LeWorldModel and the JEPA camp**: [LeWorldModel](https://arxiv.org/abs/2603.19312) and the [JEPA](/blog/jepa-nobody-cares-about-the-wallpaper/) line hold that drawing pixels at all is a waste of a perfectly good GPU, and that a world model should predict the description and never paint the room. Both camps are shipping. Neither has beaten the other on anything that would settle it.
 
 ## The continuity report
 
-WorldLens is blunt about the state of the lot: no model wins across all five axes. The texture-rich ones violate geometry, the geometrically stable ones lack behavioural fidelity, and even the best of them score **2 to 3 out of 10** on human realism ratings. Three years into the driving effort, the strongest generated footage is scored by actual human beings at about a quarter of the way to convincing.
+WorldLens is blunt about the state of the set. None of the models wins on all five scores. The ones with rich texture get the geometry wrong, the ones with stable geometry get the behaviour wrong, and the best of them score **2 to 3 out of 10** on human realism. Three years into the driving effort, the strongest generated footage is about a quarter of the way to convincing a person.
 
-Most of the impressive numbers in this post are vendor numbers. Wayve's fivefold improvement in test rejection, XPENG's production deployment, Waymo's elephant: all announced by the company, none refereed, all measured on private fleets against internal baselines that nobody outside can inspect. I have quoted them because they are the only numbers there are, which is not the same as trusting them.
+Most of the impressive numbers in this post came from the companies selling the models. Wayve's fivefold improvement, XPENG's production deployment, Waymo's elephant: announced in press releases, measured on private fleets, against internal baselines nobody outside can look at. I have quoted them because they are the only numbers there are, which is not the same as trusting them.
 
-Then there is the trap that comes free with closed-loop training. A policy optimised inside a learned simulator is being scored by a model with soft spots, and reinforcement learning is a machine for finding soft spots. If the simulator's pedestrians are slightly too cautious, the policy learns a slightly-too-aggressive merge and gets rewarded for it, and the failure only shows up on a real road. That one is an old lesson from sim-to-real, not a fresh result from any of these papers, and none of these papers has retired it.
+Then there is the trap you get free with closed-loop training. A policy trained inside a learned simulator is being marked by a model with soft spots, and reinforcement learning is a machine for finding soft spots. If the simulated pedestrians are a little too timid, the policy learns a merge that is a little too aggressive, gets rewarded for it, and you find out on a real road. That is an old sim-to-real lesson rather than a fresh result, and none of these papers has retired it.
 
-And a smaller thing that bothers me more than it should: the most capable model here has no paper. You cannot reproduce a blog post, you cannot review one, and the entire discussion of Genie 3 is conducted at the level of what the videos looked like.
+And a smaller thing that bothers me more than it should: the most capable model here has no paper. You cannot reproduce a blog post and you cannot review one, so the entire public discussion of Genie 3 happens at the level of what the videos looked like.
 
 ## Conclusion
 
-The backlot was always a trick for building the smallest amount of world that survives one shot from one angle. What changed is who builds it. The carpenters have been replaced by a model that watched two thousand years of footage and can nail up any street you name in real time, including the one with the elephant, and it will hold together for about ninety seconds, which happens to be about as long as your context window can hold the pavement you are standing on.
+A film set was always a trick for building the smallest amount of world that survives one shot from one angle. What changed is who builds it. The carpenters have been replaced by a model that watched two thousand years of footage and can put up any street you name in real time, elephant included. It holds for about ninety seconds, which is roughly how long a context window can hold the pavement you are standing on.
 
-The series thesis holds and takes another turn. Image patches are tokens, words are tokens, robot actions are tokens, and now the world itself is a token stream with a steering wheel bolted to the side. The [ViT](/blog/vit-pixels-to-tokens/) chopped a picture into patches so a Transformer could read it; a world model chops the next ten seconds of your life into patches so a Transformer can write it.
+The series thesis survives with one more turn on it. Image patches are tokens, words are tokens, robot actions are tokens, and now the next ten seconds of the world is a token stream with a steering wheel bolted to the side.
 
-What nobody has yet is the other half of the film crew. We have the set builders, and they are astonishing. Nobody has yet hired the person with the clipboard who checks that the coffee cup is still half full in the next shot, and until somebody does, the honest description of every model in this post is that it makes a very good street to look at, and a street you should not lean on.
+What nobody has hired is the rest of the film crew. The set builders are astonishing. The continuity person, the one with the clipboard and the half-full coffee cup, does not exist yet, and until somebody writes one, the honest description of every model here is the same: a very good street to look at, and one you should not lean on.
 
 And now you know. Fin.

@@ -59,3 +59,4 @@ The publisher appends rows here; keep this table last in the file.
 | solving-chess-paths-nodes | 2026-09-07 | urn:li:share:7502931553073827840 | 2026-09-08T03:31Z | 2026-09-08 | manual via LinkedIn API |
 | world-models-learned-simulators | 2026-09-09 | urn:li:share:7503513730584821761 | 2026-09-09T18:04Z | 2026-09-09 | blog-companion via LinkedIn API |
 | speculative-decoding | 2026-09-09 | urn:li:share:7503528834714103809 | 2026-09-09T19:04Z | 2026-09-09 | blog-companion via LinkedIn API |
+| grpo-rlvr | 2026-09-13 | urn:li:share:7504963213017571329 | 2026-09-13T18:04Z | 2026-09-13 | blog-companion via LinkedIn API |

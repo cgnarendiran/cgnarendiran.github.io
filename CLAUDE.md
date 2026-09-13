@@ -33,14 +33,17 @@ from `origin/master`, open a PR, self-check it and merge it; none pushes to `mas
   `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
   with a `publish_after` time thirty minutes out.
-- **LinkedIn publisher**, daily at 16:00, 18:00 and 19:00 UTC. Runs `.claude/scripts/linkedin_publish.py`,
-  which posts every due outbox file through LinkedIn's Posts API, appends the ledger row and
-  deletes the file. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
-  environment; setup and the 60-day token renewal are in `.claude/linkedin-api-setup.md`.
+- **LinkedIn publisher**, weekdays at 9:00am IST with a retry at 10:00am (03:30 and 04:30 UTC).
+  Runs `.claude/scripts/linkedin_publish.py`, which posts every due outbox file through
+  LinkedIn's Posts API, appends the ledger row and deletes the file. Needs
+  `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud environment; setup and the
+  60-day token renewal are in `.claude/linkedin-api-setup.md`.
 
-There is no day-long review window, by choice: a post is on LinkedIn by 18:00 UTC on blog days.
-To change or hold one, edit its outbox file or its `publish_after` on master before the next
-publisher fire; to veto, delete the file and add a ledger row.
+The publisher fires the morning after each blog day, so a Sunday post reaches LinkedIn on Monday
+and a Wednesday post on Thursday, at 9:00am IST when the Indian audience is starting its day.
+The overnight gap is the review window: to change or hold a post, edit its outbox file or its
+`publish_after` on master before the next publisher fire; to veto, delete the file and add a
+ledger row.
 
 Cloud sandbox facts learned the hard way: the egress proxy blocks cgnarendiran.github.io, so
 liveness is checked through the GitHub Pages deployment record; and the Edit and Write tools

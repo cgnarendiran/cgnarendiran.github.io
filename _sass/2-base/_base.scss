@@ -102,6 +102,41 @@ pre {
   word-break: break-all;
 }
 
+// Tables
+// kramdown emits bare <table>/<thead>/<tbody> for markdown tables and the
+// theme ships no cell styles, so without this block they render as
+// unbordered text. $border-color is the theme's #eee.
+table {
+  width: 100%;
+  font-size: 14px;
+  line-height: 22px;
+  border: 1px solid $border-color;
+
+  th, td {
+    padding: 10px 12px;
+    vertical-align: top;
+    text-align: left;
+    border: 1px solid $border-color;
+  }
+
+  th {
+    font-weight: bold;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid darken($border-color, 10%);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  // Wide tables scroll sideways on narrow screens instead of breaking layout.
+  @media only screen and (max-width: $mobile) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 
 // Images
 img, 

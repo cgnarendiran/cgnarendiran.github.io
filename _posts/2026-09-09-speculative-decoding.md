@@ -7,7 +7,7 @@ description: "One token costs a full read of every weight in the model. Speculat
 tags: [speculative-decoding, efficient-inference, llms, transformers, kv-caching]
 ---
 
-*On the cover: the book lift at the Library of Congress, photographed around 1900. Each carrier rides the shaft up from the stacks to the reading room, and the trip costs the same whether it is carrying one book or a full rack. [Public domain](https://commons.wikimedia.org/wiki/File:Library_of_Congress-Book_conveyors_LCCN96525713.jpg), Library of Congress Prints and Photographs Division.*
+*On the cover: the goods lift in the Fagus factory at Alfeld, installed in 1912 to carry shoe-last blanks between the floors. The cage makes the same trip whether it holds one blank or a full load, which is the whole trick of this post. Photo by [Waltraud.gropius](https://commons.wikimedia.org/wiki/File:2023-11-06_Historischer_Lastenaufzug_im_Fagus-Werk.jpg), CC BY-SA 4.0.*
 
 In the [KV caching post](/blog/kv-caching-mla-is-attention-all-you-really-need/) we stopped the Transformer re-reading its own homework. Cache every key and value, squeeze the cache down to a latent with MLA (multi-head latent attention), and the quadratic bill for a long context turns into something a finance team will sign off on.
 

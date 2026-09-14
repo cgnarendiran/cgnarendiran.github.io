@@ -7,7 +7,7 @@ description: "Learned simulators generate the street instead of building it. Gen
 tags: [world-models, simulation, synthetic-data, autonomous-vehicles, embodied-ai]
 ---
 
-*On the cover: a film set, the left half built by carpenters and the right half generated. Decorative, and also the whole argument.*
+*On the cover: New York Street on the Universal Studios backlot, seen from the hill above it. Fronts on one side, scaffolding on the other, and nothing in between, which is the whole argument. Photo by [Patrick Pelletier](https://commons.wikimedia.org/wiki/File:Universal_Studio_Tour_Facades_from_Above_2014.JPG), CC BY-SA 3.0.*
 
 The [VLA post](/blog/vla-pixels-to-tokens/) ended on an accounting problem. Language models ate the internet. Robots have a few thousand hours of somebody wiggling a joystick. The gap between those two piles is about five orders of magnitude, and nobody closes it by hiring more people to drive forklifts.
 

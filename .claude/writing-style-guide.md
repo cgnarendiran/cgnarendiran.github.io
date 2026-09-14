@@ -326,6 +326,31 @@ Numbered steps with joke names: `### Step 1: The Butcher Shop (Patchification)`,
   ResearchGate URLs rot and block hotlinking.
 - **Every named architecture gets a figure.** ViT has 6, VLM 5, VLA 5, Guided Diffusion 2 has 8.
 
+**Covers.** The cover is a real picture of the conceit, not a diagram of it. Naren's rule,
+September 2026, after two posts shipped with drawn covers: "you don't need to draw the cover
+every time, it needs to be representative of the conceit." The covers that work are found, not
+made: Itchō's blind monks for ViT, Bruegel's Babel for VLM, a claw crane for VLA, the Library
+of Congress book lift for speculative decoding, the University of Tokyo results boards for GRPO,
+the Universal Studios New York Street backlot for world models. A painting, a historical
+photograph, or a plain documentary photo of the actual thing.
+
+- **Source: Wikimedia Commons**, through `.claude/scripts/commons_cover.py`. `search` prints
+  candidates with their licence; `fetch` re-checks the licence, downloads, crops and prints the
+  credit line. It refuses anything that is not public domain, CC0, CC BY or CC BY-SA. No
+  stock sites, no AI images, no screenshots of other people's figures.
+- **Search like a librarian.** Commons search is literal. Try the object's plain name ("goods
+  lift", "book conveyor"), the name in the language of the place ("合格発表" found the results
+  boards that "exam results" did not), category names ("Category:Backlot"), and the big
+  institutional uploads (Library of Congress, National Archives, the Met). Wide scenes and
+  portrait crops rarely read at card size; a tight crop on the object does.
+- **Caption carries the credit.** `*On the cover: <what it shows, and the one line that ties it
+  to the conceit>. Photo by [Author](commons file page), CC BY 2.0.*` or `[Public
+  domain](file page), via <institution>.` The joke or the tie-in goes before the credit.
+- **Shape:** landscape, 1.905:1, 1400 px wide, JPEG under 200 KB (the script does this). Mild
+  auto-contrast is fine on an old print. No text overlays.
+- **Fall back to drawing only when a real search found nothing**, and say so in the PR. A drawn
+  cover is a figure; it belongs in the body with a `Source: Author` caption, not on the card.
+
 **Image budget** — the site serves these on every page load, so weight is not free:
 
 | | limit |
@@ -527,6 +552,8 @@ deliberate and should survive any proofread.
 - [ ] Generic recipe explained before any named model
 - [ ] Every named architecture has a figure with a sourced caption; numbers are sequential
 - [ ] At least one self-made figure (`Source: Author`)
+- [ ] The cover is a real image of the conceit from Wikimedia Commons, licence verified by
+      `commons_cover.py`, credited in the `*On the cover:*` line (§8 Covers)
 - [ ] Display math uses `$$ $$`; list-embedded math uses `\( \)` (kramdown breaks `\[ \]`)
 - [ ] English intuition precedes every equation; every symbol defined
 - [ ] One worked micro-example

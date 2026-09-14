@@ -2,12 +2,12 @@
 layout: post
 title:  "Speculative Decoding - Is Attention All You Really Need?"
 date:   2026-09-09
-image:  images/blog32/cover.png
+image:  images/blog32/cover.jpg
 description: "One token costs a full read of every weight in the model. Speculative decoding guesses eight, checks them in a single read, and changes nothing."
 tags: [speculative-decoding, efficient-inference, llms, transformers, kv-caching]
 ---
 
-*On the cover: a goods lift with one sheet of paper on the left and a slip of eight guesses on the right. Same journey, same forty-two milliseconds.*
+*On the cover: the book lift at the Library of Congress, photographed around 1900. Each carrier rides the shaft up from the stacks to the reading room, and the trip costs the same whether it is carrying one book or a full rack. [Public domain](https://commons.wikimedia.org/wiki/File:Library_of_Congress-Book_conveyors_LCCN96525713.jpg), Library of Congress Prints and Photographs Division.*
 
 In the [KV caching post](/blog/kv-caching-mla-is-attention-all-you-really-need/) we stopped the Transformer re-reading its own homework. Cache every key and value, squeeze the cache down to a latent with MLA, and the quadratic bill for a long context turns into something a finance team will sign off on.
 

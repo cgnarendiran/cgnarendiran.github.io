@@ -28,7 +28,17 @@ import urllib.request
 
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "cgnarendiran-blog-cover/1.0 (https://cgnarendiran.github.io)"}
-ALLOWED = ("public domain", "cc0", "cc by", "cc-by")  # "cc by-sa" matches "cc by"
+
+
+def licence_ok(lic):
+    """Public domain, CC0, CC BY or CC BY-SA, any version. Anything with NC or ND is refused,
+    as is GFDL-only, fair use, or an unknown string."""
+    l = lic.lower()
+    if re.search(r"\b(nc|nd)\b|non-?commercial|no ?derivatives", l):
+        return False
+    return ("public domain" in l or l.startswith("cc0") or l.startswith("pd")
+            or re.match(r"^cc[ -]by(-sa)?(\b|$)", l) is not None)
+
 RATIO = 1.905
 WIDTH = 1400
 MAX_BYTES = 195 * 1024
@@ -57,7 +67,7 @@ def info(page):
     return {
         "title": page["title"],
         "licence": lic,
-        "ok": any(k in lic.lower() for k in ALLOWED),
+        "ok": licence_ok(lic),
         "author": strip(em.get("Artist", {}).get("value", ""))[:80],
         "desc": strip(em.get("ImageDescription", {}).get("value", ""))[:160].replace("\n", " "),
         "w": ii["width"], "h": ii["height"], "mime": ii["mime"],

@@ -16,6 +16,10 @@ Errors
   aphorism run          a second run of 3+ paragraphs ending on a sentence of 8 words or fewer
   fragment sentences    3+ sentences like "Not a long thin one." / "Could be a hinge." / "Just a gauge."
   colon labels          (LinkedIn) "My read:", "The dragons:", "Bottom line:" opening a sentence
+  pipe in inline math   an unescaped | inside $...$ on the first line of a paragraph ("$1/|o_i|$");
+                        kramdown turns the paragraph into a table before MathJax sees it. Write \vert
+  stray $$ in prose     an odd number of $$ on a prose line ("$1/|o_i|$$"); it opens a display
+                        block that swallows the rest of the paragraph
 Warnings
   colon labels          (blog) the same, as a warning
   landing-line ratio    more than 25% of multi-sentence paragraphs end on a short sentence
@@ -70,6 +74,51 @@ def prose_paragraphs(text):
     return paras
 
 
+def math_lint(text):
+    """Errors for markdown/MathJax interactions that silently break a paragraph's rendering.
+
+    Kramdown's table parser runs before MathJax. An unescaped | on the FIRST line of a paragraph
+    turns the paragraph into a table (a | on a continuation line, or an escaped \|, does not).
+    A single $$...$$ pair on one line is kramdown inline math and is fine; an odd number of $$ on
+    a line is a stray delimiter that swallows the rest of the paragraph.
+    """
+    errs = []
+    lines = text.split("\n")
+    offset = 0
+    if lines and lines[0].strip() == "---":
+        try:
+            offset = lines.index("---", 1) + 1
+            lines = lines[offset:]
+        except ValueError:
+            pass
+    in_code = in_math = False
+    block_start = True
+    for n, line in enumerate(lines, offset + 1):
+        s = line.strip()
+        if s.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if s == "$$":
+            in_math = not in_math
+            block_start = False
+            continue
+        if in_math:
+            continue
+        if not s:
+            block_start = True
+            continue
+        if s.count("$$") % 2 == 1:
+            errs.append(f"stray $$ in prose (line {n}): '{s[:70]}'")
+        if block_start and not s.startswith("|"):
+            for m in re.finditer(r"(?<!\$)\$(?!\$)[^$\n]+(?<!\$)\$(?!\$)", s):
+                if re.search(r"(?<!\\)\|", m.group(0)):
+                    errs.append(f"pipe in inline math (line {n}): '{m.group(0)}' turns the paragraph into a kramdown table; use \\vert")
+        block_start = False
+    return errs
+
+
 def sentences(p):
     p = re.sub(r"\$[^$]*\$", "X", p)               # inline math counts as one word
     p = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", p)  # links to their text
@@ -93,6 +142,8 @@ def main():
 
     for m in NEG3.finditer(" ".join(paras)):
         errors.append(f"negation triplet: '{m.group(0).strip()}'")
+    if not linkedin:
+        errors.extend(math_lint(text))
 
     frag_sents, frag_runs, labels = [], [], []
     for p in paras:

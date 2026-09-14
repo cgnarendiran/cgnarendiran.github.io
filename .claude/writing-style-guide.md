@@ -241,6 +241,14 @@ Avengers, Rick and Morty, Joker, Gordon Ramsay, Marie Kondo, Kahneman. One or tw
    a numbered/bulleted step, e.g. MoE's `\(P_i = \frac{1}{T}\sum_{t=1}^T p_{t,i}\)` and Flux 2's
    `\(\mathcal{L}_{FM}(\theta) = \mathbb{E}_{t,x_0,x_1}[\|v_\theta(x_t,t)-(x_1-x_0)\|^2]\)`
 
+4. **Never a bare `|` inside inline math.** Kramdown's table parser runs before MathJax and
+   treats a paragraph containing a pipe as a table row, so `$1/|o_i|$` splits its paragraph into
+   three `<td>` cells and every formula in it dies (the GRPO post shipped like this). Write
+   `$1/\vert o_i\vert$` or `\lvert … \rvert`. Pipes are fine inside a standalone `$$` block,
+   which kramdown parses as math before the table rule sees it. And close inline math with
+   exactly one `$`: a trailing `$$` opens a display block that swallows the rest of the
+   paragraph. `prose_lint.py` fails on both.
+
 Multi-line goes inside a single `$$ $$` using `\\` breaks, or wraps `\begin{aligned}…\end{aligned}`
 or `\begin{equation}…\end{equation}`.
 
@@ -373,6 +381,10 @@ More common than a quick read suggests, and they land well. Recurring types:
 - Heading-level linking also used: `## R-CNN (2013): [paper](…)`
 - A `## References` numbered list at the end appears in the Flux posts. Optional; inline linking is
   the more common pattern.
+- **Benchmarks, datasets, tools and models get a link and a plain-words gloss on first mention,
+  not only papers.** "grade school math [GSM8K](https://huggingface.co/datasets/openai/gsm8k)",
+  "a proof in [Lean](https://lean-lang.org/)", "[AIME 2024](https://artofproblemsolving.com/…)".
+  Datasets link to HuggingFace, tools to the project site, models to arXiv. See §19.7.
 - **Cross-link your own posts constantly.** LoRA ← VLA, RoPE ← ViT, ChatGPT ← RLHF, part 1 ← part 2.
   This is a strong habit; keep it.
 - Non-arXiv links used freely: HuggingFace, GitHub, YouTube (Veritasium, 3blue1brown, Welch Labs),
@@ -530,6 +542,14 @@ deliberate and should survive any proofread.
 - [ ] At least two jokes attached to the maths (§18), and the conceptual-equation move used once
 - [ ] No point is made twice; nothing is signposted with "we'll come back to that"
 - [ ] `python3 .claude/scripts/prose_lint.py _posts/<file>` exits 0, and its warnings were read
+- [ ] Every conceit character is pinned to its technical term in brackets wherever the mechanism
+      needs it: "the TA (ranker)", "a second network (critic)" (§19.1)
+- [ ] Benchmarks, datasets, tools and models are linked and glossed on first mention (§19.7)
+- [ ] The post talks to the reader ("I want you to", "Let's say") rather than directing one
+      ("Hold on to", "Price it out"); the small words are in ("pretty", "kind of", "simple");
+      chains of ", so" and ", and" are split into sentences that open with So, And, But (§19)
+- [ ] Every clever line has its reason spelled out in the clause; no image outside the conceit
+      is doing a plain word's job (§19.6, §19.9)
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -541,6 +561,7 @@ deliberate and should survive any proofread.
 - [ ] No body `# Title` — the layout renders the front-matter title as the `<h1>`
 - [ ] Image paths root-relative (`/images/…`); cross-links use `/blog/<slug>/`
 - [ ] `.claude/scripts/optimize_images.py --check images/blogNN` passes
+- [ ] No bare `|` inside `$...$` (use `\vert`), and no inline formula closed with `$$` (§7)
 
 ---
 
@@ -657,3 +678,106 @@ EOF
 
 Then read that list. **Every line in it must be a joke or a fact.** Any that reads like advice,
 wisdom or a moral is the defect this section exists to catch.
+
+---
+
+## 19. What Naren changes by hand: the GRPO edit pass
+
+Naren edited the published GRPO post (blog33, September 2026) by hand after it had passed §13,
+§18, the humanizer and the lint clean. None of the edits was a vocabulary fix and none was a §18
+shape. They are the difference between a draft that is *correct* and one that sounds like him
+explaining the thing across a table. Ten habits, each with the actual before and after.
+
+**1. Pin the conceit's character to its technical term, in brackets, every time the mechanism
+needs it.** The draft called the reward model "the marker" and expected the reader to hold the
+mapping for 2,500 words. Naren renamed it and then kept pinning the real name to it:
+> ✗ "we asked people which of two answers they preferred" → ✓ "we asked people which of two answers they preferred (a human ranker)"
+> ✗ "The marker is gone. The teacher predicting ranks is still at the front of the room" → ✓ "The TA (ranker) is gone. The teacher predicting ranks (critic) is still at the front of the room"
+> ✗ "Reference and reward models sit frozen" → ✓ "Reference (frozen policy) and reward models sit frozen"
+> ✗ "two networks that will never emit a token" → ✓ "two networks (critic and reference) that will never emit a token"
+> ✗ "train a second network to predict it" → ✓ "train a second network (critic) to predict it"
+>
+> The conceit carries the intuition and the bracket carries the name. A reader skimming for the
+> mechanism must never have to scroll back to find out who the TA is.
+
+**2. The conceit's props come from the reader's real world, and each one says what the thing
+does.** "Marker" became "ranker" because ranking is what a reward model does. The human reading
+papers became a TA. The "photocopier" the centre kept in the last line became an "OMR machine",
+and "a rank list on the noticeboard" became "the scores on the noticeboard". The coaching centre
+is an Indian one; its furniture should be too.
+
+**3. Talk to the reader instead of staging the conceit.**
+> ✗ "Hold on to a coaching centre for the rest of this, because the whole post runs on one. Two hundred students, one classroom" → ✓ "I want you to now think about a coaching centre: two hundred students, one classroom"
+> ✗ "Do one group by hand. Eight answers to the same question" → ✓ "Let's do one group by hand. Let's say group size is 8, so eight answers to the same question"
+> ✗ "Price it out for a 7B policy." → ✓ "Now check the price this setup has for a 7B policy."
+> Added, unprompted: "That's it." / "If you think about it, we humans do the rough work all the time for complex problems." / "…and somebody else sat through the meeting about it smh"
+>
+> The draft's imperatives are a writer directing a reader. "I want you to", "Let's say", "Now
+> check" are a person talking. "smh" and "That's it." are the 2026 form of the 2021 emoticons:
+> one or two per post, in the lighter spots, never in the mechanism.
+
+**4. Put the small words back.** Each of these is a softener the draft had sanded off because it
+looked like padding:
+> "expensive" → "pretty expensive" · "a question about the boiling point" → "a simple question about the boiling point" · "turned PPO loose" → "set PPO loose" · "the useful problems are the ones sitting near a coin flip" → "the useful problems are the ones can be kind of hard, but not too hard"
+>
+> A person explaining across a table says "pretty", "kind of" and "simple". A draft with none of
+> them reads clipped, which is its own AI tell. Not everywhere: where the spoken version would
+> have them.
+
+**5. Split the chains, and open the next sentence with So, And or But.**
+> ✗ "…has to write out the good answer every time, so instead we asked people…" → ✓ "…every time. So instead we asked people…"
+> ✗ "…$G$ is the group size, and every token $t$ of answer $i$ carries…" → ✓ "…$G$ is the group size. Every token $t$ of answer $i$ carries…"
+> ✗ "Sampling a group and keeping whatever checks out rewards any habit that raises the hit rate, and going back over your own working raises the hit rate." → ✓ "Sampling a group and keeping whatever checks out, rewards any habit that raises the hit rate. And turns out, going back over your own working raises the hit rate."
+> ✗ "…unremarkable if everyone did, so the gradient needs a baseline to subtract" → ✓ "…unremarkable if everyone scored 1. So the gradient needs a baseline to subtract"
+>
+> The draft joined clauses with ", so" and ", and" to get the long-sentence rhythm §5 asks for.
+> The fix is not shorter sentences everywhere. It is a full stop where a speaker would breathe,
+> and a conjunction opening the next one.
+
+**6. Say why, not just that.**
+> ✗ "for the first few weeks of any new syllabus he is wrong." → ✓ "…he is wrong because the students haven't learnt much."
+> ✗ "unremarkable if everyone did" → ✓ "unremarkable if everyone scored 1"
+> ✗ "Push that into the gradient and you are done; there was never a value network in the room." → ✓ "…and you are done; you don't need a value network in the room."
+> ✗ "The setup is deliberately stripped: take DeepSeek-V3-Base" → ✓ "The setup is deliberately stripped of any RLHF: take DeepSeek-V3-Base"
+>
+> A line that leaves the reason implicit reads clever to the writer and opaque to the reader.
+> Spell the mechanism out in the clause, even when it costs the rhythm.
+
+**7. Link and gloss every benchmark, dataset, tool and model on first mention.** The draft linked
+the papers and left the benchmarks bare. Naren added six links in one pass: a proof in
+[Lean](https://lean-lang.org/), grade school math [GSM8K](https://huggingface.co/datasets/openai/gsm8k),
+[MATH](https://huggingface.co/datasets/qwedsacf/competition_math),
+[AIME 2024](https://artofproblemsolving.com/wiki/index.php/American_Invitational_Mathematics_Examination),
+[MATH-500](https://huggingface.co/datasets/HuggingFaceH4/MATH-500), [Olmo 3](https://arxiv.org/abs/2512.13961).
+The gloss is two or three plain words in front of the link, so a reader who has never met GSM8K
+knows what kind of test it is without clicking. §10 has the link targets.
+
+**8. A numbered list for anything the sentence is straining to enumerate.**
+> ✗ "run GRPO against two rule-based rewards. Accuracy, from the answer key. Format, which asks only that the working sits inside `<think>` tags." → ✓ "run GRPO against two rule-based rewards:" then `1. Accuracy, from the answer key.` / `2. Format, which asks only that the working sits inside <think> tags.`
+>
+> §14 already says numbered lists are the archive's main explanatory device. The draft wrote the
+> list as two fragments to protect the prose rhythm; Naren undid that.
+
+**9. Keep the conceit's images, cut the incidental ones.** The coaching centre stays. The one-off
+writerly flourishes went, each for the plain word or the field's own word:
+> "the bill" → "the cost" · "arrived as subsection 4.1" → "came as subsection 4.1" · "Their reading is" → "Their conclusion is" · "gradient descent finds holes faster than anyone can patch them" → "gradient descent can exploit holes faster than anyone can patch them" · "sitting near a coin flip" → "kind of hard, but not too hard"
+>
+> "Exploit" is what the RL literature says and what the reader already knows. A metaphor that is
+> not the conceit is competing with it.
+
+**10. Everyday examples for an abstract category.**
+> ✗ "A memo, a diagnosis, a design review, or a piece of code that is correct and horrible all fall outside it." → ✓ "A memo, a diagnosis, a design review, or a piece of code that is correct. Tasks like summarization and email writing all fall outside it."
+>
+> When the post says a method does not cover some class of task, name two tasks the reader does
+> every day.
+
+**What he did not touch.** The conceit, the numbers, the tables, the honest cons, the maths
+jokes, the landing lines, the sign-off. Every §17 and §18 item held. The edits were local, all in
+the direction of plainer, and they added words: the post came out about 80 words longer. The
+breath comma survives proofreading too ("Anything it scores generously that it should not, is a
+hole", "a room of students marked only against an answer key, can ever learn"). It is his. Do
+not add it and do not remove it.
+
+**Mechanics caught in the same pass.** `$1/|o_i|$` turned its whole paragraph into a kramdown
+table, and a stray `$$` after it swallowed the next formula. Both are in §7 now and the lint
+fails on them.

@@ -384,7 +384,7 @@ More common than a quick read suggests, and they land well. Recurring types:
 - **Benchmarks, datasets, tools and models get a link and a plain-words gloss on first mention,
   not only papers.** "grade school math [GSM8K](https://huggingface.co/datasets/openai/gsm8k)",
   "a proof in [Lean](https://lean-lang.org/)", "[AIME 2024](https://artofproblemsolving.com/…)".
-  Datasets link to HuggingFace, tools to the project site, models to arXiv. See §19.7.
+  Datasets link to HuggingFace, tools to the project site, models to arXiv. See §19.8.
 - **Cross-link your own posts constantly.** LoRA ← VLA, RoPE ← ViT, ChatGPT ← RLHF, part 1 ← part 2.
   This is a strong habit; keep it.
 - Non-arXiv links used freely: HuggingFace, GitHub, YouTube (Veritasium, 3blue1brown, Welch Labs),
@@ -544,12 +544,13 @@ deliberate and should survive any proofread.
 - [ ] `python3 .claude/scripts/prose_lint.py _posts/<file>` exits 0, and its warnings were read
 - [ ] Every conceit character is pinned to its technical term in brackets wherever the mechanism
       needs it: "the TA (ranker)", "a second network (critic)" (§19.1)
-- [ ] Benchmarks, datasets, tools and models are linked and glossed on first mention (§19.7)
+- [ ] Benchmarks, datasets, tools and models are linked and glossed on first mention (§19.8)
 - [ ] The post talks to the reader ("I want you to", "Let's say") rather than directing one
-      ("Hold on to", "Price it out"); the small words are in ("pretty", "kind of", "simple");
-      chains of ", so" and ", and" are split into sentences that open with So, And, But (§19)
+      ("Hold on to", "Price it out"); the small words are in ("pretty", "kind of", "simple") (§19)
+- [ ] Every long sentence is split, with So, And or But opening the next one; every long subject
+      has a comma before its verb and every introductory phrase has one after it (§19.5, §19.6)
 - [ ] Every clever line has its reason spelled out in the clause; no image outside the conceit
-      is doing a plain word's job (§19.6, §19.9)
+      is doing a plain word's job (§19.7, §19.10)
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -686,7 +687,7 @@ wisdom or a moral is the defect this section exists to catch.
 Naren edited the published GRPO post (blog33, September 2026) by hand after it had passed §13,
 §18, the humanizer and the lint clean. None of the edits was a vocabulary fix and none was a §18
 shape. They are the difference between a draft that is *correct* and one that sounds like him
-explaining the thing across a table. Ten habits, each with the actual before and after.
+explaining the thing across a table. Eleven habits, each with the actual before and after.
 
 **1. Pin the conceit's character to its technical term, in brackets, every time the mechanism
 needs it.** The draft called the reward model "the marker" and expected the reader to hold the
@@ -724,17 +725,34 @@ looked like padding:
 > them reads clipped, which is its own AI tell. Not everywhere: where the spoken version would
 > have them.
 
-**5. Split the chains, and open the next sentence with So, And or But.**
+**5. Split any sentence that runs long, and open the next one with So, And or But.** If a
+sentence is carrying two ideas, or has a ", so" or ", and" in the middle of it, it is two
+sentences:
 > ✗ "…has to write out the good answer every time, so instead we asked people…" → ✓ "…every time. So instead we asked people…"
 > ✗ "…$G$ is the group size, and every token $t$ of answer $i$ carries…" → ✓ "…$G$ is the group size. Every token $t$ of answer $i$ carries…"
 > ✗ "Sampling a group and keeping whatever checks out rewards any habit that raises the hit rate, and going back over your own working raises the hit rate." → ✓ "Sampling a group and keeping whatever checks out, rewards any habit that raises the hit rate. And turns out, going back over your own working raises the hit rate."
 > ✗ "…unremarkable if everyone did, so the gradient needs a baseline to subtract" → ✓ "…unremarkable if everyone scored 1. So the gradient needs a baseline to subtract"
 >
 > The draft joined clauses with ", so" and ", and" to get the long-sentence rhythm §5 asks for.
-> The fix is not shorter sentences everywhere. It is a full stop where a speaker would breathe,
-> and a conjunction opening the next one.
+> Naren split every one of those he found. The rule is simple: long sentence, full stop, and a
+> conjunction opening the next one. The long-then-short rhythm of §5 still holds; "long" just
+> means one idea with its qualifiers, not two ideas glued together.
 
-**6. Say why, not just that.**
+**6. Put a comma where the reader needs to find the verb.** Three of the edits added nothing
+but a comma, each after a subject phrase long enough that the reader would otherwise run past
+the verb:
+> ✗ "Anything it scores generously that it should not is a hole" → ✓ "Anything it scores generously that it should not, is a hole"
+> ✗ "Sampling a group and keeping whatever checks out rewards any habit that raises the hit rate" → ✓ "Sampling a group and keeping whatever checks out, rewards any habit that raises the hit rate"
+> ✗ "whether a room marked only against an answer key can ever learn" → ✓ "whether a room of students marked only against an answer key, can ever learn"
+>
+> And a comma after every introductory phrase: "And turns out, going back over your own working
+> raises the hit rate", "If you think about it, we humans do the rough work all the time". A copy
+> editor would strike the first three; Naren adds them on purpose, because a subject that is a
+> whole clause needs a mark where it ends. So: a comma after a long subject before its verb,
+> after an introductory phrase, and before "so" and "but" ("group size is 8, so eight answers",
+> "kind of hard, but not too hard"). Do not add commas between a short subject and its verb.
+
+**7. Say why, not just that.**
 > ✗ "for the first few weeks of any new syllabus he is wrong." → ✓ "…he is wrong because the students haven't learnt much."
 > ✗ "unremarkable if everyone did" → ✓ "unremarkable if everyone scored 1"
 > ✗ "Push that into the gradient and you are done; there was never a value network in the room." → ✓ "…and you are done; you don't need a value network in the room."
@@ -743,7 +761,7 @@ looked like padding:
 > A line that leaves the reason implicit reads clever to the writer and opaque to the reader.
 > Spell the mechanism out in the clause, even when it costs the rhythm.
 
-**7. Link and gloss every benchmark, dataset, tool and model on first mention.** The draft linked
+**8. Link and gloss every benchmark, dataset, tool and model on first mention.** The draft linked
 the papers and left the benchmarks bare. Naren added six links in one pass: a proof in
 [Lean](https://lean-lang.org/), grade school math [GSM8K](https://huggingface.co/datasets/openai/gsm8k),
 [MATH](https://huggingface.co/datasets/qwedsacf/competition_math),
@@ -752,20 +770,20 @@ the papers and left the benchmarks bare. Naren added six links in one pass: a pr
 The gloss is two or three plain words in front of the link, so a reader who has never met GSM8K
 knows what kind of test it is without clicking. §10 has the link targets.
 
-**8. A numbered list for anything the sentence is straining to enumerate.**
+**9. A numbered list for anything the sentence is straining to enumerate.**
 > ✗ "run GRPO against two rule-based rewards. Accuracy, from the answer key. Format, which asks only that the working sits inside `<think>` tags." → ✓ "run GRPO against two rule-based rewards:" then `1. Accuracy, from the answer key.` / `2. Format, which asks only that the working sits inside <think> tags.`
 >
 > §14 already says numbered lists are the archive's main explanatory device. The draft wrote the
 > list as two fragments to protect the prose rhythm; Naren undid that.
 
-**9. Keep the conceit's images, cut the incidental ones.** The coaching centre stays. The one-off
+**10. Keep the conceit's images, cut the incidental ones.** The coaching centre stays. The one-off
 writerly flourishes went, each for the plain word or the field's own word:
 > "the bill" → "the cost" · "arrived as subsection 4.1" → "came as subsection 4.1" · "Their reading is" → "Their conclusion is" · "gradient descent finds holes faster than anyone can patch them" → "gradient descent can exploit holes faster than anyone can patch them" · "sitting near a coin flip" → "kind of hard, but not too hard"
 >
 > "Exploit" is what the RL literature says and what the reader already knows. A metaphor that is
 > not the conceit is competing with it.
 
-**10. Everyday examples for an abstract category.**
+**11. Everyday examples for an abstract category.**
 > ✗ "A memo, a diagnosis, a design review, or a piece of code that is correct and horrible all fall outside it." → ✓ "A memo, a diagnosis, a design review, or a piece of code that is correct. Tasks like summarization and email writing all fall outside it."
 >
 > When the post says a method does not cover some class of task, name two tasks the reader does
@@ -773,10 +791,8 @@ writerly flourishes went, each for the plain word or the field's own word:
 
 **What he did not touch.** The conceit, the numbers, the tables, the honest cons, the maths
 jokes, the landing lines, the sign-off. Every §17 and §18 item held. The edits were local, all in
-the direction of plainer, and they added words: the post came out about 80 words longer. The
-breath comma survives proofreading too ("Anything it scores generously that it should not, is a
-hole", "a room of students marked only against an answer key, can ever learn"). It is his. Do
-not add it and do not remove it.
+the direction of plainer, and they added words: the post came out about 80 words longer. And
+nothing was cut for length: every edit either added a word, a comma, a link or a full stop.
 
 **Mechanics caught in the same pass.** `$1/|o_i|$` turned its whole paragraph into a kramdown
 table, and a stray `$$` after it swallowed the next formula. Both are in §7 now and the lint

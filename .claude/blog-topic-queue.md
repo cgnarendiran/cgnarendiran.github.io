@@ -5,8 +5,8 @@ whose `Post file` does not already exist in `_posts/` on `master`. Reorder rows 
 priority. Delete a row to drop it. Add rows at the bottom (or wherever you want them) to extend
 the queue.
 
-Post numbering: latest published is **blog34** (quantization). The next post takes
-`images/blog35/`, then 36, and so on. The job derives the number from `ls images | grep blog`,
+Post numbering: latest published is **blog35** (knowledge distillation). The next post takes
+`images/blog36/`, then 37, and so on. The job derives the number from `ls images | grep blog`,
 not from this table, so a manual post in between will not break it.
 
 **Publish date.** If a Queue row has a date in the `Date` column, the job uses it for both the
@@ -30,6 +30,7 @@ force a rewrite.
 | 32 | Speculative decoding — draft, verify, and the rejection rule that keeps it exact | `speculative-decoding` | 2026-09-09 | Is Attention All You Really Need? |
 | 33 | GRPO and RLVR — what replaced RLHF | `grpo-rlvr` | 2026-09-13 | Follows the 2023 RLHF post |
 | 34 | Quantization — INT8, FP8, NVFP4 and what actually breaks | `quantization-edge-inference` | 2026-09-16 | Standalone, practical |
+| 35 | Knowledge distillation — soft targets, temperature and what "distilled" means now | `knowledge-distillation` | 2026-09-20 | Standalone |
 
 ---
 
@@ -37,17 +38,16 @@ force a rewrite.
 
 | # | Topic | Post file (slug) | Date | Series | Conceit to test first |
 |---|-------|------------------|------|--------|----------------------|
-| 1 | Knowledge distillation | `knowledge-distillation` | | Standalone | The professor's lecture notes vs. the student's crib sheet |
-| 2 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system. Open on speech: audio at sample rate is where quadratic attention breaks first |
-| 3 | Test-time compute and reasoning models | `test-time-compute` | | Standalone | Paying for thinking by the minute |
-| 4 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
-| 5 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
-| 6 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
-| 7 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
-| 8 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
-| 9 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
-| 10 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
-| 11 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
+| 1 | Mamba and state space models | `mamba-is-attention-all-you-really-need` | | Is Attention All You Really Need? | The goldfish with a good filing system. Open on speech: audio at sample rate is where quadratic attention breaks first |
+| 2 | Test-time compute and reasoning models | `test-time-compute` | | Standalone | Paying for thinking by the minute |
+| 3 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
+| 4 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
+| 5 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
+| 6 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
+| 7 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
+| 8 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
+| 9 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
+| 10 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
 
 No queue row carries a date any more, so every remaining topic publishes on the day it runs. The
 backfill that spread JEPA and LeJEPA across June and July is done.

@@ -164,7 +164,8 @@ forgot what YOLO does", "my favorite scene", "I really liked the examples he use
 
 **This device is occasional, not the default paragraph shape.** Roughly one paragraph in six
 should end on a short line; the LeJEPA draft shipped at one in three and read as portentous. See
-§18, which is the single most important section in this guide for sounding human.
+§18, which is the single most important section in this guide for sounding human, and §20
+for the audience rule: one idea per sentence, written for a reader with almost no ML.
 
 **And notice what those landing lines actually are.** Every one is a joke or a concrete fact.
 None is a maxim. "Pick your poison" is a joke; "The superstition moved house, it did not leave
@@ -578,6 +579,12 @@ deliberate and should survive any proofread.
       has a comma before its verb and every introductory phrase has one after it (§19.5, §19.6)
 - [ ] Every clever line has its reason spelled out in the clause; no image outside the conceit
       is doing a plain word's job (§19.7, §19.10)
+- [ ] A reader who knows what a neural network is and little more can follow every section;
+      each term is explained before it is used (§20.2)
+- [ ] The problem has its own paragraph, with a number or an everyday example, before the fix is
+      named (§20.3)
+- [ ] One idea per sentence: the lint's "chained sentences" and "long sentences" warnings are
+      resolved or are lists (§20.1); none of the §20.4 patterns is left
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -824,3 +831,83 @@ nothing was cut for length: every edit either added a word, a comma, a link or a
 **Mechanics caught in the same pass.** `$1/|o_i|$` turned its whole paragraph into a kramdown
 table, and a stray `$$` after it swallowed the next formula. Both are in §7 now and the lint
 fails on them.
+
+---
+
+## 20. Write for a reader with almost no ML: the September 2026 pass
+
+Naren's rule, September 2026, after a review of the quantization, distillation and Mamba posts
+(blog34-36): **anyone should be able to understand the post with minimal ML knowledge.** Those
+three drafts passed §13, §18, §19 and the lint clean, and still read as written by a model for
+people who already knew the subject. This section is what he asked for instead.
+
+**1. One idea per sentence. Simple statements.** Several clauses glued together to make one
+point is the tell this section exists to catch. If a sentence has two or more of ", and",
+", so", ", which" or ", but" in it, it is two or three sentences. Split it, and open the next
+one with So, And or But (§19.5). The lint warns on these ("chained sentences") and on anything
+over 35 words.
+> ✗ "LLM.int8() splits each matrix multiply in two: the outlier channels go through in 16-bit, everything else, which is more than 99.9% of the values, goes through in 8-bit, and the two halves are added back together." → ✓ "LLM.int8() splits each matrix multiply in two. The outlier channels go through in 16-bit. Everything else, which is more than 99.9% of the values, goes through in 8-bit. Then the two halves are added back together."
+> ✗ "At inference it writes its own, and four tokens in it is somewhere the teacher would never have gone, and nobody has ever shown it what to do out there." → ✓ "At inference it writes its own. Four tokens in, it is somewhere the teacher would never have gone, and nobody has ever shown it what to do out there."
+> ✗ "If $\bar{A}$ changes at every step then there is no single convolution kernel, so no FFT, and you are back to a for-loop over 960,000 samples." → ✓ "If $\bar{A}$ changes at every step, then there is no single convolution kernel and so no FFT. You are back to a for-loop over 960,000 samples."
+>
+> Exempt: the "where $x$ is …" line that defines an equation's symbols, the §3 thesis line, and
+> a sentence that is really a list (better still, make it a numbered list, §19.9).
+
+**2. Start from the basics and build up.** Assume the reader knows what a neural network is
+and not much more. Before a technical term is used, say what it is in plain words, or pin it in
+brackets (§19.1). Each section should need only what the sections above it taught. When a post
+needs control theory, GPU memory hierarchies, FFTs and a benchmark suite in its first two
+sections, it is doing too much for one post (see "Split test" below).
+
+**3. Make the problem land before the fix.** The reader should be able to say, in one sentence
+of their own, what goes wrong before the post names the method that fixes it. Give the problem
+its own paragraph, with a number or an everyday example, and do not start the solution in the
+same sentence.
+
+**4. The patterns caught in blog34-36**, each with the fix that shipped. These are §18 shapes
+that survived the lint because they were phrased a little differently.
+- **Quotable paragraph closes** (§18.1).
+  > ✗ "The size of a weight tells you almost nothing about whether it matters, and the size of what runs through it tells you almost everything." → ✓ "So you pick the important channels by the activations running through them."
+  > ✗ "It has been sitting there the whole time. It just needed a teacher worth copying." → cut.
+  > ✗ "And then the field did the thing that actually works, which is to stop arguing." → ✓ "And then the field stopped arguing and built hybrids."
+  > ✗ "That is the capacity gap showing up in 2015, in a footnote, wearing a disguise." → ✓ "That is the capacity gap, already showing up in 2015."
+  > ✗ "A labelling budget of zero and a teacher is enough." / "Everything since is a variation on that split." → cut.
+- **Negate, then reveal**, including the "stopped being X and became Y" form (§18.4).
+  > ✗ "The label is not wrong. The bottle really is a rose. It is just that a label has room for one word" → ✓ "The label is right, because the bottle really is a rose. But a label only has room for one word"
+  > ✗ "The selective pad is not remembering harder. It just declined to start the timer during 'and, er'." → ✓ "The selective pad kept the number because $\Delta$ was close to zero during 'and, er'. So almost nothing faded."
+  > ✗ "So the question stopped being how small you can get a model and became which parts of it were ever worth sixteen bits." → ✓ "So the question now is which parts of a model were ever worth sixteen bits."
+  > ✗ "The 2B and 9B are not pretrained on next-token prediction at all. They are pretrained on the 27B teacher's full distribution" → ✓ "Instead of plain next-token prediction, the 2B and 9B are pretrained on the 27B teacher's full distribution"
+- **The narrator staging the conceit** (§19.3). A sentence whose only job is to point at the
+  metaphor.
+  > ✗ "The perfume house has been the same building the whole way through." / "The booth has been the same three square metres the whole way through this post" → cut, or say what changed: "From S4 to Mamba-3, what changed is only what the interpreter is allowed to do with the pad."
+  > ✗ "Everything else in this post is the same evening it always was." → cut.
+- **Verbless openers and triptychs** (§18.2).
+  > ✗ "Same architecture, same training run, same answers to within a rounding error. One card." → ✓ "It is the same model, and it gives the same answers to within a rounding error. And it fits on one card."
+- **Vague attribution and portentous framing.**
+  > ✗ "the calibration set is doing more work than anybody admits" → ✓ "And then there is the calibration set."
+  > ✗ "Nobody likes this result" → cut. ✗ "people still find it surprising" → ✓ "I still find it surprising" (§5: "I" for opinion)
+  > ✗ "That is the tension everything since has been working on." → ✓ "Every method since has been trying to fix that."
+  > ✗ "the shape of the finding is the interesting part. The outliers are not scattered about." → ✓ "It found that they bunch up."
+- **Stray images competing with the conceit** (§19.10).
+  > ✗ "a lovely thing to find at the bottom of two different ladders" → cut. ✗ "the shape of the bill" → ✓ "the shape of the cost". ✗ "a batching story" → ✓ "down to batching". ✗ "which surface of the teacher you may touch" → ✓ "where you tap the teacher"
+- **Emphatic restatement.**
+  > ✗ "Selection breaks the trick that made S4 trainable, and it breaks it completely." → ✓ "Selection breaks the trick that made S4 trainable."
+  > ✗ "Both of those are true at once, and after a decade nobody…" → ✓ "After a decade, nobody…"
+- **The tacked-on kicker.** A last sentence added only to make the number feel bigger. Naren:
+  "looks like AI written. I never write like this."
+  > ✗ "so that session is around $1.5 \times 10^{16}$ pairs. And nobody has multiplied anything by a weight yet." → ✓ end on "pairs." The number is the point; let it land on its own.
+  >
+  > Same family: "and we haven't even started", "and that's before X". The lint flags "nobody has … yet".
+- **Unglossed shorthand** (§19.8).
+  > ✗ "That buys W8A8 on OPT-175B" → ✓ "That buys W8A8 (8-bit weights and 8-bit activations) on OPT-175B"
+- **A flourish hiding a factual slip.** "Three students, three decades apart" was over rows
+  dated 2015, 2015 and 2024. Check every number in a caption against the table it describes.
+
+**What stays.** Jokes that are jokes ("Four and a half bits per weight, which is a lovely thing
+to say out loud to a hardware engineer and watch what happens"), the conceit, the numbers, the
+worked examples. The lint's arch-commentary list now carries the phrases above.
+
+**Split test.** Split a post into two when the basics it needs (point 2) and the method it is
+about cannot both be explained plainly in about 3,500 words. The natural cut is after the
+problem and its fix have landed, with the engineering, the follow-up models and the honest cons
+going to part two. Each part keeps the same conceit and gets its own worked example.

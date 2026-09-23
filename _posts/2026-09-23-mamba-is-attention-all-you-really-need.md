@@ -7,7 +7,7 @@ description: "Attention keeps every word it has ever heard. Mamba keeps one smal
 tags: [state-space-models, transformers, attention, llms, efficient-inference]
 ---
 
-*On the cover: two interpreters in the booth, headphones on, one microphone and a few sheets of notes, and no transcript anywhere. Photo by [Blossom Ozurumba](https://commons.wikimedia.org/wiki/File:Erika_at_the_Interpreter_Booth.jpg), CC BY-SA 4.0.*
+*On the cover: the interpreters' section at the Nuremberg trials, 1945-46, where simultaneous interpretation was first used at scale. Headphones on, a microphone each, and nothing in front of them but a few sheets of notes. Photo by Raymond D'Addario, [public domain](https://commons.wikimedia.org/wiki/File:Interpreters_section.jpg), via Wikimedia Commons.*
 
 In the [KV caching post](/blog/kv-caching-mla-is-attention-all-you-really-need/) we spent two thousand words shrinking the thing attention drags behind it. Every token a model has ever seen is kept as a key and a value, and every new token reads all of them. MLA squeezed that cache down into a latent, and [speculative decoding](/blog/speculative-decoding/) got more tokens out of each read of it. But neither of them changes the shape of the bill. The cache still grows with every word, and the work to produce word $n$ still grows with $n$.
 

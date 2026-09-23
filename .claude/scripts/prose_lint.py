@@ -26,7 +26,13 @@ Warnings
                         (the style guide's target is about one in six); the lines are listed
   too few asides        fewer than 3 parenthetical asides of 20+ characters (LinkedIn: 1)
   too few questions     fewer than 3 question marks in prose (LinkedIn: 1)
-  arch commentary       "which is the healthiest possible sign", "for reasons that took", and similar
+  arch commentary       "which is the healthiest possible sign", "for reasons that took", "the whole way
+                        through", "than anybody admits", and similar (style guide §20)
+  chained sentence      one sentence carrying two or more ", and" / ", so" / ", which" / ", but" joins;
+                        split it into simple statements (§20.1)
+  long sentence         more than 35 words in one sentence (§20.1)
+  stopped/became        "X stopped being A and became B", the chiasmus form of negate-then-reveal (§18.4)
+  negate-then-reveal    a short "... is not X." followed by "It is / They are / It just ..." (§18.4)
   banned vocabulary     the blog guide's section 13 list
 """
 import re
@@ -34,7 +40,14 @@ import sys
 
 BANNED = r"\b(additionally|delve|realm|tapestry|landscape|harness|unlock|leverage|utilize|facilitate|crucial|pivotal|testament|underscores?|showcas\w*|groundbreaking|revolutionary|seamless|cutting-edge|game-chang\w*|vibrant)\b"
 ARCH = [r"healthiest possible sign", r"for reasons that took", r"dressed in overalls", r"a polite way of saying",
-        r"is not a result .* prepared", r"moved house", r"the entire theoretical content", r"which is to say nothing of"]
+        r"is not a result .* prepared", r"moved house", r"the entire theoretical content", r"which is to say nothing of",
+        r"the whole way through", r"than (anybody|anyone) (admits|realises|realizes)", r"\bnobody likes (this|that|it)\b",
+        r"which is a lovely thing to find", r"is the interesting part", r"the thing that actually works", r"in a footnote, wearing",
+        r"owes you nothing", r"it breaks it completely", r"a batching story"]
+JOIN = re.compile(r", (and|so|which|but) ")
+STOPPED = re.compile(r"\bstopped being\b[^.!?]{1,90}\bbec(ame|omes)\b", re.I)
+NEG_SENT = re.compile(r"\b(is|are|was|were|isn't|aren't|wasn't) not\b|\b(isn't|aren't|wasn't)\b", re.I)
+REVEAL = re.compile(r"^(It|They|It's|That) (is|are|was|just|were)\b")
 LABEL = re.compile(r"^(My read|My take|The dragons|The stance|The bet|The catch|Bottom line|The takeaway|The kicker|The upshot|Translation|The lesson):", re.I)
 FRAG = re.compile(r"^(Not|Just|Could be|Same|No) [^.!?]{0,45}[.!?]$")
 NEG3 = re.compile(r"\b[Nn]o [^,.;:]{1,30}, no [^,.;:]{1,30},? (and )?no \b")
@@ -182,7 +195,29 @@ def main():
         landing = [sentences(p)[-1] for p, c in zip(multi, closes) if c]
         warns.append(f"landing-line ratio: {sum(closes)}/{len(multi)} multi-sentence paragraphs end on a sentence of 8 words or fewer; aim for 1 in 6. Each must be a joke or a fact: " + " | ".join(landing[:8]))
 
+    chained, longs, negrev = [], [], []
+    for p in paras:
+        ss = sentences(p)
+        for i, s_ in enumerate(ss):
+            if s_.startswith(("where ", "This is the story of")):  # symbol lists and the §3 thesis line
+                pass
+            elif len(JOIN.findall(s_)) >= 2:
+                chained.append(s_)
+            elif words(s_) > 35:
+                longs.append(s_)
+            if i + 1 < len(ss) and words(s_) <= 14 and NEG_SENT.search(s_) and REVEAL.match(ss[i + 1]):
+                negrev.append(s_ + " " + ss[i + 1])
+    if not linkedin:
+        if chained:
+            warns.append(f"chained sentences: {len(chained)} sentences carry two or more ', and/so/which/but' joins; split each into simple statements: " + " | ".join(c[:90] + "..." for c in chained[:8]))
+        if longs:
+            warns.append(f"long sentences: {len(longs)} over 35 words: " + " | ".join(l[:90] + "..." for l in longs[:8]))
+    for n_ in negrev:
+        warns.append(f"negate-then-reveal: '{n_[:140]}'")
+
     prose = " ".join(paras)
+    for m in STOPPED.finditer(prose):
+        warns.append(f"stopped/became: '{m.group(0)}'")
     asides = re.findall(r"\(([^()]{20,})\)", prose)
     min_asides = 1 if linkedin else 3
     if len(asides) < min_asides:

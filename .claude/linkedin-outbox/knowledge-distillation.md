@@ -3,7 +3,7 @@ slug: knowledge-distillation
 title: Knowledge Distillation - The Perfumer's Apprentice
 blog_date: 2026-09-20
 image: images/blog35/cover.jpg
-alt: a perfumer's organ, which is the real name for the tiered bench a perfume house keeps its bottles on, with the apprentice's much smaller one off to the right. I drew this one, because the machine this post was written on cannot reach Wikimedia Commons. Source: Author
+alt: a perfumer's organ at Fragonard in Grasse, a curved tiered bench of hundreds of small brown bottles around a desk and chair
 publish_after: 2026-09-23T10:49:53-07:00
 source: blog-companion
 ---

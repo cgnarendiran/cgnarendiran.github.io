@@ -7,7 +7,7 @@ description: "Cutting every weight from sixteen bits to four is nearly free. The
 tags: [quantization, efficient-inference, llms, transformers, kv-caching]
 ---
 
-*On the cover: the sizer at the gate, the bag that has to go through it, and the pile that stays on the bed. I drew this one, because the machine this post was written on cannot reach Wikimedia Commons. Source: Author*
+*On the cover: carry-on sizers at Sochi airport, three frames in three sizes and not one of them negotiates. Photo by [Stolbovsky](https://commons.wikimedia.org/wiki/File:Baggage_sizers_in_Sochi_Airport_05.jpg), CC BY-SA 3.0.*
 
 I want you to think about the night before a flight. There is a pile of clothes on the bed, there is a cabin bag, and there is a number printed on the ticket, which is seven kilos. The pile weighs more than seven kilos. It always does.
 

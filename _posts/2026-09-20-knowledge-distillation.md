@@ -7,7 +7,7 @@ description: "The label says rose. The teacher's nose says rose, some jasmine, a
 tags: [knowledge-distillation, efficient-training, llms, transformers, loss-functions]
 ---
 
-*On the cover: a perfumer's organ, which is the real name for the tiered bench a perfume house keeps its bottles on, with the apprentice's much smaller one off to the right. I drew this one, because the machine this post was written on cannot reach Wikimedia Commons. Source: Author*
+*On the cover: a perfumer's organ at Fragonard in Grasse, which is the real name for the tiered bench a perfume house keeps its bottles on, with a pot of blotters on the desk. Photo by [Tristan Mimet](https://commons.wikimedia.org/wiki/File:Perfume_Organ_%28181037189%29.jpeg), CC BY 3.0.*
 
 A perfume house keeps its bottles on a curved tiered bench called an organ, after the church instrument, because the perfumer sits in the middle of it and reaches three hundred things without standing up.
 

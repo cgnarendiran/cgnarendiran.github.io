@@ -43,7 +43,8 @@ ARCH = [r"healthiest possible sign", r"for reasons that took", r"dressed in over
         r"is not a result .* prepared", r"moved house", r"the entire theoretical content", r"which is to say nothing of",
         r"the whole way through", r"than (anybody|anyone) (admits|realises|realizes)", r"\bnobody likes (this|that|it)\b",
         r"which is a lovely thing to find", r"is the interesting part", r"the thing that actually works", r"in a footnote, wearing",
-        r"owes you nothing", r"it breaks it completely", r"a batching story"]
+        r"owes you nothing", r"it breaks it completely", r"a batching story",
+        r"\b(and )?(nobody|no one) has (even )?\w+[^.!?]{0,60}\byet\b", r"and (we|you) (have not|haven't) even\b"]
 JOIN = re.compile(r", (and|so|which|but) ")
 STOPPED = re.compile(r"\bstopped being\b[^.!?]{1,90}\bbec(ame|omes)\b", re.I)
 NEG_SENT = re.compile(r"\b(is|are|was|were|isn't|aren't|wasn't) not\b|\b(isn't|aren't|wasn't)\b", re.I)

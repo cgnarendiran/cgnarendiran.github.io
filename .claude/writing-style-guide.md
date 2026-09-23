@@ -893,6 +893,11 @@ that survived the lint because they were phrased a little differently.
 - **Emphatic restatement.**
   > ✗ "Selection breaks the trick that made S4 trainable, and it breaks it completely." → ✓ "Selection breaks the trick that made S4 trainable."
   > ✗ "Both of those are true at once, and after a decade nobody…" → ✓ "After a decade, nobody…"
+- **The tacked-on kicker.** A last sentence added only to make the number feel bigger. Naren:
+  "looks like AI written. I never write like this."
+  > ✗ "so that session is around $1.5 \times 10^{16}$ pairs. And nobody has multiplied anything by a weight yet." → ✓ end on "pairs." The number is the point; let it land on its own.
+  >
+  > Same family: "and we haven't even started", "and that's before X". The lint flags "nobody has … yet".
 - **Unglossed shorthand** (§19.8).
   > ✗ "That buys W8A8 on OPT-175B" → ✓ "That buys W8A8 (8-bit weights and 8-bit activations) on OPT-175B"
 - **A flourish hiding a factual slip.** "Three students, three decades apart" was over rows

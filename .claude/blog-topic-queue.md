@@ -5,8 +5,8 @@ whose `Post file` does not already exist in `_posts/` on `master`. Reorder rows 
 priority. Delete a row to drop it. Add rows at the bottom (or wherever you want them) to extend
 the queue.
 
-Post numbering: latest published is **blog36** (Mamba). The next post takes
-`images/blog37/`, then 38, and so on. The job derives the number from `ls images | grep blog`,
+Post numbering: latest published is **blog37** (Mamba part 2). The next post takes
+`images/blog38/`, then 39, and so on. The job derives the number from `ls images | grep blog`,
 not from this table, so a manual post in between will not break it.
 
 **Publish date.** If a Queue row has a date in the `Date` column, the job uses it for both the
@@ -31,7 +31,8 @@ force a rewrite.
 | 33 | GRPO and RLVR — what replaced RLHF | `grpo-rlvr` | 2026-09-13 | Follows the 2023 RLHF post |
 | 34 | Quantization — INT8, FP8, NVFP4 and what actually breaks | `quantization-edge-inference` | 2026-09-16 | Standalone, practical |
 | 35 | Knowledge distillation — soft targets, temperature and what "distilled" means now | `knowledge-distillation` | 2026-09-20 | Standalone |
-| 36 | Mamba and state space models — selection, the scan, and the hybrids that shipped | `mamba-is-attention-all-you-really-need` | 2026-09-23 | Is Attention All You Really Need? |
+| 36 | Mamba part 1 — control theory, the RNN and CNN views, S4 and selection | `mamba-is-attention-all-you-really-need` | 2026-09-23 | Is Attention All You Really Need? Part 1 of 2 |
+| 37 | Mamba part 2 — the parallel scan, the kernel, Mamba-2/3 and the hybrids that shipped | `mamba-is-attention-all-you-really-need-part2` | 2026-09-23 | Is Attention All You Really Need? Part 2 of 2 |
 
 ---
 

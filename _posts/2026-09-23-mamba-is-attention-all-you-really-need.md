@@ -180,6 +180,17 @@ The S4 column is the kernel from the last section, read top to bottom. Three wor
 
 So what does selection actually buy? On selective copying, the best non-selective model in the Mamba paper's table gets 57%. Making $\Delta$, $B$ and $C$ depend on the input takes it to 99.8%. On induction heads, the model sees a pattern once and has to complete it later. Mamba trains at sequence length 256 and still scores near 100% at length 1,000,000. That is 4,000 times longer than anything it saw in training. The other architectures start falling over a few hundred tokens past their training length.
 
+## Where the booth gets hired
+
+It would be easy to file all this under audio. That is where SSMs made their name. But the biggest users today are text models.
+
+- **Language models.** Mostly as hybrids, which are stacks of nearly all Mamba layers with a few attention layers mixed in. [Jamba](https://arxiv.org/abs/2403.19887) (AI21), Nemotron-H (NVIDIA) and Granite 4.0 (IBM) all ship this way. Pure Mamba models exist too, like Mistral's [Codestral Mamba](https://mistral.ai/news/codestral-mamba) for code.
+- **Speech and audio.** Real-time voice is the natural fit. A voice assistant has to keep listening and talking for as long as the call lasts, and a pad that never grows suits that. Cartesia, a company started by the S4 and Mamba authors, builds its real-time voice models on SSMs.
+- **DNA.** A genome is billions of letters long. Models like [Caduceus](https://arxiv.org/abs/2403.03234) use Mamba layers to read long stretches of it.
+- **Images.** [Vision Mamba](https://arxiv.org/abs/2401.09417) reads an image as a long row of patches. It works, but it has not pushed ViTs out.
+
+Where the booth loses is exact recall. Ask it for a phone number from an hour ago and the pad may have faded it. That is why almost every language model on that list keeps a few typists in the room. Part 2 gets into why.
+
 ## The catch
 
 So are we done? Look back at the CNN view. It only worked because $\bar{A}$, $\bar{B}$ and $C$ were the same at every step. That is what let one fixed kernel slide along the whole sequence.

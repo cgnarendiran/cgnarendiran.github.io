@@ -10,6 +10,105 @@ on formatting, this one wins, because LinkedIn renders plain text and truncates 
 
 ---
 
+## 0. Read this first: the post is for people with no ML background
+
+Naren's verdict on the companion posts through September 2026 (quantization, distillation,
+Mamba part 1): "complete bullshit". They borrowed the blog's context and packed it into a
+LinkedIn post. They used the blog's conceit and words without the paragraphs that set them up
+("That gap is knowledge distillation. The teacher hands the student its whole opinion, warmed
+with a temperature knob so a gradient can see the quiet notes"), and a reader who never opens
+the link gets nothing. **This section overrides everything below it.** The rest of this guide
+still governs voice, formatting, the tail and the truth rules.
+
+**1. It stands alone.** Someone who has never heard of the blog, the series or the conceit reads
+the post once and understands all of it. Nothing refers to anything outside the post: no "the
+booth", no "the pad", no "the typist", no "that gap", no "part 2 picks up", unless the post
+itself set that image up in plain words first.
+
+**2. One idea.** Pick ONE motivation or ONE problem from the blog post, the one a normal person
+would find surprising or relatable, and build the whole post around it. Leave everything else
+for the blog. A companion post is a trailer, not a summary. If you catch yourself writing a
+second mechanism, a second number or a history lesson, cut it.
+
+**3. The reader has no ML background.** Write for a smart friend who works in marketing, law or
+medicine and has used ChatGPT. They know what "AI", "a model" and "ChatGPT" are. They do not
+know what a token, a Transformer, a gradient, a cache, a kernel, an encoder or a benchmark is.
+Use at most two technical terms in the whole post, and explain each one in everyday words where
+it first appears. Model and product names (Mamba, ChatGPT, Gemini) are fine as names. The lint
+fails a post with three or more (`prose_lint.py --linkedin`, "jargon").
+
+**4. A hook that stops the scroll.** The first line has to make a normal person stop and read
+the second. The hooks that work say something surprising about a thing they already use, or put
+a familiar everyday situation next to the AI problem:
+> "Every time ChatGPT writes a word, it rereads its notes on your entire conversation."
+> "The AI on your phone was packed the way you pack a cabin bag: roll the jeans, wear the coat."
+It is concrete, true, and needs no setup. It does not name a paper, an acronym or a method.
+
+**5. Simple beats complete.** Short sentences, about 20 words or fewer (the lint warns over 25).
+Numbers only if a normal person can feel them ("an hour-long call", "twice as fast"). No
+percentages from a benchmark table. When a detail is true but needs a paragraph to explain, drop
+it.
+
+**6. The shape** (replaces §2 for every blog promo):
+
+| # | Beat | Notes |
+|---|---|---|
+| 1 | **Hook** | One line, under 150 characters. §0.4 |
+| 2 | **The problem, in everyday terms** | Two or three short lines. Why it matters to someone who uses AI |
+| 3 | **The everyday picture** | The conceit, set up from zero in two or three sentences: who, where, what they do |
+| 4 | **The idea** | One paragraph: what the new approach does, in the words of the picture. Name the method once |
+| 5 | **The catch** | One or two sentences, plain words. Optional in a very short post |
+| 6 | **Pointer, URL, hashtags, mention** | As §7. The pointer line says what the reader will find, in plain words |
+
+100 to 200 words. No series line unless it makes sense to a cold reader ("I'm writing a two-part
+series on this" is fine; "part 2 picks up where the relay starts" is not).
+
+**7. Before and after.** Mamba part 1, as it went out (September 2026), fails §0 everywhere: it
+uses seven technical terms, three ideas, and "the typist in the hall" without ever setting up a
+typist:
+> "An interpreter in a conference booth never keeps a transcript. They keep one small pad and
+> decide, word by word, what is worth writing on it. / A Transformer is the typist in the hall
+> instead. It keeps every word it has heard (the KV cache), and every new word reads all of
+> them. On raw audio that is 960,000 tokens a minute. / So where does the pad come from? Control
+> theory. A state space model describes a system by a small state that rolls forward one step at
+> a time (think of a thermostat tracking a room). And the same equation runs like an RNN when you
+> step through it, and trains like a CNN when you unroll it into one fixed kernel. ..."
+
+The same post written to §0:
+> Every time ChatGPT writes a word, it rereads its notes on your entire conversation.
+>
+> For a short chat, that's fine. But the notes never shrink. Talk to it for an hour and every
+> new word costs more than the one before, because there's more to reread.
+>
+> Now picture a conference interpreter. They sit two seconds behind the speaker, for hours, and
+> they never write the speech down. They keep one small notepad and decide, word by word, what's
+> worth keeping. "Um" gets dropped. A phone number gets written down.
+>
+> So can an AI listen like that? That's the idea behind Mamba. Instead of notes that grow
+> forever, it keeps one small notepad that is the same size at minute one and at hour three. And
+> each new word gets to decide how much of the notepad to wipe.
+>
+> The catch is that a small notepad forgets. Ask for an exact phone number from an hour ago and
+> it may be gone. That's why most of the new models that use it still keep a little of the old
+> kind of memory too.
+>
+> I wrote about where the idea comes from (thermostats and rocket control, of all places) and how
+> Mamba chooses what to forget:
+> https://cgnarendiran.github.io/blog/mamba-is-attention-all-you-really-need/
+>
+> #AI #Mamba #MachineLearning #ChatGPT
+> @Fast Code AI
+
+One problem (the notes that never shrink), one picture (the interpreter), one idea (a notepad
+that stays the same size and chooses what to keep), one catch, zero equations, and no technical
+terms beyond the names.
+
+**8. The cold-reader test (required, §13).** Before the post is queued, and again before it is
+published, a reader who has seen only the post text must be able to say in one sentence what it
+is about, and must not stop at any word. §13 says how to run it.
+
+---
+
 ## 1. The evidence
 
 | LinkedIn date | Promotes | Hook type | Words | Emoji | Link | Hashtags |
@@ -39,7 +138,12 @@ hashtags. None of them end with "Fin."
 
 ---
 
-## 2. The shape of a blog-promo post
+## 2. The older shape of a blog-promo post (superseded by §0.6)
+
+Kept for reference. It was written for an audience that already knew ML, and it produced the
+posts §0 rejects. Where it disagrees with §0, §0 wins: no mechanism paragraph, no dragons from
+the honest-cons section unless they fit in one plain sentence, one number at most, and only a
+number a normal person can feel.
 
 | # | Beat | Notes |
 |---|---|---|
@@ -59,6 +163,11 @@ optional.
 ---
 
 ## 3. Hooks, with the real ones
+
+These are Naren's own hooks, written for ML readers. "Attention is All You Need" means nothing
+to someone outside the field, so under §0.4 the famous-line hook needs a line a normal person
+already knows. The question hook and the absurd pairing carry over well when the question or
+the pairing uses everyday words.
 
 **Famous line, then a twist.** The most used opener, five of the seven promos.
 > "Attention is All You Need"... but that says nothing about how we handle fast inference for
@@ -153,7 +262,7 @@ the LinkedIn hook is that image in one line.
   bullets are retired.
 - **Names, not links.** Mention papers and models by name. The only URL in the post is the blog
   link. No arXiv links, no shorteners.
-- **Length: 120 to 220 words, target 170, hard stop at 250 (about 1,600 characters).** RoPE is
+- **Length: 100 to 200 words (§0.6), hard stop at 250 (about 1,600 characters).** RoPE is
   170 words, KV Caching 150, VLA 340, and that one is the ceiling, not the norm. The first JEPA
   promo was written to an older 320-word ceiling and read like a summary.
 
@@ -229,6 +338,11 @@ One image. No carousels, no video.
 ---
 
 ## 11. Two exemplars, verbatim
+
+**These are voice references, not audience references.** They were written for ML readers,
+before §0. Take the rhythm, the "imo", the first person and the dry asides from them. Do not
+take the jargon, the number of ideas or the assumed background. The only exemplar for audience
+and structure is the Mamba "after" in §0.7.
 
 Mention and hashtag syntax normalised to plain text; the links are as posted.
 
@@ -387,23 +501,53 @@ replacement that went live in its place:
 
 ## 12. Pre-schedule checklist
 
-- [ ] First sentence names the concrete object of the conceit and stands alone for a cold reader
-- [ ] Hook under 200 characters before the first blank line
-- [ ] Opens on the post's conceit or absurd image, not on "I wrote a post"
-- [ ] The mechanism in plain words. No equations, no markdown
-- [ ] One concrete number or failure from the post
-- [ ] One line of dragons from the honest-cons section
-- [ ] A bet or a turn, in first person
-- [ ] Pointer line, then the canonical URL on its own line
-- [ ] Series line if the post is part of a series
-- [ ] 4 to 6 hashtags, then the Fast Code AI mention
-- [ ] 120 to 220 words, never above 250
-- [ ] At least one rhetorical question in the first half, answered at once
+**§0 first. A post that fails any of these is rewritten, not patched.**
+
+- [ ] The cold-reader test (§13) passed: the reader summarised the post correctly in one
+      sentence, stopped at no word, and found nothing that refers to something outside the post
+- [ ] One problem or motivation from the blog, and nothing else
+- [ ] The first line would make a non-technical person stop scrolling, and needs no setup
+- [ ] The everyday picture is set up from zero inside the post
+- [ ] At most two technical terms, each explained in everyday words; `prose_lint.py --linkedin`
+      reports no "jargon" error
+- [ ] No sentence over about 20 words; the lint's "long sentence" warnings are fixed
+- [ ] No equations, no acronyms left unexpanded, no benchmark percentages
+- [ ] 100 to 200 words, never above 250
+- [ ] At least one question in the first half, answered at once
 - [ ] At least two first-person sentences about what Naren did or thinks
-- [ ] One number, two at most
-- [ ] No more than two consecutive paragraphs ending on a fragment
+- [ ] Pointer line in plain words, then the canonical URL on its own line
+- [ ] 4 to 6 hashtags, then the Fast Code AI mention
 - [ ] No colon-label openers; `python3 .claude/scripts/prose_lint.py --linkedin <file>` exits 0
+- [ ] The humanizer skill ran on the draft (§13)
 - [ ] Zero emoji bullets, at most one 👇, at most one emoticon
 - [ ] Nothing claimed that is not in the post. No invented anecdotes, no role claims
 - [ ] No §9 or blog-guide §13 banned patterns
 - [ ] Cover image attached with alt text
+
+---
+
+## 13. The checks, and who runs them
+
+Both LinkedIn routines run these. The companion job runs both before it queues a post. The
+publisher runs the lint and the cold-reader test again before it posts, as a backstop. It never
+rewrites a post: it holds any file that fails, publishes the rest, and reports the hold so Naren
+can fix or delete the file.
+
+**1. The AI-writing pass.** Invoke the vendored `humanizer` skill (`.claude/skills/humanizer/`)
+on the post body, subtractively, as the blog job does. Then run
+`python3 .claude/scripts/prose_lint.py --linkedin <file>`. It must exit 0. It fails on jargon,
+colon labels, negation triplets and fragment runs, so read its warnings too (long sentences).
+
+**2. The cold-reader test.** Give a fresh subagent ONLY the post body (no blog, no title, no
+hashtags) with this brief, verbatim:
+
+> You work in marketing and have used ChatGPT, but you know nothing about how AI works. Read
+> this LinkedIn post once. Then answer: (1) In one sentence, what is this post about? (2) List
+> every word or phrase you did not understand or had to guess at. (3) List anything that seems
+> to refer to something you were not told (a person, a thing, "the X"). (4) Would you have
+> stopped scrolling at the first line? Yes or no, and why. (5) Would you click the link?
+
+The post passes only if (1) matches the post's one idea, (2) and (3) are empty, and (4) is yes.
+Otherwise, rewrite and run the test again with a new subagent. If no subagent tool is available,
+answer the five questions yourself as that reader, in writing, before deciding. Put the
+answers in the PR body.

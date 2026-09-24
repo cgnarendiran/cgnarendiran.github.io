@@ -16,6 +16,9 @@ Errors
   aphorism run          a second run of 3+ paragraphs ending on a sentence of 8 words or fewer
   fragment sentences    3+ sentences like "Not a long thin one." / "Could be a hinge." / "Just a gauge."
   colon labels          (LinkedIn) "My read:", "The dragons:", "Bottom line:" opening a sentence
+  jargon                (LinkedIn) 3+ distinct ML terms a non-technical reader would not know
+                        (token, encoder, gradient, KV cache, kernel, ...); the post is for
+                        people with no ML background (LinkedIn guide §0). Hashtag lines are skipped
   pipe in inline math   an unescaped | inside $...$ on the first line of a paragraph ("$1/|o_i|$");
                         kramdown turns the paragraph into a table before MathJax sees it. Write \vert
   stray $$ in prose     an odd number of $$ on a prose line ("$1/|o_i|$$"); it opens a display
@@ -34,6 +37,8 @@ Warnings
   stopped/became        "X stopped being A and became B", the chiasmus form of negate-then-reveal (§18.4)
   negate-then-reveal    a short "... is not X." followed by "It is / They are / It just ..." (§18.4)
   banned vocabulary     the blog guide's section 13 list
+  jargon                (LinkedIn) 1-2 ML terms: each must be explained in everyday words or cut
+  long sentence         (LinkedIn) more than 25 words in one sentence
 """
 import re
 import sys
@@ -52,6 +57,18 @@ REVEAL = re.compile(r"^(It|They|It's|That) (is|are|was|just|were)\b")
 LABEL = re.compile(r"^(My read|My take|The dragons|The stance|The bet|The catch|Bottom line|The takeaway|The kicker|The upshot|Translation|The lesson):", re.I)
 FRAG = re.compile(r"^(Not|Just|Could be|Same|No) [^.!?]{0,45}[.!?]$")
 NEG3 = re.compile(r"\b[Nn]o [^,.;:]{1,30}, no [^,.;:]{1,30},? (and )?no \b")
+# Terms a reader with no ML background would stop at. Model and product names (Mamba, ChatGPT)
+# are not jargon; "AI" and "model" are not either.
+JARGON = [r"tokens?", r"tokeni[sz]\w*", r"encoders?", r"decoders?", r"embeddings?", r"gradients?", r"logits?",
+          r"softmax", r"kv cache", r"cache", r"kernels?", r"convolution\w*", r"cnns?", r"rnns?", r"lstms?",
+          r"transformers?", r"self-attention", r"attention (layer|head)s?", r"parameters?", r"fine-tun\w*",
+          r"backprop\w*", r"inference", r"latents?", r"vectors?", r"matri(x|ces)", r"tensors?", r"quanti[sz]\w*",
+          r"perplexity", r"benchmarks?", r"ablations?", r"regulari[sz]\w*", r"loss function", r"the loss",
+          r"optimi[sz]ers?", r"epochs?", r"autoregressive", r"pre-?train\w*", r"rlhf", r"reward model",
+          r"state space", r"ssms?", r"recurren\w*", r"discreti[sz]\w*", r"distillation", r"llms?",
+          r"architectures?", r"weights", r"activations?", r"hyperparameters?", r"on-policy", r"off-policy",
+          r"diffusion", r"eigen\w*", r"fft", r"gpus?", r"vram", r"h100s?", r"flops?", r"throughput", r"latency"]
+JARGON_RE = re.compile(r"\b(" + "|".join(JARGON) + r")\b", re.I)
 SENT_SPLIT = re.compile(r'(?<=[.!?])\s+(?=[A-Z"\'(*$\[])')
 
 
@@ -232,6 +249,18 @@ def main():
             warns.append(f"arch commentary: '{m.group(0)}'")
     for m in re.finditer(BANNED, prose, re.I):
         warns.append(f"banned vocabulary: '{m.group(0)}'")
+
+    if linkedin:
+        found = {}
+        for m in JARGON_RE.finditer(prose):
+            found.setdefault(m.group(0).lower(), m.group(0))
+        if len(found) >= 3:
+            errors.append(f"jargon: {len(found)} ML terms a non-technical reader would not know: " + ", ".join(found.values()) + ". Keep at most two, each explained in everyday words (LinkedIn guide §0)")
+        elif found:
+            warns.append("jargon: " + ", ".join(found.values()) + ". Explain each in everyday words or cut it (LinkedIn guide §0)")
+        longs_li = [s_ for p in paras for s_ in sentences(p) if words(s_) > 25]
+        for l in longs_li:
+            warns.append(f"long sentence: {words(l)} words: '{l[:90]}...'")
 
     for e in errors:
         print("ERROR  " + e)

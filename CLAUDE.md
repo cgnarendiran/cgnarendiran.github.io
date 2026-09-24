@@ -32,10 +32,13 @@ from `origin/master`, open a PR, self-check it and merge it; none pushes to `mas
 - **LinkedIn companion job**, Sun + Wed 17:15 UTC with a retry at 18:15, about half an hour after the post is live. Reads `.claude/linkedin-ledger.md` and
   `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
-  with a `publish_after` time thirty minutes out.
+  with a `publish_after` time thirty minutes out. The post is written for readers with no ML background, one idea,
+  standalone (LinkedIn guide §0), and must pass `prose_lint.py --linkedin` (which fails on jargon)
+  and a cold-reader test by a fresh subagent (§13) before it is queued.
 - **LinkedIn publisher**, daily at 16:00, 18:00 and 19:00 UTC. Runs `.claude/scripts/linkedin_publish.py`,
   which posts every due outbox file through LinkedIn's Posts API, appends the ledger row and
-  deletes the file. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
+  deletes the file. Before posting it re-runs the lint and the cold-reader test on each due file
+  and holds any that fail. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
   environment; setup and the 60-day token renewal are in `.claude/linkedin-api-setup.md`.
 
 There is no day-long review window, by choice: a post is on LinkedIn by 18:00 UTC on blog days.

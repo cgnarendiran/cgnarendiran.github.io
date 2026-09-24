@@ -15,6 +15,8 @@ Now try that on sound.
 
 Raw audio at 16,000 samples a second is telephone quality, and not a nice telephone either. Treat each sample as a token and one minute of it is 960,000 tokens. A three-hour session is about 173 million. Attention compares every token with every other token, so that session comes to around $1.5 \times 10^{16}$ pairs.
 
+To be fair, nobody actually feeds a Transformer raw samples. Speech models like [Whisper](https://arxiv.org/abs/2212.04356) first turn the audio into a spectrogram, a picture of which frequencies are loud in each 10-millisecond slice. Then they squash that down to about 50 tokens a second. It works, but it is a hand-built shortcut that throws detail away before the model hears anything. The real question is whether a model could just listen to the raw waveform.
+
 Welcome to the era of **state space models (SSMs)**. This is the story of how an idea control engineers have used since 1960, a small running summary that never grows, got rebuilt into a sequence model that runs like an RNN and trains like a CNN.
 
 ## Two ways to follow a conference
@@ -60,6 +62,16 @@ where $h_t$ is the state (the pad), $x_t$ is the input at step $t$ (the new word
 
 In a real model $h_t$ is a vector of numbers, not one number. But its size never depends on how long the input is. That is the whole point of it.
 
+The toy version also takes one number in and gives one number out. A real model runs thousands of these pads side by side. Inside each layer a word is a vector of a few thousand numbers, just like in a Transformer. Each of those numbers (a channel) gets its own small pad and its own $y_t$. Put the outputs back together and you have a vector for the word again. So the SSM layer does the job attention does in a Transformer. It lets each position pull in what came before it. Everything around it stays the same. Dozens of these layers are stacked. The last one feeds the usual final layer, which scores every word in the vocabulary and picks the next one.
+
+So the worked examples below follow one channel, with a one-number pad. How do the channels talk to each other, then? They never do inside the pad. Each pad fades and fills on its own. The talking happens around it. A projection going in and one coming out each mix all the channels together. And $\Delta$, $B$ and $C$ are computed from the whole vector, so what one pad forgets depends on everything the word carries.
+
+![Mamba block drawn as parallel channel tracks: wide orange boxes span every track, small blue conv and pad boxes sit on one track each, and a red wire from one box feeds every pad. A side panel zooms into a single pad](/images/blog36/mamba_block.png) *Figure 2: One Mamba block, with each channel drawn as its own track. Orange boxes span every track, so they mix the channels. Blue boxes sit on a single track and never see the others. The red wire is how the channels still talk: one box reads them all and sets every pad's $\Delta$, $B$ and $C$. The panel on the right is one pad up close, which is all the worked examples in this post ever compute. Source: Author*
+
+So how far back can the pad reach? There is no window and no cut-off. Every word the model has ever heard is still on the pad, just faded. What sets the reach in practice is how fast it fades. If each step keeps 99% of the pad, a word from 100 steps ago is down to about a third. A word from 1,000 steps ago is basically gone. Learn a slower fade and the reach gets longer, at no extra cost.
+
+A Transformer is the opposite. Its recall is exact, but it has a hard edge: the context length it was trained at. [RoPE](/blog/rope-is-attention-all-you-really-need/) does not remove that edge. It only tells the model how far apart two tokens are. Push a model well past its training length and it usually falls apart, which is why stretching tricks like [YaRN](https://arxiv.org/abs/2309.00071) exist. And inside the window, every extra token still costs its line in the cache.
+
 If you read the [Kalman filter post](/blog/kill-john-connor-using-kalman-filter/), this should look familiar. There the state was a motorcycle's position and velocity, and a physics model rolled it forward one step at a time. It is the same shape of equation. The Terminator just wanted a different output.
 
 ## Where the name comes from
@@ -76,13 +88,15 @@ In words, how fast the state changes depends on the state itself ($A$) and on wh
 
 A thermostat makes it concrete. The state is the room's temperature. $A$ is negative, because a warm room drifts back toward the temperature outside. $B$ is how hard the heater pushes. Switch the heater off and the room slowly forgets it was ever warm.
 
-But a language model does not get a continuous signal. It gets words, one at a time. So you sample the continuous system at steps of size $\Delta$, which is called discretisation. The standard method is the zero-order hold (it simply assumes the input stays constant between two samples), and it gives
+But a language model does not get a continuous signal. It gets words, one at a time. So you sample the continuous system at steps of size $\Delta$, which is called discretisation. The standard method is the zero-order hold (it simply assumes the input stays constant between two samples).
+
+Where does the maths come from? Switch the input off for a moment, so the rule is just $h' = Ah$. The state changes at a rate proportional to itself. The only function that does that is an exponential, the same one behind radioactive decay and compound interest. So after a time $\Delta$ the pad has been multiplied by $e^{\Delta A}$. Now switch the input back on, hold it constant over the step, and add up how much of it lands on the pad. For a one-number pad that gives
 
 $$
-\bar{A} = e^{\Delta A}
+\bar{A} = e^{\Delta A}, \qquad \bar{B} = \frac{e^{\Delta A} - 1}{A}\,B
 $$
 
-along with a matching $\bar{B}$. You can think of $\Delta$ as how much time passes between two words. A big $\Delta$ means a lot of time went by. So the old pad fades to almost nothing and the new word takes over. A small $\Delta$ means almost no time passed. So the pad survives and the new word barely registers. That makes $\Delta$ the dial for how fast the pad forgets, and Mamba is going to grab it.
+The bar just means "per step". $A$ is a rate, how fast the pad changes at any instant. $\bar{A}$ is what that rate adds up to over one step of length $\Delta$. Mamba keeps $A$ negative. So $\bar{A}$ always lands between 0 and 1, and every step is a fade. You can think of $\Delta$ as how much time passes between two words. A big $\Delta$ means a lot of time went by. So the old pad fades to almost nothing and the new word takes over. A small $\Delta$ means almost no time passed. So the pad survives and the new word barely registers. That makes $\Delta$ the dial for how fast the pad forgets, and Mamba is going to grab it.
 
 ## An RNN and a CNN at the same time
 
@@ -104,6 +118,8 @@ $$
 K = \left(C\bar{B},\; C\bar{A}\bar{B},\; C\bar{A}^2\bar{B},\; \dots\right)
 $$
 
+This kernel is not like the ones in an image CNN. There, a 3-wide kernel is three numbers the network learned, and it can never get longer because nobody learned a fourth. Here the model only learns $A$, $B$, $C$ and $\Delta$. The kernel is what you get when you plug $k = 0, 1, 2, \dots$ into $C\bar{A}^k\bar{B}$. So it stores the recipe, not the list. A sequence of length $n$ gets exactly $n$ entries, one for each distance a word can be from the current one, and no new parameters appear however long $n$ gets.
+
 Sliding one fixed kernel along a sequence is exactly what a convolutional neural network (CNN) does. And a convolution computes every output position at once. With an FFT it costs $O(n \log n)$ for a sequence of length $n$. Every core on the GPU has something to do.
 
 Let's do one by hand, with a single number on the pad. Take $A = -1$, $B = 1$, $C = 1$ and $\Delta = 0.5$. That gives $\bar{A} = e^{-0.5} = 0.607$ and $\bar{B} = 1 - e^{-0.5} = 0.393$. Now feed in four words with the values $x = (1, 0, 2, 0)$.
@@ -117,7 +133,7 @@ The RNN way, one step at a time:
 
 The CNN way, all at once. The kernel is $K = (0.393, 0.239, 0.145, 0.088)$, which is just $0.393$ faded by $0.607$ once more at every step. The output at word 3 is $0.393 \times 2 + 0.239 \times 0 + 0.145 \times 1 = 0.932$. That is the same number, and nobody ever built a pad to get it.
 
-![Top: four pad boxes chained left to right, each fading by 0.607 and taking in a word, giving outputs 0.393, 0.239, 0.932 and 0.565. Bottom: the decaying kernel 0.393, 0.239, 0.145, 0.088 as bars, and the weighted sum that gives 0.932 at word 3](/images/blog36/two_views.png) *Figure 2: The worked example computed both ways. The RNN carries a pad from word to word. The CNN slides a kernel and never builds the pad at all. Source: Author*
+![Top: four pad boxes chained left to right, each fading by 0.607 and taking in a word, giving outputs 0.393, 0.239, 0.932 and 0.565. Bottom: the decaying kernel 0.393, 0.239, 0.145, 0.088 as bars, and the weighted sum that gives 0.932 at word 3](/images/blog36/two_views.png) *Figure 3: The worked example computed both ways. The RNN carries a pad from word to word. The CNN slides a kernel and never builds the pad at all. Source: Author*
 
 So you train it as a CNN, with the whole sequence in parallel. And you run it as an RNN, one cheap step per word. The 2021 paper that set this out put all three views in its title: [Combining Recurrent, Convolutional, and Continuous-time Models with Linear State-Space Layers](https://arxiv.org/abs/2110.13985) (Gu et al., 2021). That is where "an RNN and a CNN at the same time" comes from, and it is a fair description.
 
@@ -153,7 +169,9 @@ $$
 
 where each $W$ is a small learned projection. So the model reads the incoming word and decides, on the spot, how much of the pad to clear and how much of the word to write. That is the whole idea, and it is called **selection**. A filler word can get a tiny $\Delta$, so the pad barely changes. A number worth keeping can get a big one.
 
-![Diagram of the recurrence unrolled over four words, with the pad passed along and delta set big or small for each word](/images/blog36/recurrence.png) *Figure 3: The same recurrence, except that now each word sets its own $\Delta$. Source: Author*
+As for the name, the paper never explains it. The usual story is a pun. S4 is short for four words that start with S (structured state space sequence). The paper calls the selective version S6, and six S's in a row is a hiss. A black mamba is also one of the fastest snakes around, which suits a model sold on speed.
+
+![Diagram of the recurrence unrolled over four words, with the pad passed along and delta set big or small for each word](/images/blog36/recurrence.png) *Figure 4: The same recurrence, except that now each word sets its own $\Delta$. Source: Author*
 
 Let's do one by hand again, with the same one-number pad from before. A number arrives ($x = 1$), then three filler words that carry nothing ($x = 0$), and then somebody asks for the number back.
 
@@ -166,9 +184,20 @@ Let's do one by hand again, with the same one-number pad from before. A number a
 
 The S4 column is the kernel from the last section, read top to bottom. Three words of filler cost the fixed pad 78% of the number. They cost the selective pad about 6%. It is the same recurrence, with the same $A$ and the same filler going in. The only difference is whether $\Delta$ was allowed to look at the word before it chose.
 
-![Two decay curves over the same four words, the fixed-delta pad dropping to 0.088 and the selective pad holding at 0.864](/images/blog36/delta_worked.png) *Figure 4: The worked example above, drawn. The selective pad kept the number because $\Delta$ was close to zero during "and, er". So almost nothing faded. Source: Author*
+![Two decay curves over the same four words, the fixed-delta pad dropping to 0.088 and the selective pad holding at 0.864](/images/blog36/delta_worked.png) *Figure 5: The worked example above, drawn. The selective pad kept the number because $\Delta$ was close to zero during "and, er". So almost nothing faded. Source: Author*
 
 So what does selection actually buy? On selective copying, the best non-selective model in the Mamba paper's table gets 57%. Making $\Delta$, $B$ and $C$ depend on the input takes it to 99.8%. On induction heads, the model sees a pattern once and has to complete it later. Mamba trains at sequence length 256 and still scores near 100% at length 1,000,000. That is 4,000 times longer than anything it saw in training. The other architectures start falling over a few hundred tokens past their training length.
+
+## Where the booth gets hired
+
+It would be easy to file all this under audio. That is where SSMs made their name. But the biggest users today are text models.
+
+- **Language models.** Mostly as hybrids, which are stacks of nearly all Mamba layers with a few attention layers mixed in. [Jamba](https://arxiv.org/abs/2403.19887) (AI21), Nemotron-H (NVIDIA) and Granite 4.0 (IBM) all ship this way. Pure Mamba models exist too, like Mistral's [Codestral Mamba](https://mistral.ai/news/codestral-mamba) for code.
+- **Speech and audio.** Real-time voice is the natural fit. A voice assistant has to keep listening and talking for as long as the call lasts, and a pad that never grows suits that. It matters most for full-duplex models, the kind that listen and talk at the same time. They have to process every frame for the whole call, silence included, so a Transformer's cache grows the entire time. Cartesia, a company started by the S4 and Mamba authors, builds its real-time voice models on SSMs.
+- **DNA.** A genome is billions of letters long. Models like [Caduceus](https://arxiv.org/abs/2403.03234) use Mamba layers to read long stretches of it.
+- **Images.** [Vision Mamba](https://arxiv.org/abs/2401.09417) reads an image as a long row of patches. It works, but it has not pushed ViTs out.
+
+Where the booth loses is exact recall. Ask it for a phone number from an hour ago and the pad may have faded it. That is why almost every language model on that list keeps a few typists in the room. Part 2 gets into why.
 
 ## The catch
 

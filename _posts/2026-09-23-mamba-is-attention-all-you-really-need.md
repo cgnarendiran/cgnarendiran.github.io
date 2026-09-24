@@ -185,7 +185,7 @@ So what does selection actually buy? On selective copying, the best non-selectiv
 It would be easy to file all this under audio. That is where SSMs made their name. But the biggest users today are text models.
 
 - **Language models.** Mostly as hybrids, which are stacks of nearly all Mamba layers with a few attention layers mixed in. [Jamba](https://arxiv.org/abs/2403.19887) (AI21), Nemotron-H (NVIDIA) and Granite 4.0 (IBM) all ship this way. Pure Mamba models exist too, like Mistral's [Codestral Mamba](https://mistral.ai/news/codestral-mamba) for code.
-- **Speech and audio.** Real-time voice is the natural fit. A voice assistant has to keep listening and talking for as long as the call lasts, and a pad that never grows suits that. Cartesia, a company started by the S4 and Mamba authors, builds its real-time voice models on SSMs.
+- **Speech and audio.** Real-time voice is the natural fit. A voice assistant has to keep listening and talking for as long as the call lasts, and a pad that never grows suits that. It matters most for full-duplex models, the kind that listen and talk at the same time. They have to process every frame for the whole call, silence included, so a Transformer's cache grows the entire time. Cartesia, a company started by the S4 and Mamba authors, builds its real-time voice models on SSMs.
 - **DNA.** A genome is billions of letters long. Models like [Caduceus](https://arxiv.org/abs/2403.03234) use Mamba layers to read long stretches of it.
 - **Images.** [Vision Mamba](https://arxiv.org/abs/2401.09417) reads an image as a long row of patches. It works, but it has not pushed ViTs out.
 

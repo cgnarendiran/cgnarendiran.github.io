@@ -112,6 +112,8 @@ $$
 K = \left(C\bar{B},\; C\bar{A}\bar{B},\; C\bar{A}^2\bar{B},\; \dots\right)
 $$
 
+This kernel is not like the ones in an image CNN. There, a 3-wide kernel is three numbers the network learned, and it can never get longer because nobody learned a fourth. Here the model only learns $A$, $B$, $C$ and $\Delta$. The kernel is what you get when you plug $k = 0, 1, 2, \dots$ into $C\bar{A}^k\bar{B}$. So it stores the recipe, not the list. A sequence of length $n$ gets exactly $n$ entries, one for each distance a word can be from the current one, and no new parameters appear however long $n$ gets.
+
 Sliding one fixed kernel along a sequence is exactly what a convolutional neural network (CNN) does. And a convolution computes every output position at once. With an FFT it costs $O(n \log n)$ for a sequence of length $n$. Every core on the GPU has something to do.
 
 Let's do one by hand, with a single number on the pad. Take $A = -1$, $B = 1$, $C = 1$ and $\Delta = 0.5$. That gives $\bar{A} = e^{-0.5} = 0.607$ and $\bar{B} = 1 - e^{-0.5} = 0.393$. Now feed in four words with the values $x = (1, 0, 2, 0)$.

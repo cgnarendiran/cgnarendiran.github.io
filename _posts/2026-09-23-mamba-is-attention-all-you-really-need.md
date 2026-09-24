@@ -169,6 +169,8 @@ $$
 
 where each $W$ is a small learned projection. So the model reads the incoming word and decides, on the spot, how much of the pad to clear and how much of the word to write. That is the whole idea, and it is called **selection**. A filler word can get a tiny $\Delta$, so the pad barely changes. A number worth keeping can get a big one.
 
+As for the name, the paper never explains it. The usual story is a pun. S4 is short for four words that start with S (structured state space sequence). The paper calls the selective version S6, and six S's in a row is a hiss. A black mamba is also one of the fastest snakes around, which suits a model sold on speed.
+
 ![Diagram of the recurrence unrolled over four words, with the pad passed along and delta set big or small for each word](/images/blog36/recurrence.png) *Figure 4: The same recurrence, except that now each word sets its own $\Delta$. Source: Author*
 
 Let's do one by hand again, with the same one-number pad from before. A number arrives ($x = 1$), then three filler words that carry nothing ($x = 0$), and then somebody asks for the number back.

@@ -585,6 +585,15 @@ deliberate and should survive any proofread.
       named (§20.3)
 - [ ] One idea per sentence: the lint's "chained sentences" and "long sentences" warnings are
       resolved or are lists (§20.1); none of the §20.4 patterns is left
+- [ ] Every formula says where it comes from, and every symbol (barred and hatted ones included)
+      is defined in words (§21.1)
+- [ ] The worked example says what it is a slice of, and one paragraph connects it to the
+      model's real output (§21.2); hypotheticals are flagged as such (§21.3)
+- [ ] The architecture figure shows how the units connect, with a zoom on the part the maths
+      computes, a legend and no overlapping text (§21.7, §21.8)
+- [ ] A short "where it is used" section, and the name explained if it is not obvious (§21.9,
+      §21.10)
+- [ ] The ten-questions test was run and every question it raised is answered (§21)
 
 **Mechanics** (cheap to check, expensive to fix after publish):
 
@@ -911,3 +920,86 @@ worked examples. The lint's arch-commentary list now carries the phrases above.
 about cannot both be explained plainly in about 3,500 words. The natural cut is after the
 problem and its fix have landed, with the engineering, the follow-up models and the honest cons
 going to part two. Each part keeps the same conceit and gets its own worked example.
+
+---
+
+## 21. Answer the reader's next question: the Mamba Q&A pass
+
+Naren read the published Mamba part 1 (blog36) as a reader and came back with a list of
+questions. Every one was a gap the post should have closed itself: where does $e^{\Delta A}$
+come from, what are $\bar{A}$ and $\bar{B}$, is speech really one token per sample, how long is
+the pad, how does a kernel "grow", is $y_t$ really one number, how do the dimensions talk, where
+are these models used, why the name. The post had passed §13, §18, §19, §20 and the lint. None
+of those checks ask what a curious reader will ask next. This section does. The fixes that
+shipped in PR #62 are the examples.
+
+**1. Every formula says where it came from.** No equation arrives from nowhere. Give one or two
+plain sentences of derivation, or the intuition that forces the form ("the only function whose
+rate of change is proportional to itself is an exponential"). Every symbol gets defined,
+including the barred, hatted and discretised versions. "Along with a matching $\bar{B}$" is not
+a definition. Write $\bar{B}$ down, and say what the bar means in words ("per step").
+
+**2. Say what the toy example is a slice of.** A worked example with one number in and one
+number out is fine, but say so, and say what the real thing looks like: "this is one channel of
+5,120, and a real pad holds 16 numbers, not one". Then close the loop to the model's actual
+output. If the post is about a language model, one paragraph says how the thing it explained
+turns into the next word. Otherwise the reader looks at $y_t$ and asks how a single number
+predicts a word.
+
+**3. Flag a hypothetical as a hypothetical.** "Treat each audio sample as a token" is a fine
+thought experiment. But say in the next breath what real systems do (spectrograms, about 50
+tokens a second) and why the thought experiment still matters. A reader who knows a little will
+otherwise think the post got the basics wrong. A reader who knows nothing will learn something
+false.
+
+**4. Metaphor words must not collide with technical words.** "Pad" for the state sat right
+next to CNN padding, and Naren asked whether the pad was a fixed size "because CNNs expect it".
+When the conceit's word is also a term of art nearby (pad, cache, head, bank, window, kernel),
+either choose another word or say once, plainly, which one you mean.
+
+**5. Say what is stored and what is computed, and what sets each size.** "The kernel is as long
+as the sequence" raised "how does it keep growing?". The answer, that the model learns $A$, $B$
+and $C$ and the kernel is generated from them, was one sentence away. For anything with a size
+(a kernel, a state, a context window, a cache), say what fixes that size, whether it was learned
+or computed, and what happens when the input gets longer.
+
+**6. Compare against what the reader already knows.** Any claim about memory, length or cost
+gets a sentence on how the familiar alternative handles it. The Mamba post said the pad "never
+grows" but never said how far back it reaches, or what a Transformer's limit actually is (the
+training length, which RoPE does not remove). The reader filled that gap with a wrong guess.
+
+**7. Show how the pieces connect, not only the piece.** If the mechanism works on one unit (a
+channel, a head, a patch, an expert), say how the units talk to each other, and draw it. The
+figure for a named architecture (§8) shows the whole block. It draws the part the worked example
+computes as a zoom and labels it that way, so the reader can place the maths in the picture.
+
+**8. Figures a reader can follow at first look.** Naren sent the first Mamba block diagram back
+with "not fully clear". The redraw that shipped (blog36, Figure 2) follows these rules:
+- One message per figure, stated in the title or a legend, e.g. "orange boxes mix the channels,
+  blue boxes work on one channel alone".
+- Numbered steps in reading order when there are more than three stages.
+- Repeated units drawn as parallel tracks, so "per unit" and "across units" are visible without
+  reading anything.
+- A zoom panel for the part the worked example computes.
+- No line crosses text, and no label overlaps a box. Render it, look at it, and fix every
+  overlap before committing.
+- Put the explanation in the caption: what the colours mean, what the zoom is, how to read it.
+
+**9. Say where it is used.** Any post about a method has a short section, a few bullets, on who
+ships it today, for what, and where it loses. The reader wants to know whether this is a lab
+curiosity or something inside products they use. Keep it to what you can source, and point to
+part 2 if part 2 covers it in depth.
+
+**10. Explain the name** when it is not self-explanatory (Mamba, JEPA, LoRA, Flux). One or two
+sentences. If the authors never explained it, say so and give the usual story as the usual
+story.
+
+### How to check: the ten-questions test
+
+After the §17 checklist, reread the finished post as the §20 reader, one section at a time. At
+the end of each section, write down the question that reader would ask next. Then ask yourself
+if the post answers it within a paragraph or two. If it does not, add the answer or cut the
+claim that raised it. A post that leaves more than two such questions open is not finished.
+When a subagent is available, hand it the post alone with this brief: "You know what a neural
+network is and nothing more. List the ten questions you would ask the author after reading
+this, in order." Then answer every one it raises in the post, or decide in the PR why not.

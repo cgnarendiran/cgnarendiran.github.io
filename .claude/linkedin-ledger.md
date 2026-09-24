@@ -62,3 +62,4 @@ The publisher appends rows here; keep this table last in the file.
 | grpo-rlvr | 2026-09-13 | urn:li:share:7504963213017571329 | 2026-09-13T18:04Z | 2026-09-13 | blog-companion via LinkedIn API |
 | quantization-edge-inference | 2026-09-16 | urn:li:share:7507643485982920704 | 2026-09-21T03:34Z | 2026-09-21 | blog-companion via LinkedIn API |
 | knowledge-distillation | 2026-09-20 | - | - | 2026-09-23 | skipped: Naren vetoed it, Mamba part 1 goes out instead |
+| mamba-is-attention-all-you-really-need | 2026-09-23 | urn:li:share:7508733025787224065 | 2026-09-24T03:44Z | 2026-09-24 | manual via LinkedIn API |

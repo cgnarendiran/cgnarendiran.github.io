@@ -15,6 +15,8 @@ Now try that on sound.
 
 Raw audio at 16,000 samples a second is telephone quality, and not a nice telephone either. Treat each sample as a token and one minute of it is 960,000 tokens. A three-hour session is about 173 million. Attention compares every token with every other token, so that session comes to around $1.5 \times 10^{16}$ pairs.
 
+To be fair, nobody actually feeds a Transformer raw samples. Speech models like [Whisper](https://arxiv.org/abs/2212.04356) first turn the audio into a spectrogram, a picture of which frequencies are loud in each 10-millisecond slice. Then they squash that down to about 50 tokens a second. It works, but it is a hand-built shortcut that throws detail away before the model hears anything. The real question is whether a model could just listen to the raw waveform.
+
 Welcome to the era of **state space models (SSMs)**. This is the story of how an idea control engineers have used since 1960, a small running summary that never grows, got rebuilt into a sequence model that runs like an RNN and trains like a CNN.
 
 ## Two ways to follow a conference
@@ -60,6 +62,10 @@ where $h_t$ is the state (the pad), $x_t$ is the input at step $t$ (the new word
 
 In a real model $h_t$ is a vector of numbers, not one number. But its size never depends on how long the input is. That is the whole point of it.
 
+So how far back can the pad reach? There is no window and no cut-off. Every word the model has ever heard is still on the pad, just faded. What sets the reach in practice is how fast it fades. If each step keeps 99% of the pad, a word from 100 steps ago is down to about a third. A word from 1,000 steps ago is basically gone. Learn a slower fade and the reach gets longer, at no extra cost.
+
+A Transformer is the opposite. Its recall is exact, but it has a hard edge: the context length it was trained at. [RoPE](/blog/rope-is-attention-all-you-really-need/) does not remove that edge. It only tells the model how far apart two tokens are. Push a model well past its training length and it usually falls apart, which is why stretching tricks like [YaRN](https://arxiv.org/abs/2309.00071) exist. And inside the window, every extra token still costs its line in the cache.
+
 If you read the [Kalman filter post](/blog/kill-john-connor-using-kalman-filter/), this should look familiar. There the state was a motorcycle's position and velocity, and a physics model rolled it forward one step at a time. It is the same shape of equation. The Terminator just wanted a different output.
 
 ## Where the name comes from
@@ -76,13 +82,15 @@ In words, how fast the state changes depends on the state itself ($A$) and on wh
 
 A thermostat makes it concrete. The state is the room's temperature. $A$ is negative, because a warm room drifts back toward the temperature outside. $B$ is how hard the heater pushes. Switch the heater off and the room slowly forgets it was ever warm.
 
-But a language model does not get a continuous signal. It gets words, one at a time. So you sample the continuous system at steps of size $\Delta$, which is called discretisation. The standard method is the zero-order hold (it simply assumes the input stays constant between two samples), and it gives
+But a language model does not get a continuous signal. It gets words, one at a time. So you sample the continuous system at steps of size $\Delta$, which is called discretisation. The standard method is the zero-order hold (it simply assumes the input stays constant between two samples).
+
+Where does the maths come from? Switch the input off for a moment, so the rule is just $h' = Ah$. The state changes at a rate proportional to itself. The only function that does that is an exponential, the same one behind radioactive decay and compound interest. So after a time $\Delta$ the pad has been multiplied by $e^{\Delta A}$. Now switch the input back on, hold it constant over the step, and add up how much of it lands on the pad. For a one-number pad that gives
 
 $$
-\bar{A} = e^{\Delta A}
+\bar{A} = e^{\Delta A}, \qquad \bar{B} = \frac{e^{\Delta A} - 1}{A}\,B
 $$
 
-along with a matching $\bar{B}$. You can think of $\Delta$ as how much time passes between two words. A big $\Delta$ means a lot of time went by. So the old pad fades to almost nothing and the new word takes over. A small $\Delta$ means almost no time passed. So the pad survives and the new word barely registers. That makes $\Delta$ the dial for how fast the pad forgets, and Mamba is going to grab it.
+The bar just means "per step". $A$ is a rate, how fast the pad changes at any instant. $\bar{A}$ is what that rate adds up to over one step of length $\Delta$. Mamba keeps $A$ negative. So $\bar{A}$ always lands between 0 and 1, and every step is a fade. You can think of $\Delta$ as how much time passes between two words. A big $\Delta$ means a lot of time went by. So the old pad fades to almost nothing and the new word takes over. A small $\Delta$ means almost no time passed. So the pad survives and the new word barely registers. That makes $\Delta$ the dial for how fast the pad forgets, and Mamba is going to grab it.
 
 ## An RNN and a CNN at the same time
 

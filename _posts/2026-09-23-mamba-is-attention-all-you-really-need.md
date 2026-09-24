@@ -64,6 +64,10 @@ In a real model $h_t$ is a vector of numbers, not one number. But its size never
 
 The toy version also takes one number in and gives one number out. A real model runs thousands of these pads side by side. Inside each layer a word is a vector of a few thousand numbers, just like in a Transformer. Each of those numbers (a channel) gets its own small pad and its own $y_t$. Put the outputs back together and you have a vector for the word again. So the SSM layer does the job attention does in a Transformer. It lets each position pull in what came before it. Everything around it stays the same. Dozens of these layers are stacked. The last one feeds the usual final layer, which scores every word in the vocabulary and picks the next one.
 
+So the worked examples below follow one channel, with a one-number pad. How do the channels talk to each other, then? They never do inside the pad. Each pad fades and fills on its own. The talking happens around it. A projection going in and one coming out each mix all the channels together. And $\Delta$, $B$ and $C$ are computed from the whole vector, so what one pad forgets depends on everything the word carries.
+
+![Mamba block diagram: a word vector goes through a mixing projection, a per-channel convolution, thousands of separate pads steered by red arrows from one delta-B-C box, a gate, and a mixing projection back out](/images/blog36/mamba_block.png) *Figure 2: One Mamba block. The orange boxes mix the channels and the blue ones never do, so the pads stay separate while everything around them talks. Source: Author*
+
 So how far back can the pad reach? There is no window and no cut-off. Every word the model has ever heard is still on the pad, just faded. What sets the reach in practice is how fast it fades. If each step keeps 99% of the pad, a word from 100 steps ago is down to about a third. A word from 1,000 steps ago is basically gone. Learn a slower fade and the reach gets longer, at no extra cost.
 
 A Transformer is the opposite. Its recall is exact, but it has a hard edge: the context length it was trained at. [RoPE](/blog/rope-is-attention-all-you-really-need/) does not remove that edge. It only tells the model how far apart two tokens are. Push a model well past its training length and it usually falls apart, which is why stretching tricks like [YaRN](https://arxiv.org/abs/2309.00071) exist. And inside the window, every extra token still costs its line in the cache.
@@ -129,7 +133,7 @@ The RNN way, one step at a time:
 
 The CNN way, all at once. The kernel is $K = (0.393, 0.239, 0.145, 0.088)$, which is just $0.393$ faded by $0.607$ once more at every step. The output at word 3 is $0.393 \times 2 + 0.239 \times 0 + 0.145 \times 1 = 0.932$. That is the same number, and nobody ever built a pad to get it.
 
-![Top: four pad boxes chained left to right, each fading by 0.607 and taking in a word, giving outputs 0.393, 0.239, 0.932 and 0.565. Bottom: the decaying kernel 0.393, 0.239, 0.145, 0.088 as bars, and the weighted sum that gives 0.932 at word 3](/images/blog36/two_views.png) *Figure 2: The worked example computed both ways. The RNN carries a pad from word to word. The CNN slides a kernel and never builds the pad at all. Source: Author*
+![Top: four pad boxes chained left to right, each fading by 0.607 and taking in a word, giving outputs 0.393, 0.239, 0.932 and 0.565. Bottom: the decaying kernel 0.393, 0.239, 0.145, 0.088 as bars, and the weighted sum that gives 0.932 at word 3](/images/blog36/two_views.png) *Figure 3: The worked example computed both ways. The RNN carries a pad from word to word. The CNN slides a kernel and never builds the pad at all. Source: Author*
 
 So you train it as a CNN, with the whole sequence in parallel. And you run it as an RNN, one cheap step per word. The 2021 paper that set this out put all three views in its title: [Combining Recurrent, Convolutional, and Continuous-time Models with Linear State-Space Layers](https://arxiv.org/abs/2110.13985) (Gu et al., 2021). That is where "an RNN and a CNN at the same time" comes from, and it is a fair description.
 
@@ -165,7 +169,7 @@ $$
 
 where each $W$ is a small learned projection. So the model reads the incoming word and decides, on the spot, how much of the pad to clear and how much of the word to write. That is the whole idea, and it is called **selection**. A filler word can get a tiny $\Delta$, so the pad barely changes. A number worth keeping can get a big one.
 
-![Diagram of the recurrence unrolled over four words, with the pad passed along and delta set big or small for each word](/images/blog36/recurrence.png) *Figure 3: The same recurrence, except that now each word sets its own $\Delta$. Source: Author*
+![Diagram of the recurrence unrolled over four words, with the pad passed along and delta set big or small for each word](/images/blog36/recurrence.png) *Figure 4: The same recurrence, except that now each word sets its own $\Delta$. Source: Author*
 
 Let's do one by hand again, with the same one-number pad from before. A number arrives ($x = 1$), then three filler words that carry nothing ($x = 0$), and then somebody asks for the number back.
 
@@ -178,7 +182,7 @@ Let's do one by hand again, with the same one-number pad from before. A number a
 
 The S4 column is the kernel from the last section, read top to bottom. Three words of filler cost the fixed pad 78% of the number. They cost the selective pad about 6%. It is the same recurrence, with the same $A$ and the same filler going in. The only difference is whether $\Delta$ was allowed to look at the word before it chose.
 
-![Two decay curves over the same four words, the fixed-delta pad dropping to 0.088 and the selective pad holding at 0.864](/images/blog36/delta_worked.png) *Figure 4: The worked example above, drawn. The selective pad kept the number because $\Delta$ was close to zero during "and, er". So almost nothing faded. Source: Author*
+![Two decay curves over the same four words, the fixed-delta pad dropping to 0.088 and the selective pad holding at 0.864](/images/blog36/delta_worked.png) *Figure 5: The worked example above, drawn. The selective pad kept the number because $\Delta$ was close to zero during "and, er". So almost nothing faded. Source: Author*
 
 So what does selection actually buy? On selective copying, the best non-selective model in the Mamba paper's table gets 57%. Making $\Delta$, $B$ and $C$ depend on the input takes it to 99.8%. On induction heads, the model sees a pattern once and has to complete it later. Mamba trains at sequence length 256 and still scores near 100% at length 1,000,000. That is 4,000 times longer than anything it saw in training. The other architectures start falling over a few hundred tokens past their training length.
 

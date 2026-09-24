@@ -22,13 +22,17 @@ Most work here is authoring content in `_posts/` and `_projects/`, not changing 
 
 ## Automation
 
-Three cloud routines (claude.ai/code/routines) write and publish content on a schedule. All work
+Four cloud routines (claude.ai/code/routines) write and publish content on a schedule. All work
 from `origin/master`, open a PR, self-check it and merge it; none pushes to `master` directly.
 
 - **Blog job**, Sun + Wed 9:15am Pacific. Reads `.claude/blog-topic-queue.md` and
   `.claude/writing-style-guide.md`, writes the next queued post into `_posts/` and
   `images/blogN/`, and moves the queue row to Published. Figures come from
   `.claude/scripts/fetch_arxiv_figures.py`.
+- **Same-day part 2 job**, Sun + Wed 17:30 UTC. Does nothing unless the next queue row's
+  `Series` says ``Same day as `<slug>` `` and that post went out today; then it writes that row by
+  following `.claude/routine-prompts/blog-post.md` (a copy of the blog job's prompt, so keep the
+  two in step), dated today at noon so it lists above part 1.
 - **LinkedIn companion job**, Sun + Wed 17:15 UTC with a retry at 18:15, about half an hour after the post is live. Reads `.claude/linkedin-ledger.md` and
   `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`

@@ -6,6 +6,8 @@ claude.ai/code/routines (agents cannot edit routines created through the API).
 
 | File | Routine |
 |---|---|
+| `blog-post.md` | Blog post → PR → auto-merge (`trig_015TPxhMyUj9knFFetUHXSbD`) |
+| `blog-same-day.md` | Blog same-day part 2 (`trig_01JAg1WjcaSPVHSdiuz5RMxA`); follows `blog-post.md` |
 | `linkedin-companion.md` | LinkedIn companion → outbox (`trig_01QB94MCpCYwCoebXsH2Ttxo`) |
 | `linkedin-publisher.md` | LinkedIn publisher → LinkedIn API (`trig_013YoNfh6xBXzccn4cK863gW`) |
 

@@ -45,7 +45,7 @@ force a rewrite.
 | 3 | Tokenizers — BPE, and why your model can't spell | `tokenizers-bpe` | | Foundational | A dictionary assembled by a committee with a word limit |
 | 4 | Test-time compute and reasoning models | `test-time-compute` | | Standalone | Paying for thinking by the minute |
 | 5 | Voice models part 1 — turning sound into tokens: spectrograms, wav2vec/HuBERT features, neural codecs (EnCodec, SoundStream, Mimi) and residual vector quantization, semantic vs acoustic tokens, frame rates from 50 Hz to 12.5 Hz | `voice-models-sound-to-tokens` | | Voice models, part 1 of 2. Follows the Mamba series, whose 16 kHz numbers set it up | The walkie-talkie against the phone call; part 1 is what goes down the wire |
-| 6 | Voice models part 2 — holding a conversation: cascaded ASR → LLM → TTS vs end-to-end, half-duplex (VAD, endpointing, semantic VAD, barge-in), full-duplex (Moshi's two streams, backchannels, overlap, silence as input), echo cancellation, and voice data caveats (scarce two-channel data like Fisher, overlap labelling, accents and noise, consent and cloning, synthetic dialogue) | `voice-models-holding-a-conversation` | | Voice models, part 2 of 2. Links back to Mamba on full-duplex | A walkie-talkie is literally half-duplex: VAD is the model guessing when you would have said "over". A phone call is full-duplex |
+| 6 | Voice models part 2 — holding a conversation: cascaded ASR → LLM → TTS vs end-to-end, half-duplex (VAD, endpointing, semantic VAD, barge-in), full-duplex (Moshi's two streams, backchannels, overlap, silence as input), echo cancellation, and voice data caveats (scarce two-channel data like Fisher, overlap labelling, accents and noise, consent and cloning, synthetic dialogue) | `voice-models-holding-a-conversation` | | Voice models, part 2 of 2. Same day as `voice-models-sound-to-tokens`. Links back to Mamba on full-duplex | A walkie-talkie is literally half-duplex: VAD is the model guessing when you would have said "over". A phone call is full-duplex |
 | 7 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
 | 8 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
 | 9 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
@@ -77,6 +77,10 @@ backfill that spread JEPA and LeJEPA across June and July is done.
   Adding a new term means adding it to that file in the same PR.
 - The job opens a PR against `master`, self-checks it, and merges it if every check passes. It
   never pushes to `master` directly.
+- **Same-day parts.** A row whose `Series` says ``Same day as `<slug>` `` is written by the
+  same-day job (`.claude/routine-prompts/blog-same-day.md`, Sun + Wed 17:30 UTC) on the day
+  `<slug>` publishes, with a noon time in its front-matter `date` so it lists above part 1. If
+  part 1 slips to a later blog day, part 2 slips with it.
 - Slug matching is a substring test against `_posts/`. Keep slugs distinctive enough not to
   collide (`lejepa` will not match the JEPA part 1 file, which contains `jepa-nobody-cares`).
 

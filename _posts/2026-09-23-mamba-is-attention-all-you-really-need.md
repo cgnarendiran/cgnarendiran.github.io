@@ -62,6 +62,8 @@ where $h_t$ is the state (the pad), $x_t$ is the input at step $t$ (the new word
 
 In a real model $h_t$ is a vector of numbers, not one number. But its size never depends on how long the input is. That is the whole point of it.
 
+The toy version also takes one number in and gives one number out. A real model runs thousands of these pads side by side. Inside each layer a word is a vector of a few thousand numbers, just like in a Transformer. Each of those numbers (a channel) gets its own small pad and its own $y_t$. Put the outputs back together and you have a vector for the word again. So the SSM layer does the job attention does in a Transformer. It lets each position pull in what came before it. Everything around it stays the same. Dozens of these layers are stacked. The last one feeds the usual final layer, which scores every word in the vocabulary and picks the next one.
+
 So how far back can the pad reach? There is no window and no cut-off. Every word the model has ever heard is still on the pad, just faded. What sets the reach in practice is how fast it fades. If each step keeps 99% of the pad, a word from 100 steps ago is down to about a third. A word from 1,000 steps ago is basically gone. Learn a slower fade and the reach gets longer, at no extra cost.
 
 A Transformer is the opposite. Its recall is exact, but it has a hard edge: the context length it was trained at. [RoPE](/blog/rope-is-attention-all-you-really-need/) does not remove that edge. It only tells the model how far apart two tokens are. Push a model well past its training length and it usually falls apart, which is why stretching tricks like [YaRN](https://arxiv.org/abs/2309.00071) exist. And inside the window, every extra token still costs its line in the cache.

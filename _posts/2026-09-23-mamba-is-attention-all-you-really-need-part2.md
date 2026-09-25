@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Mamba - Is Attention All You Really Need? Part 2"
-date:   2026-09-23
+date:   2026-09-23 12:00:00
 image:  images/blog37/cover.jpg
 description: "Selection broke the convolution that made state space models fast to train. Here is how Mamba got the speed back, and why attention stayed in the room."
 tags: [state-space-models, attention, transformers, llms, efficient-inference]

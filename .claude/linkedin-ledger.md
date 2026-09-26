@@ -63,3 +63,5 @@ The publisher appends rows here; keep this table last in the file.
 | quantization-edge-inference | 2026-09-16 | urn:li:share:7507643485982920704 | 2026-09-21T03:34Z | 2026-09-21 | blog-companion via LinkedIn API |
 | knowledge-distillation | 2026-09-20 | - | - | 2026-09-23 | skipped: Naren vetoed it, Mamba part 1 goes out instead |
 | mamba-is-attention-all-you-really-need | 2026-09-23 | urn:li:share:7508733025787224065 | 2026-09-24T03:44Z | 2026-09-24 | manual via LinkedIn API |
+| mamba-is-attention-all-you-really-need-part2 | 2026-09-23 | - | - | 2026-09-26 | skipped: Naren doesn't want a second LinkedIn post on Mamba |
+| jev-system-one-models-rlcd | 2026-09-25 | - | - | 2026-09-26 | posted by hand by Naren in the LinkedIn app, text written in session; post id not recorded |

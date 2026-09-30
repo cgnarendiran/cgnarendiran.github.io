@@ -23,7 +23,7 @@ I want you to think about a horse show. Two classes run on the same afternoon, i
 
 The first is a dressage test. Its sheet is published weeks in advance: enter at A, working trot, twenty-metre circle at B, medium walk, down a list of about twenty movements. Every rider has that sheet and drills it at home. A ground jury sits around the arena and marks each movement out of 10.
 
-The second is a show jumping class. The course designer builds ten fences that morning, and nobody has jumped them before. The rider walks the course on foot, counting strides and deciding where to turn. The horse meets the fences at a canter, having never seen them. There is a time allowed, four faults for a pole on the floor, and three refusals sends you home.
+The second is a show jumping class. The course designer builds ten fences that morning, and nobody has jumped them before. The rider walks the course on foot, counting strides and deciding where to turn. The horse meets the fences at a canter, having never seen them. There is a time allowed, four faults for a pole down, and three refusals sends you home.
 
 Now here is the bit that runs the rest of this post. The results sheet for that jumping class prints two names, the rider's and the horse's, because the same horse goes round very differently under a different rider. Map it across, and hold on to these three:
 
@@ -67,7 +67,7 @@ When a whole class goes clear, the course designer does not congratulate everybo
 
 **[GPQA](https://arxiv.org/abs/2311.12022) (2023)** is 448 graduate-level science questions, and its Diamond subset is the hardest 198. A question only gets in if two PhD validators in that field both answered it correctly, and fewer than one in three skilled non-experts did, even with the whole internet and half an hour each. PhD experts score 65%, the non-experts 34%, and models are now above 92%. Careful with that comparison, though: the questions were chosen for being ones experts get right.
 
-**[Humanity's Last Exam](https://arxiv.org/abs/2501.14249) (2025)** is 2,500 questions across more than a hundred subjects, written and vetted by specialists. At launch the frontier scored under 5%.
+**[Humanity's Last Exam](https://arxiv.org/abs/2501.14249) (2025)** is 2,500 questions across more than a hundred subjects, written and vetted by specialists. At launch the frontier scored under 5%. By August 2026 the top entry is in the mid-40s.
 
 | test | year | what it asks for | where it sits now | what it can still tell you |
 |---|---|---|---|---|
@@ -78,7 +78,7 @@ When a whole class goes clear, the course designer does not congratulate everybo
 | MMLU-Pro | 2024 | one of ten options, several steps | mid-80s | a little ordering near the top |
 | HLE | 2025 | 2,500 specialist questions | mid-40s | real ordering, for the moment |
 
-Eighteen months from under 5% to the mid-40s is the fastest any of these has been climbed, and HLE is the hardest sheet anybody has written.
+Eighteen months to get there is the fastest any of these has been climbed, and HLE is the hardest sheet anybody has written.
 
 ## Asking the crowd instead
 
@@ -108,7 +108,7 @@ Every one of those five needs a rider.
 
 ## Nobody is scoring the horse
 
-A model cannot open a file. It produces text, and that is the whole list. Something else has to read the issue, pick the files worth looking at and run the tests. Then it has to notice the traceback, decide whether that is worth another go, and call the patch done. That something else is the scaffold (the rider), and it is a real piece of software with real judgement calls inside it.
+A model cannot open a file. It produces text, and that is the whole list. Something else has to read the issue, pick the files worth looking at and run the tests. Then it has to notice the traceback, decide whether that is worth another go, and call the patch done. That something else is the scaffold (the rider), and it is real software with real judgement calls in it.
 
 So how much of a published agent score belongs to the scaffold? A paper this month went and measured it. [Coding Agents Have Converged](https://arxiv.org/abs/2609.17394) pulled the SWE-bench Verified leaderboard apart by model and by scaffold. For models run under at least two different scaffolds, the median spread was 15.6 percentage points. The widest within-model spread it found was 29.8 points.
 

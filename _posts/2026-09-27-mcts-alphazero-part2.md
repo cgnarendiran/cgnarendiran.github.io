@@ -62,6 +62,67 @@ In game two, AlphaGo played move 37, a stone so far from the edge that commentat
 
 How much of AlphaGo's strength actually needed the 28.4 million human positions? [AlphaGo Zero](https://www.nature.com/articles/nature24270) (Nature, October 2017) answered that: none of it. It threw out the human games, the rollouts and the separate networks. It keeps one network with two outputs (heads), $f_\theta(s) = (p, v)$, where $\theta$ is its weights. The policy head $p$ supplies the priors, and the value head $v$ scores each new junction.
 
+In code, that is part 1's search with three changes, and the back-up step stays exactly as it was. Here is the diff against part 1's [`mcts.py`](https://github.com/cgnarendiran/cgnarendiran.github.io/blob/master/code/mcts/mcts.py):
+
+```diff
+--- mcts.py
++++ puct.py
+@@ -1,6 +1,6 @@
+ class Node:
+-    def __init__(self, state, move=None, parent=None):
++    def __init__(self, first_moved, move=None, parent=None, prior=1.0):
+         self.move, self.parent, self.children = move, parent, []
+-        self.untried = state.legal_moves()            # moves not in the tree yet
+-        self.first_moved = not state.first_to_move()  # did the first player make `move`?
++        self.prior = prior                            # P(s,a), the network's guess
++        self.first_moved = first_moved                # did the first player make `move`?
+         self.n, self.w = 0, 0.0                       # visits, total result for that player
+@@ -8,5 +8,4 @@
+ 
+-def uct_search(root_state, rollout, n_simulations, c=1.0, seed=0, on_step=None):
+-    rng = random.Random(seed)
+-    root = Node(root_state)
++def puct_search(root_state, network, n_simulations, c_puct=1.5, on_step=None):
++    root = Node(not root_state.first_to_move())
+     for t in range(1, n_simulations + 1):
+@@ -14,19 +13,16 @@
+ 
+-        # 1. Select: walk down through fully expanded nodes by UCT score
+-        while not node.untried and node.children:
+-            log_n = math.log(node.n)
++        # 1. Select: walk down through expanded nodes by PUCT score
++        while node.children:
++            sqrt_n = math.sqrt(node.n)
+             node = max(node.children,
+-                       key=lambda ch: ch.w / ch.n + c * math.sqrt(log_n / ch.n))
++                       key=lambda ch: (ch.w / ch.n if ch.n else 0.0)
++                                      + c_puct * ch.prior * sqrt_n / (1 + ch.n))
+             state.play(node.move)
+ 
+-        # 2. Expand: add one untried move to the tree
+-        if node.untried and not state.is_over():
+-            move = node.untried.pop(rng.randrange(len(node.untried)))
+-            state.play(move)
+-            child = Node(state, move, node)
+-            node.children.append(child)
+-            node = child
++        # 2. Expand: one network call gives every legal move its prior
++        priors, result = network(state)
++        node.children = [Node(state.first_to_move(), move, node, p)
++                         for move, p in priors.items()]
+ 
+-        # 3. Simulate: play the rest of the game out at random
+-        result = rollout(state, rng)
++        # 3. Evaluate: the same call scored the position, so there is no rollout
+ 
+```
+
+1. **Select** uses PUCT, so the network's prior scales the bonus. A move with no visits counts as 0 until it gets some.
+2. **Expand** adds every legal move at once, each with its prior, from one call to the network.
+3. **Evaluate** takes the value from that same call, so there is no rollout.
+
+The [full file](https://github.com/cgnarendiran/cgnarendiran.github.io/blob/master/code/mcts/puct.py) runs on part 1's Go position with a stand-in for the network. One random rollout gives the value, and the priors are either uniform or put half their weight on B1. With uniform priors, how soon B1 takes the lead for good is down to luck: after 489 simulations in the default run, and between 1 and 200 in three other runs. With priors that lean on B1, it leads from the second simulation and ends with about 96% of the visits.
+
 The search plays better than the network alone, because it is the network plus 1,600 trips of lookahead. In the paper's words, MCTS "may therefore be viewed as a powerful policy improvement operator". So AlphaGo Zero trains the network to predict what the search decided. The visit counts become the label:
 
 $$\pi(a \vert s) = \frac{N(s,a)^{1/\tau}}{\sum_b N(s,b)^{1/\tau}}$$
@@ -121,7 +182,7 @@ AlphaZero still needs the rules, so that the search knows where a move leads. [M
 - **[AlphaProof](https://www.nature.com/articles/s41586-025-09833-y)** runs the same loop over proofs in [Lean](https://lean-lang.org/), where a computer checks every step. It solved three of the six 2024 International Mathematical Olympiad problems, including the hardest one.
 - **[Leela Chess Zero](https://lczero.org/)** and **[KataGo](https://github.com/lightvector/KataGo)** are open-source versions that anyone can run.
 
-## The honest cons
+## Where AlphaZero falls short
 
 **DeepMind set up the 2017 match.** Stockfish got a fixed minute per move, a small hash table (its memory of positions already seen) and no opening book. That is not how engines are normally tested. The Science rematch fixed most of it, even giving AlphaZero a tenth of Stockfish's thinking time, and AlphaZero still won.
 

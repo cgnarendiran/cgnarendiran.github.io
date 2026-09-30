@@ -7,7 +7,7 @@ description: "AlphaGo gave tree search a policy and a value network. AlphaGo Zer
 tags: [reinforcement-learning, game-theory, test-time-compute, deep-learning]
 ---
 
-*On the cover: a caver with the survey book strapped to her helmet, pushing through a new passage. NPS photo, [Public domain](https://commons.wikimedia.org/wiki/File:When_surveying_new_cave_passages,_cavers_must_often_crawl_on_their_hands_and_knees_and_even_on_their_stomachs_to_get_to_bigger_(0112c9d6-155d-4519-3eab-4e9a4ccf6c40).JPG), via Wikimedia Commons.*
+*On the cover: Aja Huang places AlphaGo's stones opposite Lee Sedol in Seoul, March 2016. Key art from Greg Kohs's 2017 documentary AlphaGo.*
 
 In [part 1](/blog/mcts-alphazero/), we built Monte Carlo tree search from scratch: play positions out at random, keep a tree of where those games went, and send the next games down the passages that did well. In part 1's cave, a position is a junction, a move is a passage, and one simulation is one trip. The survey book keeps a visit count $N(s,a)$ and an average result $Q(s,a)$ for every passage, and the search plays the most-visited move. With nothing but random games, it took Go programs from club level to strong amateur.
 

@@ -7,7 +7,7 @@ description: "Why game programs search a tree, why they fill it with random game
 tags: [game-theory, graph-algorithms, reinforcement-learning, probability]
 ---
 
-*On the cover: a cave survey part way through. Solid outlines are surveyed passage; the dashed red arrows are passages nobody has walked yet. Source: Author.*
+*On the cover: Stephen Bishop's map of Mammoth Cave in Kentucky, drawn from memory in 1842 and published in 1845. Bishop was an enslaved man who worked as a guide at the cave. [Public domain](https://commons.wikimedia.org/wiki/File:Stephen_Bishop_1842_Map_of_Mammoth_Cave,_Kentucky_-_Hi-Res.jpg), via Wikimedia Commons.*
 
 In January 2016, John Tromp finished counting the legal positions on a 19 by 19 Go board: [about $2.08 \times 10^{170}$](https://tromp.github.io/go/legal.html), a 171-digit number. The observable universe has around $10^{80}$ atoms. Give every one of those atoms its own universe of $10^{80}$ atoms, and put one Go position on each. You would still have covered only one position in every twenty billion.
 

@@ -1,167 +1,131 @@
 ---
 layout: post
-title:  "MCTS and AlphaZero - Four Steps in the Dark"
+title:  "MCTS and AlphaZero - Four Steps in the Dark, Part 1"
 date:   2026-09-27
 image:  images/blog39/cover.jpg
-description: "Monte Carlo tree search never enumerates and never finishes. AlphaZero turned its visit counts into a training target and stopped asking humans."
-tags: [reinforcement-learning, game-theory, test-time-compute, graph-algorithms, deep-learning]
+description: "Why game programs search a tree, why they fill it with random games, and what plain Monte Carlo tree search does on real Go and chess positions."
+tags: [game-theory, graph-algorithms, reinforcement-learning, probability]
 ---
 
-*On the cover: a cave survey part way through. Solid outlines are surveyed passage; the dashed red arrows are leads nobody has pushed. Source: Author.*
+*On the cover: Stephen Bishop's map of Mammoth Cave in Kentucky, drawn from memory in 1842 and published in 1845. Bishop was an enslaved man who worked as a guide at the cave. [Public domain](https://commons.wikimedia.org/wiki/File:Stephen_Bishop_1842_Map_of_Mammoth_Cave,_Kentucky_-_Hi-Res.jpg), via Wikimedia Commons.*
 
-Three weeks ago I wrote about [what it would take to solve chess](/blog/solving-chess-paths-nodes/), and the answer was that nobody is going to. The tree is around $10^{44}$ positions, and the one skipping rule anybody has proved sound only gets you to its square root. So Stockfish guesses, very well and very fast.
+In January 2016, John Tromp finished counting the legal positions on a 19 by 19 Go board: [about $2.08 \times 10^{170}$](https://tromp.github.io/go/legal.html), a 171-digit number. The observable universe has around $10^{80}$ atoms. Give every one of those atoms its own universe of $10^{80}$ atoms, and put one Go position on each. You would still have covered only one position in every twenty billion.
 
-Now sit the same machine down in front of a Go board.
+Two months later, AlphaGo beat Lee Sedol, one of the best Go players alive, 4 games to 1. It never came anywhere near looking at all those positions. Its search looked at a tiny corner of the tree, picked by playing out games, and it is called **Monte Carlo tree search (MCTS)**. This post builds it up from the start. First, why a program searches a tree at all, and why it would fill that tree with random games. Then what the search does on a real Go position and a real chess position, with no neural network anywhere. [Part 2](/blog/mcts-alphazero-part2/) is how AlphaGo and AlphaZero wrapped neural networks around it, and how all of that connects to PPO, the reinforcement learning algorithm ChatGPT was trained with.
 
-In January 2016, John Tromp finished counting the legal positions on a 19 by 19 board: [about $2.08 \times 10^{170}$](https://tromp.github.io/go/legal.html), a 171-digit number. The observable universe holds around $10^{80}$ atoms. So you could hand every atom its own universe of atoms, give each one a position to mind, and still come up ten billion short.
+## Why search a tree at all
 
-Welcome to the era of **Monte Carlo tree search (MCTS)**. This is the story of how a search that never finishes, and looks at a two-thousandth of what Deep Blue did, took the game that was supposed to be a decade away.
+A game is a tree. Every position is a node, and every legal move is a branch to the position it leads to. The start of the game is the root, and the finished games are the leaves. So picking a move means asking which branch out of the current position leads to a win.
 
-AlphaGo and AlphaZero are the one thing that pulled me into the AI era, so this is not a neutral post. The credit belongs to David Silver, Aja Huang, Julian Schrittwieser, Demis Hassabis and the rest of the DeepMind team, who get talked about a lot less than the algorithm does.
+The fast way to pick is by reflex. You look at the board and play whatever looks right. A neural network trained on expert games can do this pretty well: AlphaGo's first network guessed the expert's move 57% of the time. But a reflex never checks itself. It does not ask what the opponent will do next.
 
-## Deep Blue brought a tape measure
+Looking ahead does check. "If I take his knight, can he mate me?" You follow a move down the tree, assume the opponent answers with their best reply, and see where you end up. This rule is called **minimax**. You pick the move that is best for you, on the assumption that your opponent always picks the move that is worst for you. If you could follow every line to the end of the game, minimax would play perfectly.
 
-On the 11th of May 1997, in New York, Deep Blue beat Garry Kasparov by 3½ to 2½. It had lost to him 4–2 in Philadelphia the year before, the half that usually gets dropped. [Campbell, Hoane and Hsu (2002)](https://dl.acm.org/doi/10.1016/s0004-3702(01)00129-1) describe thirty nodes of an IBM RS/6000 SP carrying 480 custom chess chips, averaging 126 million positions a second across the match. On top of all that silicon sat a hand-written evaluation function of thousands of features, tuned with grandmasters in the room. Somebody decided how many points a doubled pawn costs (and somebody else disagreed).
+You can't. [The AlphaGo paper](https://www.nature.com/articles/nature16961) puts chess at about 35 legal moves per turn over a game of about 80 moves, and Go at about 250 legal moves over about 150. That works out to roughly $10^{123}$ paths through the chess tree and $10^{360}$ through the Go tree.
 
-So the recipe is two lines. Search as wide as the hardware allows, and at the bottom of every line, ask a human what a good position looks like.
+So chess programs cut the search off after a set number of moves. They score the position they reach with a hand-written formula (an **evaluation function**), which counts the material, adds a bit for king safety and takes a bit off for a doubled pawn. And they skip branches that provably cannot change the answer (**alpha-beta pruning**). That recipe beat Kasparov in 1997. Stockfish, the strongest chess engine today, still runs alpha-beta search, although its formula has been a small neural network since 2020.
 
-You might think Go is the same job with a bigger board. [The AlphaGo paper](https://www.nature.com/articles/nature16961) puts chess at roughly 35 legal moves per turn over 80 moves and Go at roughly 250 over 150. That is not a gap you buy your way out of, but size is the less interesting half. So why did thirty years of faster chips not fix it? Because alpha-beta needs a number at the bottom of every line, and in Go nobody could write that number down. In chess you can: count the material, add a bit for king safety, subtract a bit for a doubled pawn. A Go stone is worth nothing by itself, and a wall of them facing the wrong way is worth less than nothing. Whether a group is alive or dead can turn on a single point forty moves later. Before 2006 the best Go programs played at about 14 kyu, which is somebody who has been going to a club for a few months.
+## Why Monte Carlo
 
-## I want you to think about a cave
+Go breaks that recipe, because nobody could write the formula.
 
-I do not mean a show cave with handrails, but an actual one: a few kilometres of passage a local club has been mapping for twenty years, on weekends, with a tape measure. Every trip is six hours for four people (one of whom forgot the spare batteries), and every chamber has three or four more holes out of it. So they will never survey the whole thing. What they have is a survey book and a rule about where to spend the next Saturday.
+The rules of Go are simple. Two players take turns placing stones, a group of stones that gets completely surrounded is captured, and whoever surrounds more of the board wins. But a single stone is worth nothing by itself, and a wall of stones facing the wrong way can be worth less than nothing. Whether a group survives or gets captured can depend on a single point, forty moves later. So a Go program had no reliable way to score a position at the end of its search. Before 2006, the best Go programs played at about 14 kyu, the level of somebody who has been going to a Go club for a few months.
 
-That is Monte Carlo tree search, one for one. A junction is a position in the game (the state $s$), a passage out of it is a legal move (the action $a$), and a **lead** is a passage nobody has walked. The survey book holds two numbers per passage: how many trips have gone down it ($N(s,a)$) and how well those went on average ($Q(s,a)$). One simulation is one trip:
+The Monte Carlo idea is to stop trying to write the formula. If you can't score a position, play it out. From the position, play random moves for both sides until the game ends, and note who won. Do that a few thousand times, and the fraction of games your side wins is the score. "Monte Carlo" is the usual name for any method built on random sampling, after the casino in Monaco.
 
-1. **Select.** From the entrance, walk down through the junctions already in the book, taking the passage with the best score at each one. The next section is all about what "best score" means.
-2. **Expand.** Sooner or later you reach somewhere the book has never heard of. Add it.
-3. **Evaluate.** Work out how promising it looks. Classic MCTS plays on from there at random to the end of the game and sees who won. AlphaGo Zero asks a network for a number $v$ and turns round.
-4. **Back up.** Walk back out, adding one to $N$ and folding the result into $Q$ for every passage you came through.
+Why would random games tell you anything, when random moves are terrible moves? Because a position where your side wins 70% of random games is usually better than one where it wins 30%. And Go suits this well. Every game ends, because the board fills up. The final count is simple. And a big lead in territory tends to survive a lot of bad play from both sides.
 
-![Four panels of the same search tree during select, expand, evaluate and back up, with visit counts in each circle](/images/blog39/mcts-four-steps.png) *Figure 1: one simulation, run a few hundred times per move. Nobody ever looks at the whole tree. Source: Author*
+Bernd Brügmann tried this on 9 by 9 Go [in 1993](http://www.ideanest.com/vegos/MonteCarloGo.pdf). His program played thousands of near-random games after each candidate move and picked the move that did best on average. It reached about 25 kyu, which is roughly a beginner. This version is called **flat Monte Carlo**, and it has two problems. It spends as many games on obviously bad moves as on good ones. And it assumes the opponent plays at random, so a move that loses to one precise reply still looks fine, because a random opponent rarely finds that reply.
 
-Run that loop a few hundred times and the book fills up very unevenly, which is the point. And then comes the part that catches people out. When the club has to say which way the cave goes, they do not read off the best average. They read off the visit count.
+The fix came in 2006: put the random games in a tree. Every random game adds its result to the moves it passed through. Moves that do well get more games, so the tree grows deeper along the good lines. And at the opponent's turns, the tree assumes the opponent picks their best reply, which is minimax again. [Kocsis and Szepesvári](http://ggp.stanford.edu/readings/uct.pdf) proved that as the number of games grows, the chance of this search picking the wrong move goes to zero. Rémi Coulom built a Go program on the same idea that year, and [his paper](https://inria.hal.science/inria-00116992) is usually credited with the name. With MCTS, Go programs went from about 14 kyu to around 5 dan (a strong amateur) in a few years.
 
-Why the count? Because a passage with a wonderful average and two trips down it might have been lucky twice, while one with 412 trips has survived 412 chances to disappoint everybody.
+Here are the four ways of choosing a move so far, side by side:
 
-## The Friday night argument
-
-Every club has the same argument on a Friday night. Half the room wants the main streamway, because it is big and it went well last time. The other half wants to dig at the draughty crack in the third chamber, because nobody has been down it and cold air is coming out.
-
-Both halves are right, which is why the argument never ends. Go back to the good passage every week and you map one corridor beautifully; chase a new crack every week and you map nothing. This is explore against exploit, and in 2006 [Kocsis and Szepesvári](https://link.springer.com/chapter/10.1007/11871842_29) took the answer from the multi-armed bandit literature, the maths of which slot machine to feed next. Rémi Coulom reached the tree version [that year](https://inria.hal.science/inria-00116992) and named it Monte Carlo tree search.
-
-Their rule scores every lead as two things added together:
-
-$$\text{score of a lead} = \text{how well it has gone so far} + \text{how much it deserves a look}$$
-
-specifically,
-
-$$a_t = \arg\max_a \left[\, Q(s,a) + c_{\text{puct}}\, P(s,a)\, \frac{\sqrt{\sum_b N(s,b)}}{1 + N(s,a)} \,\right]$$
-
-where $Q(s,a)$ is the average result of every trip down passage $a$, $N(s,a)$ is how many trips those were, $\sum_b N(s,b)$ is the total over all passages out of this junction, $P(s,a)$ is a prior from the network (the caver's nose for which hole is worth trying), and $c_{\text{puct}}$ sets how argumentative the club is.
-
-The second term is worth reading slowly. It has $N(s,a)$ on the bottom, so a passage goes quieter each time somebody walks it. It has the square root of everybody else's visits on top, so an untouched lead starts shouting again as the others climb. And it is all multiplied by $P(s,a)$, so a hole the nose likes jumps the queue.
-
-Let's do one junction by hand, forty simulations in, with $c_{\text{puct}} = 1.5$ and $\sqrt{40} = 6.32$. A real Go position has about 250 passages out of it, so this is a slice of one:
-
-| lead | prior $P$ | visits $N$ | average $Q$ | bonus $U$ | $Q + U$ |
-|---|---|---|---|---|---|
-| main streamway | 0.55 | 24 | 0.52 | 0.209 | 0.729 |
-| draughty crack | 0.25 | 11 | 0.58 | 0.198 | **0.778** |
-| wet crawl | 0.05 | 5 | 0.40 | 0.079 | 0.479 |
-
-The crack's bonus is $1.5 \times 0.25 \times 6.32 / 12 = 0.198$, and that is enough to take it. The nose likes the streamway twice as much and it still loses, because eleven good trips beat twenty-four slightly worse ones once the bonus pays the difference.
-
-![The exploration bonus falling as visits rise, and a stacked bar chart of three leads showing which gets picked](/images/blog39/puct.png) *Figure 2: left, the bonus $U$ collapsing as visits pile up. Right, the worked example. The crack wins by 0.049, which decides where four people spend Saturday. Source: Author*
-
-Now check what happens next. The crack gets its trip, its bonus drops to 0.185, and the streamway is back on top within a few more. That argument gets settled a few hundred times before a move is played.
-
-**NOTE:** one more thing is bolted onto the entrance, and it is my favourite footnote in the paper. AlphaZero mixes random noise into the root priors, so even a passage the nose hates gets walked now and then. The noise is Dirichlet, scaled by how many legal moves a position has: 0.3 for chess, 0.15 for shogi, 0.03 for Go. Somebody divided by the branching factor of three separate games, and I have more faith in those numbers than in most round ones.
-
-## The draught
-
-Finishing every trip at random sounds like a joke, and it worked: a few thousand random finishes tell you something real about a position. And nobody had to write down what a good position looks like, the exact thing three decades of Go programming had failed to do. That is how programs went from 14 kyu to around 5 dan in a few years.
-
-But random finishes are slow, and they are noisy. What you actually want is the draught: you stand at the crack, feel cold air on your face, and know there is a lot of cave behind it without walking a step. That is a **value network** ($v$), the piece AlphaGo added. Give it a position, get back one number for how the game is going, and it never plays on.
-
-AlphaGo carried four networks, and the smallest is the interesting one. Its supervised policy network was 13 layers, trained on 28.4 million positions from the [KGS Go Server](https://www.gokgs.com/), and guessed the expert's move right 57.0% of the time at 3 milliseconds a shot. Its fast rollout policy was one layer, saw part of the board, guessed right about 24% of the time, and took 2 microseconds. Fifteen hundred times faster for a bit under half the accuracy, on something you run a few hundred moves deep, thousands of times a position. Obviously the right trade, and the sort of decision that never makes the press release. They also ran the search with rollouts only, then with the value network only, then with both mixed half and half, and the mix beat both.
-
-## October 2015, and then March 2016
-
-In October 2015 AlphaGo played Fan Hui, the European champion, over five formal games and won all five. [The paper](https://www.nature.com/articles/nature16961) landed in Nature that January with a 99.8% win rate against every other Go program the team could find. Coulom had guessed in [Wired](https://www.wired.com/2014/05/the-world-of-computer-go/) in May 2014 that this was ten years off. It took eighteen months.
-
-Then Seoul, March 2016, against Lee Sedol, one of the strongest players alive, and AlphaGo won 4–1.
-
-Two moves are worth knowing, and they only work as a pair. In game two AlphaGo played move 37, a shoulder hit on the fifth line, while Lee was out of the room. The commentators called it a mistake (a brave thing to say quickly, on live television). AlphaGo's own policy put the chance of a human playing it at 1 in 10,000. It decided the game.
-
-In game four Lee played move 78, a wedge into the middle of AlphaGo's position, and AlphaGo's policy gave that one 1 in 10,000 too. Go players call it the divine move. AlphaGo's read of the game came apart afterwards, and Lee won the only game anybody has won against it. He retired in November 2019. "Even if I become the number one," he told Yonhap, "there is an entity that cannot be defeated."
-
-## Burn the notes
-
-So AlphaGo started with 28.4 million positions of other people's Go. How much of its strength came out of that pile? [Nature, October 2017](https://www.nature.com/articles/nature24270): none of it.
-
-AlphaGo Zero throws out the human games, the separate policy and value networks, and the random rollouts. What is left is one network $f_\theta(s) = (p, v)$ with two heads: a policy head $p$ giving a probability for every move, and a value head $v$ giving one number for how the position is going. The search calls it once per new junction, and that is the evaluation step.
-
-Then comes the trick. The search is better than the network, because it is the network plus eight hundred trips down real passages. So take what the search decided, and train the network to have thought it in the first place. The visit counts become the label:
-
-$$\pi(a \vert s) = \frac{N(s,a)^{1/\tau}}{\sum_b N(s,b)^{1/\tau}}$$
-
-where $N(s,a)$ is the visit count from the search that just finished and $\tau$ is a temperature setting how sharp the label is. Early in a game $\tau = 1$, so the label keeps its spread and the games stay varied. Later it goes towards zero and the label becomes "the most-visited move, and nothing else". The network trains on the position $s$, the label $\pi$ and the result $z$: $+1$ for a win, $-1$ for a loss.
-
-$$\ell = (z - v)^2 - \pi^\top \log p + c\lVert\theta\rVert^2$$
-
-The first term pulls the value head towards the result that actually happened. The second is the cross entropy from the [cross entropy post](/blog/cross-entropy-loss/), pulling the policy head towards the visit counts. The third is weight decay.
-
-![The self-play loop as three boxes, with a zoom panel showing visit counts becoming the policy label](/images/blog39/selfplay-loop.png) *Figure 3: the loop. The network improves the search, the search improves the network, and the only thing entering from outside is the rulebook. Source: Author*
-
-It reached the strength of the version that beat Lee Sedol after 4.9 million self-play games and three days. Then it beat that version 100–0.
-
-Here is the number I find most interesting. The trained network, asked to just pick its highest-probability move with no search, rates 3,055 Elo. The same weights with the search wrapped around them rate 5,185.
-
-![Bar chart of four Elo ratings with the gap between raw network and searched network marked](/images/blog39/search-ablation.png) *Figure 4: the raw network against the same network with 1,600 simulations per move, with AlphaGo Fan and AlphaGo Lee in grey for scale. Source: Author*
-
-Same weights, two thousand one hundred and thirty Elo apart. That much of the strength was never in the network. It is in the trips you take before committing, and on its own the network is a strong club player with excellent instincts and no patience whatsoever.
-
-## One algorithm, three games
-
-AlphaGo Zero still knew it was playing Go. A Go position means the same thing rotated and reflected, so training got eight positions out of every one. Chess does not, because pawns only walk one way. AlphaZero, [the December 2017 preprint](https://arxiv.org/abs/1712.01815) and then [Science in December 2018](https://www.science.org/doi/10.1126/science.aar6404), took those Go-shaped parts out. Same code and hyperparameters for all three games, except the Dirichlet noise. Training ran 700,000 steps of mini-batches of 4,096, on 5,000 first-generation TPUs generating games and 64 second-generation TPUs learning from them (a number worth saying out loud). Nine hours for chess. Twelve for shogi. Thirteen days for Go.
-
-| | Deep Blue, 1997 | AlphaZero, 2018 | What the gap says |
+| approach | how it scores a position | expects the opponent's best reply | where it breaks |
 |---|---|---|---|
-| positions a second | 126 million | 60,000 | Two thousand times fewer, picked two thousand times better |
-| judgement comes from | hand-written features, grandmasters | one network, its own games | Nobody had to know any chess |
-| knew on day one | openings, endgames, king safety | the rules | The knowledge was the expensive part, and it was replaceable |
+| minimax to the end | plays every line out | yes | the tree is far too big |
+| alpha-beta with a formula | a hand-written evaluation function | yes | Go has no formula |
+| flat Monte Carlo | random games after each move | no | falls for one precise reply |
+| MCTS | random games, steered by a tree | yes | sharp traps, and it starts out blind |
 
-**NOTE:** the widely quoted rates are 80,000 against Stockfish's 70 million, from the 2017 preprint. Science says 60,000 against 60 million, and I use the second, as in the [chess post](/blog/solving-chess-paths-nodes/).
+So when is MCTS the right tool? When four things are true:
 
-In the preprint's 100-game match against Stockfish 8: 28 wins, 72 draws, no losses. In Science the matches ran to 1,000 games, finishing 155–6.
+1. You can simulate. Given a position and a move, you can work out the next position, because you know the rules or have a model of them.
+2. There is a clear result at the end: a win, a loss or a score.
+3. The tree is too big to search fully, and you can't write a good formula to score positions part way.
+4. You have time to think before each decision, enough for hundreds or thousands of simulated games.
 
-## MuZero does not get the rulebook
+Most of daily life fails the first two. Replying to your landlord and deciding what to cook on Thursday have no rulebook. And you cannot run Thursday evening eight hundred times to see which dinner went best.
 
-AlphaZero still needs the rules, because the search has to know what the next junction looks like before walking there. [MuZero](https://arxiv.org/abs/1911.08265) (DeepMind, Nature 2020) takes those away too and learns its own hidden state instead, one that only has to predict the reward, the policy and the value. Those are the only three things the search ever consults. So nothing forces that state to look like a board, and it does not. The [JEPA post](/blog/jepa-nobody-cares-about-the-wallpaper/) makes the same argument about pixels: model what the job needs, not what the world looks like. MuZero matched AlphaZero on Go, chess and shogi without being told how the pieces move.
+## The caving club
 
-## Where the survey went after the games
+I want you to think about a wild cave, the kind with no handrails. A local caving club has been mapping it for twenty years, on weekends, with a tape measure. Every trip takes four people six hours (and one of them always forgets the spare batteries). Every chamber they reach has three or four more holes leading out of it. So they will never survey the whole thing. What they have instead is a survey book, and a rule for deciding where to go next Saturday. A computer search is in the same spot. Its trips are far cheaper, hundreds per move instead of one a week, but a game tree is far bigger than any cave.
 
-- **[AlphaDev](https://www.nature.com/articles/s41586-023-06004-9)** turned writing assembly into a game and found shorter sorting routines, now in LLVM's C++ library. **[AlphaTensor](https://www.nature.com/articles/s41586-022-05172-4)** beat Strassen's 1969 matrix multiplication at some sizes.
-- **[MuZero](https://deepmind.google/blog/muzero-alphazero-and-alphadev-optimizing-computer-systems/)** picks VP9 encoder settings on YouTube for roughly 4% less bitrate, and **AlphaChip** laid out three generations of Google's TPU.
-- **[AlphaProof](https://www.nature.com/articles/s41586-025-09833-y)** runs the loop over proofs in [Lean](https://lean-lang.org/), which a computer checks line by line, and solved four of six 2024 Mathematical Olympiad problems. [Leela Chess Zero](https://lczero.org/) and [KataGo](https://github.com/lightvector/KataGo) are the open source ones.
+Here is how that maps onto a game. A junction in the cave is a position in the game (the state $s$). A passage out of a junction is a legal move (the action $a$). For each passage, the survey book keeps two numbers. One is how many trips have gone down it ($N(s,a)$, the visit count). The other is how well those trips went on average ($Q(s,a)$, the value). A trip that ends in a won game scores 1 and one that ends in a loss scores 0, so $Q$ sits somewhere in between.
 
-And the 3,055 against 5,185 result keeps coming back, because it says you can buy strength from fixed weights at the moment of answering. That is the bet behind reasoning models, and the [GRPO and RLVR post](/blog/grpo-rlvr/) is the same idea with the tree flattened into a batch. Which leaves the real question: what replaces the rulebook? Chess has one and Lean has one. Prose does not, and searching over a model's reasoning steps works only as well as the thing scoring those steps. Gradient descent can exploit a learned scorer faster than anyone can patch it.
+Go has two players, so the book scores the passages at each junction for whoever is choosing there. On your moves, the search picks what is best for you. On your opponent's moves, it assumes they pick what is best for them, which is the minimax rule from earlier.
 
-## What the survey does not show
+One simulation (one run of the search) is one trip, and it has four steps:
 
-**The 2017 match was DeepMind's match.** Stockfish 8 ran on 64 threads with a 1 GB hash table, no opening book, and a flat one minute per move. That is not how engines are normally tested. The criticism was fair. Science answered much of it: a thousand games, a newer Stockfish build, opening books, and time odds for Stockfish. AlphaZero won those too. It was still DeepMind's match against a Stockfish DeepMind picked.
+1. **Select.** Start at the entrance and walk down through junctions that are already in the book. At each one, take the passage with the best score. The next section is about what "best score" means.
+2. **Expand.** Sooner or later you reach a junction the book has never seen. Add it to the book.
+3. **Evaluate.** Guess how promising this new junction is. Plain MCTS plays random moves from here to the end of the game and sees who wins, which is called a **rollout**. Later programs skip the rollout and ask a neural network for a score $v$ instead.
+4. **Back up.** Walk back out to the entrance. For every passage you came through, add one to its visit count $N$ and fold the result into its average $Q$.
 
-**"From scratch" cost 5,000 TPUs.** Learning with no human data is free of humans and expensive in silicon, and nine hours of chess on five thousand accelerators is not nine hours. Leela Chess Zero reproduced it on volunteer machines, over years. The human data was never the bottleneck, and the compute quietly became one.
+![Four panels of the same search tree during select, expand, evaluate and back up, with visit counts in each circle](/images/blog39/mcts-four-steps.png) *Figure 1: the four steps of one simulation. The search runs this loop hundreds of times before it plays a single move. Source: Author*
 
-**It needs a simulator that is exact, cheap and fast.** Eight hundred simulations per move only makes sense when rolling a position forward costs nothing and the rules are never wrong. MuZero relaxes only the second half. Two things you did this week fit neither: replying to your landlord, and deciding what to cook on Thursday. No rulebook for either, and you cannot run Thursday evening eight hundred times to see which dinner went best.
+Run that loop a few hundred times and the book fills up very unevenly. The promising passages get most of the trips. The bad ones get a few trips, and then they are left alone. That is how the search spends its time on the small part of the tree that matters.
 
-**Superhuman on its own distribution, and only there.** [Adversarial Policies Beat Superhuman Go AIs](https://arxiv.org/abs/2211.00241) (Wang et al., ICML 2023) trained an opponent against KataGo at superhuman settings and won more than 97%. That opponent plays terrible Go. It sets up one shape KataGo misreads. And it loses to most human amateurs, which is the detail that should bother you. The attack transfers to other superhuman Go programs untouched, and survived retraining meant to defend against it. Somebody found a way in through a crack the survey had marked solid rock.
+So when it is time to actually play a move, which passage does the club commit to? You might expect the one with the best average. MCTS picks the one with the most visits. Why the count? A passage with a wonderful average from two trips might just have been lucky twice. A passage with 412 trips has survived 412 chances to disappoint everybody.
+
+## Which passage next
+
+The select step needs a rule for picking a passage at each junction. Kocsis and Szepesvári took theirs from the maths of slot machines (the multi-armed bandit problem), and it is called **UCT**. It scores every passage as two things added together:
+
+$$\text{score of a passage} = \text{how well it has gone so far} + \text{a bonus for having had few trips}$$
+
+specifically, in its usual textbook form,
+
+$$a_t = \arg\max_a \left[\, Q(s,a) + c \sqrt{\frac{\ln \sum_b N(s,b)}{N(s,a)}} \,\right]$$
+
+where $a_t$ is the passage the trip takes, $\arg\max_a$ means "the passage that makes the bracket biggest", $Q(s,a)$ is the average result of the trips down passage $a$, $N(s,a)$ is how many trips those were, $\sum_b N(s,b)$ is the total over all passages out of this junction, $\ln$ is the natural log, and $c$ is a constant that sets how big the bonus is (how much the club likes trying new holes).
+
+The bonus has $N(s,a)$ on the bottom, so it shrinks every time somebody walks that passage. The junction's total sits on top, inside the log, so the bonus of a passage that has been left alone slowly grows while the others get walked. And a passage with no trips at all has an infinite bonus, so it gets tried before anything else. That's it. There is no knowledge of Go in there, only counts and averages.
+
+## Plain MCTS on a Go position
+
+Here is plain MCTS on a real position, with random rollouts and no neural network anywhere. I wrote it in about 190 lines of Python, on a 7 by 7 board so that it runs in seconds.
+
+Black's group in the bottom-left corner has three empty points inside it: A1, B1 and C1. A group needs two separate empty points inside it (two **eyes**) to be safe from capture for good. If Black plays B1, the group has two eyes, A1 and C1, and it lives. If White plays B1 first, the group can only ever make one eye, and it dies. The rest of the board is settled so that this corner decides the game. So B1 is the only good move for either side, and Go players have a proverb for exactly this: your opponent's vital point is your vital point.
+
+![A 7 by 7 Go board with visit counts on every empty point, B1 with 4,331 visits, beside a line chart of B1's share of visits rising with the number of simulations](/images/blog39/go-vital-point.png) *Figure 2: plain MCTS, 5,000 simulations, Black to play. Left, the visits each Black move got. Right, B1's share of all visits as the search went on. Source: Author*
+
+After 5,000 simulations, which took about six seconds, B1 had 4,331 of the visits and won 90% of its games. The next most-visited move, F1, had 51 visits and won 53%. B1 was already the most-visited move after 100 simulations. Why 90% against about 50%? After B1, Black's group lives in every random game. After any other move, it lives only if Black happens to reach B1 before White does, which is about half the time.
+
+## Plain MCTS on a chess position
+
+Chess is where random games go wrong, and a trap shows how. In this position, White's queen can take the knight on d7 for free. But the queen is the only piece guarding e1, and White's own pawns box the king in. So after Qxd7, Black plays Re1, and it is checkmate.
+
+I ran two searches from here, with the same rollout: six random moves, then count the material. The first is flat Monte Carlo, with 400 random games after each of White's 26 moves and no tree. It scores Qxd7 at 0.686, the best of all 26, ahead of Kf1 at 0.626. Black has 20 legal replies after Qxd7, so a random reply finds Re1 only one time in twenty. Most of those games just see White a knight up.
+
+The second is MCTS with 5,000 simulations. It likes Qxd7 too at first, and Qxd7 is its most-visited move between about 200 and 500 simulations. But each visit to Qxd7 adds one more of Black's replies to the tree. Once Re1 is in the tree, it wins every trip for Black, so the search keeps choosing it at that junction. Re1 ended with 27 visits and a perfect record, and Qxd7's average sank with every one of them.
+
+![A chess board with arrows for Qxd7, the Re1 mate that follows, and f4, beside two charts comparing flat Monte Carlo scores and MCTS visit counts for seven White moves](/images/blog39/chess-trap.png) *Figure 3: the same rollouts, with and without a tree. Flat Monte Carlo ranks the free knight first. MCTS gives it 73 visits out of 5,000. Source: Author*
+
+After 5,000 simulations Qxd7 had 73 visits. The most-visited moves were f4, f3, Kf1, h3, g4 and h4. None of them moves the queen off the first rank, and most of them give the king an escape square.
+
+## Where plain MCTS runs out
+
+Plain MCTS took Go programs from club level to strong amateur, and then it stopped getting better. More simulations help, but they do not fix these:
+
+1. **Sharp tactics.** [Ramanujan, Sabharwal and Selman (2010)](https://cdn.aaai.org/ojs/13437/13437-40-16955-1-2-20201228.pdf) call them **shallow traps**: moves that lose to a short, forced sequence. They showed that plain MCTS caught traps three moves deep but missed them at five moves and deeper, and that it spent most of its time exploring far deeper lines than it needed to. The trap above was only one move deep, so the tree found it within a few hundred simulations. A trap five moves deep needs the tree to find the one right reply at every level. Chess is full of traps like that, which is part of why the strongest chess engines stayed with alpha-beta.
+2. **A blind select step.** UCT knows nothing about the game. At a junction with 250 moves, it has to try every one of them before it can prefer any.
+3. **Noisy rollouts.** Each rollout plays to the end of the game with moves that are nothing like good moves. So it takes thousands of them to say anything useful, and they can still be wrong about a position a strong player would read in a second.
 
 ## Conclusion
 
-Deep Blue and AlphaZero disagree about who writes down what a good position looks like. Deep Blue had it written by people, feature by feature, and it went as far as people could take it. AlphaZero grows the same judgement out of its own visit counts, and a visit count is only a record of where the club spent its Saturdays.
+MCTS is a small idea. When you can't score a position, play it out at random, and keep a tree of where those games went so that the next ones go somewhere useful. It needs nothing but the rules, and on a 7 by 7 board it found a vital point that Go players learn from a proverb. But it walks into every passage blind. And a visit count is just a tally of where the club spent its Saturdays.
 
-So the survey on the clubhouse wall is twenty years of arguments about which crack was worth a look, drawn as lines. And there was more cave in it than any of them thought.
+[Part 2](/blog/mcts-alphazero-part2/) gives the club a nose and a draught. That is AlphaGo's policy and value networks, then AlphaGo Zero, where the search becomes the network's teacher, and then how that loop connects to PPO.
 
-And now you know. Fin.
+Stay tuned for Part 2. Till then ciao.

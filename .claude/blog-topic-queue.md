@@ -5,8 +5,8 @@ whose `Post file` does not already exist in `_posts/` on `master`. Reorder rows 
 priority. Delete a row to drop it. Add rows at the bottom (or wherever you want them) to extend
 the queue.
 
-Post numbering: latest published is **blog39** (MCTS and AlphaZero). The next post takes
-`images/blog40/`, then 41, and so on. The job derives the number from `ls images | grep blog`,
+Post numbering: latest published is **blog40** (MCTS and AlphaZero, part 2). The next post takes
+`images/blog41/`, then 42, and so on. The job derives the number from `ls images | grep blog`,
 not from this table, so a manual post in between will not break it.
 
 **Publish date.** If a Queue row has a date in the `Date` column, the job uses it for both the
@@ -34,7 +34,8 @@ force a rewrite.
 | 36 | Mamba part 1 — control theory, the RNN and CNN views, S4 and selection | `mamba-is-attention-all-you-really-need` | 2026-09-23 | Is Attention All You Really Need? Part 1 of 2 |
 | 37 | Mamba part 2 — the parallel scan, the kernel, Mamba-2/3 and the hybrids that shipped | `mamba-is-attention-all-you-really-need-part2` | 2026-09-23 | Is Attention All You Really Need? Part 2 of 2 |
 | 38 | Jev and System One models — TypeSafe AI's typed, calibrated decisions and RLCD; written in session as an essay with no conceit, on Naren's call that nobody outside TypeSafe knows the architecture | `jev-system-one-models-rlcd` | 2026-09-25 | Standalone essay |
-| 39 | MCTS and AlphaZero — Deep Blue, MCTS, AlphaGo, AlphaGo Zero, AlphaZero and MuZero, with the cave-survey conceit | `mcts-alphazero` | 2026-09-27 | Standalone. Follows [Solving Chess](/blog/solving-chess-paths-nodes/) |
+| 39 | MCTS and AlphaZero part 1 — why tree search, why Monte Carlo, when MCTS fits, and plain MCTS run on real Go and chess positions, with the cave-survey conceit | `mcts-alphazero` | 2026-09-27 | MCTS and AlphaZero, part 1 of 2. Split in session on 2026-09-29 |
+| 40 | MCTS and AlphaZero part 2 — AlphaGo's networks and PUCT, AlphaGo Zero's self-play loop, the PPO connection, AlphaZero, MuZero | `mcts-alphazero-part2` | 2026-09-27 | MCTS and AlphaZero, part 2 of 2. Dated noon so it lists above part 1 |
 
 ---
 

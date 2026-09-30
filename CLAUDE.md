@@ -120,6 +120,8 @@ Key points when adding content:
   (`![descriptive alt](/images/blog27/vla-architecture.png)`), as do cross-links between
   posts (`/blog/<slug>/`). An absolute `https://cgnarendiran.github.io/...` URL fetches from
   the live site during local preview, so a new figure cannot be verified before it ships.
+- Runnable code behind a post's figures lives in `code/<topic>/` (for example `code/mcts/`),
+  linked from the post through its GitHub URL. Jekyll serves it as static files; keep it runnable.
 - Alt text describes the image. Never the literal string `alt` — see the style guide §8.
 - `tags:` is a YAML flow list drawn from `.claude/tag-vocabulary.md`, 3-6 per document,
   lowercase and hyphenated: `tags: [mixture-of-experts, llms, deepseek]`. A bare

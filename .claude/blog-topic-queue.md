@@ -5,8 +5,8 @@ whose `Post file` does not already exist in `_posts/` on `master`. Reorder rows 
 priority. Delete a row to drop it. Add rows at the bottom (or wherever you want them) to extend
 the queue.
 
-Post numbering: latest published is **blog43** (test-time compute). The next post takes
-`images/blog44/`, then 45, and so on. The job derives the number from `ls images | grep blog`,
+Post numbering: latest published is **blog44** (voice models part 1). The next post takes
+`images/blog45/`, then 46, and so on. The job derives the number from `ls images | grep blog`,
 not from this table, so a manual post in between will not break it.
 
 **Publish date.** If a Queue row has a date in the `Date` column, the job uses it for both the
@@ -39,6 +39,7 @@ force a rewrite.
 | 41 | LLM benchmarks — the famous ones saturating and leaking, then the agentic ones (SWE-bench, Terminal-Bench, tau-bench, OSWorld, METR) that score the model and its scaffold together | `llm-benchmarks-terminal-bench` | 2026-09-30 | Standalone. Follows Jev |
 | 42 | Tokenizers — BPE from the merge list up, byte-level fallback, WordPiece and Unigram, and why a frozen vocabulary decides spelling, arithmetic and the per-language bill | `tokenizers-bpe` | 2026-10-04 | Foundational, standalone |
 | 43 | Test-time compute — sequential and parallel scaling, coverage and the verifier gap, outcome vs process reward models, budget forcing, and where more thinking starts to hurt | `test-time-compute` | 2026-10-07 | Standalone |
+| 44 | Voice models part 1 — sound to tokens: spectrograms, wav2vec/HuBERT units, neural codecs (SoundStream, EnCodec, Mimi), residual vector quantization, semantic vs acoustic tokens, frame rates from 100 Hz to 12.5 Hz | `voice-models-sound-to-tokens` | 2026-10-11 | Voice models, part 1 of 2 |
 
 ---
 
@@ -46,15 +47,14 @@ force a rewrite.
 
 | # | Topic | Post file (slug) | Date | Series | Conceit to test first |
 |---|-------|------------------|------|--------|----------------------|
-| 1 | Voice models part 1 — turning sound into tokens: spectrograms, wav2vec/HuBERT features, neural codecs (EnCodec, SoundStream, Mimi) and residual vector quantization, semantic vs acoustic tokens, frame rates from 50 Hz to 12.5 Hz | `voice-models-sound-to-tokens` | | Voice models, part 1 of 2. Follows the Mamba series, whose 16 kHz numbers set it up | The walkie-talkie against the phone call; part 1 is what goes down the wire |
-| 2 | Voice models part 2 — holding a conversation: cascaded ASR → LLM → TTS vs end-to-end, half-duplex (VAD, endpointing, semantic VAD, barge-in), full-duplex (Moshi's two streams, backchannels, overlap, silence as input), echo cancellation, and voice data caveats (scarce two-channel data like Fisher, overlap labelling, accents and noise, consent and cloning, synthetic dialogue) | `voice-models-holding-a-conversation` | | Voice models, part 2 of 2. Same day as `voice-models-sound-to-tokens`. Links back to Mamba on full-duplex | A walkie-talkie is literally half-duplex: VAD is the model guessing when you would have said "over". A phone call is full-duplex |
-| 3 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
-| 4 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
-| 5 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
-| 6 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
-| 7 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
-| 8 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
-| 9 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
+| 1 | Voice models part 2 — holding a conversation: cascaded ASR → LLM → TTS vs end-to-end, half-duplex (VAD, endpointing, semantic VAD, barge-in), full-duplex (Moshi's two streams, backchannels, overlap, silence as input), echo cancellation, and voice data caveats (scarce two-channel data like Fisher, overlap labelling, accents and noise, consent and cloning, synthetic dialogue) | `voice-models-holding-a-conversation` | | Voice models, part 2 of 2. Same day as `voice-models-sound-to-tokens`. Links back to Mamba on full-duplex | A walkie-talkie is literally half-duplex: VAD is the model guessing when you would have said "over". A phone call is full-duplex |
+| 2 | Gaussian splatting | `gaussian-splatting` | | Standalone, visual | Pointillism, but the dots are jelly beans |
+| 3 | Retrieval — BM25 to dense to hybrid | `retrieval-bm25-to-hybrid` | | Pairs with the HNSW post | The librarian who knows the words vs. the one who knows what you meant |
+| 4 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
+| 5 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
+| 6 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
+| 7 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
+| 8 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
 
 No queue row carries a date any more, so every remaining topic publishes on the day it runs. The
 backfill that spread JEPA and LeJEPA across June and July is done.

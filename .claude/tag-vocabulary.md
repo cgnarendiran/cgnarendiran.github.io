@@ -21,13 +21,13 @@ vocabulary — a reader clicking `computer-vision` wants both.
 ## Fields
 
 `computer-vision` · `nlp` · `robotics` · `generative-ai` · `reinforcement-learning` ·
-`multimodal` · `deep-learning` · `embodied-ai`
+`multimodal` · `deep-learning` · `embodied-ai` · `speech`
 
 ## Architectures
 
 `transformers` · `vision-transformers` · `vision-language-models` · `vision-language-action` ·
 `llms` · `cnn` · `lstm` · `diffusion-models` · `flow-matching` · `mixture-of-experts` ·
-`jepa` · `world-models` · `clip`
+`jepa` · `world-models` · `clip` · `audio-codecs`
 
 ## Techniques and training
 

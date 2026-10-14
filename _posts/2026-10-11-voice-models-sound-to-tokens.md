@@ -7,7 +7,7 @@ description: "Sound has to become a short list of symbols before a language mode
 tags: [speech, audio-codecs, tokenization, self-supervised-learning, llms]
 ---
 
-*On the cover: a page from a notation notebook. The letters sit in their beat boxes, and the red squiggles are what somebody added where the letters were not enough. The last boxes are empty because the singer was still going. Source: Author.*
+*On the cover: SK Mahathi singing at a Carnatic concert in Kakkengad, Kannur, November 2025, with the violin and mridangam just out of frame. The student in the fifth row would get her swaras down, and the tape at the back would get her voice. Photo by [Vinayaraj](https://commons.wikimedia.org/wiki/File:Sk_Mahathi,_during_a_Carnatic_Music_concert_at_Kakkengad,_Kannur_(183).jpg), CC BY-SA 4.0.*
 
 In the [Mamba post](/blog/mamba-is-attention-all-you-really-need/) I said that nobody feeds a Transformer raw audio samples. Speech models like [Whisper](https://arxiv.org/abs/2212.04356), OpenAI's speech recogniser, turn the sound into a spectrogram first. Then they squash that down to about 50 chunks a second. I called it a hand-built shortcut and moved on.
 

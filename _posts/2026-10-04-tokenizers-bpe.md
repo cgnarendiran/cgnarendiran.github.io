@@ -2,12 +2,12 @@
 layout: post
 title:  "Tokenizers - Out of Sorts"
 date:   2026-10-04
-image:  images/blog42/cover.png
+image:  images/blog42/cover.jpg
 description: "A model's vocabulary is fitted by counting pairs and frozen before training starts, and it decides what the model can spell, add up and charge you."
 tags: [tokenization, nlp, llms, transformers]
 ---
 
-*On the cover: a compositor's type case, the tray a letterpress shop keeps its metal type in. The top row reads e, t, a, o, i, n, s, h, frequency order rather than alphabetical, and the wider compartments hold ligatures: single pieces carrying `th`, `er` and `the`. One is empty, because somebody has to decide what gets cast. Source: Author.*
+*On the cover: a line of type set in a composing stick, resting on a case of sorts. The line is a pangram, so every letter of the alphabet got picked at least once. Photo by [Willi Heidelbach](https://commons.wikimedia.org/wiki/File:Metal_movable_type.jpg), CC BY 2.5.*
 
 Let's say you run a print shop in 1890. Against one wall is a shallow tray of about a hundred compartments, each holding a pile of identical metal letters. The tray is called a **case**. One piece of metal is a **sort**. The man who picks them out one at a time and lines them up in a handheld rail is the **compositor**. (Upper case and lower case were two trays on a frame, capitals above, small letters below. That is the entire etymology.)
 

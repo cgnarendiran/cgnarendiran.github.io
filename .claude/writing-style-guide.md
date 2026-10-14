@@ -351,6 +351,10 @@ photograph, or a plain documentary photo of the actual thing.
   auto-contrast is fine on an old print. No text overlays.
 - **Fall back to drawing only when a real search found nothing**, and say so in the PR. A drawn
   cover is a figure; it belongs in the body with a `Source: Author` caption, not on the card.
+  Commons being unreachable is not "found nothing". From September to October 2026 the cloud
+  sandbox could not reach Commons, so the blog job drew ten covers in a row and merged them,
+  and every one was replaced by hand. A post whose cover was drawn for that reason does not
+  merge.
 
 **Image budget** — the site serves these on every page load, so weight is not free:
 

@@ -7,7 +7,7 @@ description: "The famous benchmarks saturated and leaked. The agentic ones repla
 tags: [llms, research, test-time-compute, probability]
 ---
 
-*On the cover: riders walking the course on foot before a class at the Hamburg Derby, May 2010. Their horses will meet the same fences for the first time, at a canter. Photo by [Horseexperts at German Wikipedia](https://commons.wikimedia.org/wiki/File:Hamburg_Derby_2010_01_GHI.jpg), CC BY-SA 3.0 de.*
+*On the cover: Davide Sbardella and Triomphe van Schuttershof over a 1.40 m fence at the CSIO Linz, May 2017. The results sheet prints both their names. Photo by [Isiwal](https://commons.wikimedia.org/wiki/File:CSIO4_Linzer_Pferdefestival_2017-Davide_Sbardella-_Triomphe_van_Schuttershof-6055.jpg), CC BY-SA 4.0.*
 
 In the [last post](/blog/jev-system-one-models-rlcd/) I spent a week trying to work out whether one startup's model really was as well calibrated as its launch post claimed. The vendor had numbers. Two outsiders had rather different numbers. And I came out of that week trusting the outsiders a little more, mostly because they published what they ran.
 

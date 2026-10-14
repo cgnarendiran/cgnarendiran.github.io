@@ -7,7 +7,7 @@ description: "A model's vocabulary is fitted by counting pairs and frozen before
 tags: [tokenization, nlp, llms, transformers]
 ---
 
-*On the cover: a case of lead type in Belgium. A fixed number of compartments, each holding a pile of one sort, and somebody had to decide what went in each. Photo by [Thomas Quine](https://commons.wikimedia.org/wiki/File:Lead_type_case_(25598835882).jpg), CC BY 2.0.*
+*On the cover: a line of type set in a composing stick, resting on a case of sorts. The line is a pangram, so every letter of the alphabet got picked at least once. Photo by [Willi Heidelbach](https://commons.wikimedia.org/wiki/File:Metal_movable_type.jpg), CC BY 2.5.*
 
 Let's say you run a print shop in 1890. Against one wall is a shallow tray of about a hundred compartments, each holding a pile of identical metal letters. The tray is called a **case**. One piece of metal is a **sort**. The man who picks them out one at a time and lines them up in a handheld rail is the **compositor**. (Upper case and lower case were two trays on a frame, capitals above, small letters below. That is the entire etymology.)
 

@@ -2,12 +2,12 @@
 layout: post
 title:  "LLM Benchmarks - The Horse and the Rider"
 date:   2026-09-30
-image:  images/blog41/cover.png
+image:  images/blog41/cover.jpg
 description: "The famous benchmarks saturated and leaked. The agentic ones replacing them score a model and the code driving it together, and cannot tell the two apart."
 tags: [llms, research, test-time-compute, probability]
 ---
 
-*On the cover: a show jumping course plan. The rider walks it on foot before the class, counting strides between fences; the horse meets the same ten fences at a canter, having never seen them. Source: Author.*
+*On the cover: riders walking the course on foot before a class at the Hamburg Derby, May 2010. Their horses will meet the same fences for the first time, at a canter. Photo by [Horseexperts at German Wikipedia](https://commons.wikimedia.org/wiki/File:Hamburg_Derby_2010_01_GHI.jpg), CC BY-SA 3.0 de.*
 
 In the [last post](/blog/jev-system-one-models-rlcd/) I spent a week trying to work out whether one startup's model really was as well calibrated as its launch post claimed. The vendor had numbers. Two outsiders had rather different numbers. And I came out of that week trusting the outsiders a little more, mostly because they published what they ran.
 

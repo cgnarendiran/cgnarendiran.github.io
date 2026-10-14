@@ -2,12 +2,12 @@
 layout: post
 title:  "Voice Models - Press to Talk"
 date:   2026-10-11 12:00:00
-image:  images/blog45/cover.png
+image:  images/blog45/cover.jpg
 description: "A model that can hear and speak still cannot hold a conversation. The hard part is knowing when to start, and being willing to stop."
 tags: [speech, llms, multimodal, audio-codecs, efficient-inference]
 ---
 
-*On the cover: the two instruments on a dispatcher's desk. The radio carries one voice at a time, and the orange bar on its side is the button you hold down to be that voice. The telephone carries both at once. Source: Author.*
+*On the cover: a sergeant at Fort Myer, Virginia, demonstrating a walkie-talkie in August 1942. The set carries one voice at a time, and a button on its side decides whose. [Public domain](https://commons.wikimedia.org/wiki/File:A_sergeant_at_Fort_Myer,_Virginia_demonstrates_a_%22walkie-talkie%22_in_the_field._August,_1942._(49750489543).jpg), via Wikimedia Commons.*
 
 In the [last post](/blog/voice-models-sound-to-tokens/) we got a second of sound down to a hundred whole numbers, written in eight passes, cheap enough that a language model can read them and write them back. The student in the fifth row can finally take the concert down and sing it back.
 

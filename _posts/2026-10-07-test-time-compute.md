@@ -2,12 +2,12 @@
 layout: post
 title:  "Test-Time Compute - Order One More Test"
 date:   2026-10-07
-image:  images/blog43/cover.png
+image:  images/blog43/cover.jpg
 description: "A model can be made better after it is trained, just by letting it answer for longer. Almost all of that gain comes from the thing that checks the answer."
 tags: [test-time-compute, llms, reinforcement-learning, efficient-inference]
 ---
 
-*On the cover: four chest films on a backlit viewer, each carrying more pencil rings than the one before it, and a fifth viewer switched on with nothing clipped to it yet. That empty one is the next test somebody could order. Source: Author.*
+*On the cover: FDA oncologist Gerald Sokol reading a cancer patient's films on a light box, 2012. Every film on that box is a test somebody decided to order. [Public domain](https://commons.wikimedia.org/wiki/File:Examining_X-Rays_of_a_Cancer_Patient_(FDA_102)_(8250870062).jpg), via Wikimedia Commons.*
 
 A doctor in a crowded government outpatient department gets about seven minutes per patient. You look at them, ask three questions, write something on the chit and call the next name. For a sprained ankle that is plenty of time.
 
@@ -150,6 +150,6 @@ For a decade the only lever anybody had was the size of the model, and pulling i
 
 But none of it works without something that can check the answer. Every big number here, the 78.2%, the 71.0% out of R1-Zero's RL loop, the 56% of SWE-bench Lite issues patched, has a verifier standing behind it doing the real work. So my bet is that the next good year comes from people building lab tests for the things that have no lab test yet. Making the chains longer looks finished, and the 7K crossover is where it stopped.
 
-Which brings us back to the fifth viewer on the cover, the one switched on with nothing clipped to it. You can always order one more test. Most of the skill is knowing who needs it, because the three-week fever gets the full workup and the sprained ankle gets its seven minutes. And the film you are about to order will probably come back with one more pencil ring on it that meant nothing at all.
+Which brings us back to the doctor on the cover and his row of films. You can always order one more test. Most of the skill is knowing who needs it, because the three-week fever gets the full workup and the sprained ankle gets its seven minutes. And the film you are about to order will probably come back with one more shadow on it that meant nothing at all.
 
 And now you know. Fin.

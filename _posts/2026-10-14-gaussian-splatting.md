@@ -7,7 +7,7 @@ description: "A room can be stored as three million fuzzy blobs instead of a mes
 tags: [gaussian-splatting, computer-vision, optimization, simulation, world-models]
 ---
 
-*On the cover: a balloon arch for a reception, drawn the way this post's method would draw it, as soft coloured blobs with no wall behind them. Source: Author.*
+*On the cover: an arch of party balloons. From the front it is a wall of colour, which is all the photographer needs. Photo by [Ishmael Orendain](https://commons.wikimedia.org/wiki/File:Balloon_arch.jpg), CC BY 2.0.*
 
 The man who decorates wedding halls turns up at four in the morning with a helium cylinder and six bags of balloons. By seven in the evening there is an arch over the stage and a column either side of the door, and it photographs beautifully. The photographer has three spots he stands on, and from all three it is a wall of red and gold.
 

@@ -5,7 +5,9 @@ Two jobs share this file.
 The **companion job** picks the oldest post in `_posts/` whose front-matter date is on or after
 `eligible_from` and whose slug appears in neither table below nor in `.claude/linkedin-outbox/`,
 writes a LinkedIn post for it following `.claude/linkedin-style-guide.md`, and commits it to
-`.claude/linkedin-outbox/<slug>.md` with a `publish_after` time. One post per run.
+`.claude/linkedin-outbox/<slug>.md` with a `publish_after` time. One post per run. If the post
+still fails the cold-reader test after four rounds, it appends a `held` row for the slug here
+instead, so the next run moves on to the next post rather than retrying this one forever.
 
 The **publisher job** runs `.claude/scripts/linkedin_publish.py`, which posts every due outbox
 file through LinkedIn's Posts API, appends a row to the "Posted by the job" table, and deletes
@@ -22,13 +24,17 @@ publish_tz: America/Los_Angeles
 
 `publish_delay_minutes`: the companion sets `publish_after` to its run time plus this many
 minutes. Naren chose no review window (2026-09-06): the companion fires at 17:15 UTC on blog
-days, about half an hour after the post is live, with a retry at 18:15, and the publisher fires
-daily at 16:00, 18:00 and 19:00 UTC and posts anything whose time has passed. So a Sunday or
-Wednesday post is on LinkedIn by 18:00 UTC the same day. To hold a post back, edit its
-`publish_after` on master before the next publisher fire.
+days, about half an hour after the post is live, with a retry at 18:15. Since 2026-09-13 the
+publisher fires Monday to Friday at 03:30 and 04:30 UTC and posts anything whose time has
+passed, so a Sunday or Wednesday post is on LinkedIn that evening, Pacific time. To hold a post
+back, edit its `publish_after` on master before the next publisher fire.
 
 The slug is the part of the filename after the date: `_posts/YYYY-MM-DD-<slug>.md`. Exact match,
 not substring. To skip a post for good, add a row for it below with the note `skipped`.
+
+A row whose note starts `held:` is the companion job giving up after four failed cold-reader
+rounds (LinkedIn guide §13). The PR that added the row holds the last draft and the readers'
+answers. To let the job try again, delete the row; to post it yourself, change the note.
 
 ---
 
@@ -66,3 +72,5 @@ The publisher appends rows here; keep this table last in the file.
 | mamba-is-attention-all-you-really-need-part2 | 2026-09-23 | - | - | 2026-09-26 | skipped: Naren doesn't want a second LinkedIn post on Mamba |
 | jev-system-one-models-rlcd | 2026-09-25 | - | - | 2026-09-26 | posted by hand by Naren in the LinkedIn app, text written in session; post id not recorded |
 | mcts-alphazero-part2 | 2026-09-27 | - | - | 2026-09-29 | skipped: Naren doesn't want a second LinkedIn post on MCTS |
+| mcts-alphazero | 2026-09-27 | - | - | 2026-10-14 | skipped: failed the cold-reader test in all ten companion runs from 09-27 to 10-14 and blocked every newer post; Naren chose to skip it |
+| voice-models-holding-a-conversation | 2026-10-11 | - | - | 2026-10-14 | skipped: Naren doesn't want a second LinkedIn post on voice models |

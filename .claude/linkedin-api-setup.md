@@ -62,9 +62,12 @@ Outbox files wait until the token is refreshed; nothing is lost.
 - The companion job fires at 17:15 UTC on blog days (retry 18:15), about half an hour after the
   post is live, and commits `.claude/linkedin-outbox/<slug>.md` with `publish_after` set to its
   run time plus `publish_delay_minutes` (30).
-- The publisher fires daily at 16:00, 18:00 and 19:00 UTC and posts every file whose time has
-  passed, so the LinkedIn post lands the same day. There is no day-long review window, by
-  Naren's choice; the window is the gap to the next publisher fire.
+- The publisher fires Monday to Friday at 03:30 and 04:30 UTC (cron `30 3,4 * * 1-5` since
+  2026-09-13) and posts every file whose time has passed, so a Sunday or Wednesday post lands
+  that evening, Pacific time. There is no day-long review window, by Naren's choice; the window
+  is the gap to the next publisher fire.
+- If a draft still fails the cold-reader test after four rounds, the companion queues nothing
+  and appends a `held` ledger row for the slug, so the next run moves on to the next post.
 - To change a post, edit the file on master before then. To veto it, delete the file and add a
   ledger row for the slug with the note `skipped`, so the companion does not write it again.
 - To change a post after it went out, put the new text in an outbox-format file and run

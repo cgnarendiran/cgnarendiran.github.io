@@ -38,14 +38,16 @@ from `origin/master`, open a PR, self-check it and merge it; none pushes to `mas
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
   with a `publish_after` time thirty minutes out. The post is written for readers with no ML background, one idea,
   standalone (LinkedIn guide §0), and must pass `prose_lint.py --linkedin` (which fails on jargon)
-  and a cold-reader test by a fresh subagent (§13) before it is queued.
-- **LinkedIn publisher**, daily at 16:00, 18:00 and 19:00 UTC. Runs `.claude/scripts/linkedin_publish.py`,
+  and a cold-reader test by a fresh subagent (§13) before it is queued. A post that still fails
+  after four rounds gets a `held` ledger row instead, so the next run moves on to the next post.
+- **LinkedIn publisher**, Mon-Fri 03:30 and 04:30 UTC. Runs `.claude/scripts/linkedin_publish.py`,
   which posts every due outbox file through LinkedIn's Posts API, appends the ledger row and
   deletes the file. Before posting it re-runs the lint and the cold-reader test on each due file
   and holds any that fail. Needs `LINKEDIN_ACCESS_TOKEN` and `LINKEDIN_PERSON_URN` in its cloud
   environment; setup and the 60-day token renewal are in `.claude/linkedin-api-setup.md`.
 
-There is no day-long review window, by choice: a post is on LinkedIn by 18:00 UTC on blog days.
+There is no day-long review window, by choice: a post is on LinkedIn the evening of its blog day,
+Pacific time.
 To change or hold one, edit its outbox file or its `publish_after` on master before the next
 publisher fire; to veto, delete the file and add a ledger row.
 

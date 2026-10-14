@@ -344,6 +344,13 @@ photograph, or a plain documentary photo of the actual thing.
   boards that "exam results" did not), category names ("Category:Backlot"), and the big
   institutional uploads (Library of Congress, National Archives, the Met). Wide scenes and
   portrait crops rarely read at card size; a tight crop on the object does.
+- **It has to look good at card size.** Pick the most striking candidate, not the first one that
+  fits: one sharp subject that fills the frame, strong colour or a fine painting or print. Naren
+  rejected three Commons covers in October 2026 as "really bad": a crowd of riders standing
+  on grass, a type case shot at an angle through glare, and a concert photo with banner text
+  cut off at the edges. Their replacements were a horse and rider in mid-air, a composing stick
+  lying on a case of sorts, and a singer mid-phrase against a black backdrop. Preview the
+  shortlist before fetching, and view the cropped result before committing.
 - **Caption carries the credit.** `*On the cover: <what it shows, and the one line that ties it
   to the conceit>. Photo by [Author](commons file page), CC BY 2.0.*` or `[Public
   domain](file page), via <institution>.` The joke or the tie-in goes before the credit.

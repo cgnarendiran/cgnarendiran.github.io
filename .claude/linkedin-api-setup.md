@@ -37,8 +37,11 @@ no subscription. The cost is one browser login every 60 days.
 ## Cloud environment for the publisher routine
 
 1. At https://claude.ai/code, under environments, create one named `linkedin-publisher`.
-   Keep the default environment for the blog job untouched; its Trusted network setting is what
-   lets the blog job reach arXiv.
+   Keep it separate from the environment the blog and companion jobs share
+   (`env_01NYRYG19HgmuhvdQLN32Dtc`). That one needs Custom network access too, allowing
+   `commons.wikimedia.org`, `upload.wikimedia.org` and `arxiv.org`. On the Trusted default, every
+   blog run from September to October 2026 got a 403 from Commons and arXiv and drew its own
+   cover and figures.
 2. Network access: **Custom**, with two lines in Allowed domains: `api.linkedin.com` and
    `www.linkedin.com`. GitHub traffic takes its own proxy and needs no entry. Leave the
    package-manager checkbox off; the script is stdlib only. The Trusted default blocks LinkedIn.

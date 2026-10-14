@@ -52,7 +52,10 @@ To change or hold one, edit its outbox file or its `publish_after` on master bef
 publisher fire; to veto, delete the file and add a ledger row.
 
 Cloud sandbox facts learned the hard way: the egress proxy blocks cgnarendiran.github.io, so
-liveness is checked through the GitHub Pages deployment record; and the Edit and Write tools
+liveness is checked through the GitHub Pages deployment record; the blog jobs' environment must
+allow `commons.wikimedia.org`, `upload.wikimedia.org` and `arxiv.org`, or `commons_cover.py` and
+`fetch_arxiv_figures.py` get a 403 and every cover and paper figure ends up drawn (they did, from
+September to mid-October 2026); and the Edit and Write tools
 prompt for permission on `.claude/` paths, so routines change those files through Bash. Both
 jobs run the vendored `humanizer` skill in `.claude/skills/`. `.claude/` is a dot-directory, so
 Jekyll never serves any of it.

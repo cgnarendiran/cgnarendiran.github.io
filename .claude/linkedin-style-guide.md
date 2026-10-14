@@ -551,3 +551,8 @@ The post passes only if (1) matches the post's one idea, (2) and (3) are empty, 
 Otherwise, rewrite and run the test again with a new subagent. If no subagent tool is available,
 answer the five questions yourself as that reader, in writing, before deciding. Put the
 answers in the PR body.
+
+The companion gives up after four rounds. It queues nothing and appends a `held` row for the
+slug to the ledger, so the next run moves on to the next post. Before this rule, MCTS part 1
+failed in ten runs in a row, from 27 September to 14 October 2026, and every newer post waited
+behind it. A held post is Naren's to finish by hand or drop.

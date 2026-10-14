@@ -14,7 +14,7 @@ Two facts about this environment:
 - The egress proxy BLOCKS cgnarendiran.github.io. `curl` and WebFetch against the site fail with a proxy error. That is not evidence the post is missing; step 3 says how to check liveness.
 - The Edit and Write tools raise a permission prompt for any path under `.claude/`, and nobody is there to answer it, so the run stalls. Create the outbox file ONLY through Bash (a heredoc), never with Edit or Write. Draft in the scratchpad directory with any tool.
 
-Never push to `master`. Branch, PR, merge. Before branching, `git fetch origin` and work from `origin/master`, not from whatever the checkout is sitting on. The ONLY file you may add is `.claude/linkedin-outbox/<slug>.md`. Never touch the ledger, posts, images, the queue, or the style guides. If `git rebase` or `git merge` fails with a stash error, retry with `-c merge.autoStash=false`.
+Never push to `master`. Branch, PR, merge. Before branching, `git fetch origin` and work from `origin/master`, not from whatever the checkout is sitting on. Each run changes exactly one thing: it adds `.claude/linkedin-outbox/<slug>.md` (step 8a), or, when the post fails the cold-reader test four rounds running, it appends one `held` row to the end of `.claude/linkedin-ledger.md` (step 8b). Never touch any other ledger line, posts, images, the queue, or the style guides. If `git rebase` or `git merge` fails with a stash error, retry with `-c merge.autoStash=false`.
 
 # 0. THE PART THAT MATTERS MOST: a standalone post for people with no ML background
 
@@ -46,7 +46,7 @@ If the LinkedIn guide has no "## 0." section, or the guide, the ledger, or the p
 
 `git fetch origin && git checkout -B work origin/master`, so you are reading what is actually published.
 
-Parse the ledger's settings block: `eligible_from`, `publish_delay_minutes`, `publish_tz`. Then walk `_posts/YYYY-MM-DD-<slug>.md` oldest first and take the first file where (a) the front-matter `date` is on or after `eligible_from`, (b) `<slug>` appears in NEITHER ledger table, and (c) `.claude/linkedin-outbox/<slug>.md` does not exist. Exact slug match. Ignore `_posts/temp.md` and any file without a date-prefixed filename.
+Parse the ledger's settings block: `eligible_from`, `publish_delay_minutes`, `publish_tz`. Then walk `_posts/YYYY-MM-DD-<slug>.md` oldest first and take the first file where (a) the front-matter `date` is on or after `eligible_from`, (b) `<slug>` appears in NEITHER ledger table (a `skipped` or `held` row counts), and (c) `.claude/linkedin-outbox/<slug>.md` does not exist. Exact slug match. Ignore `_posts/temp.md` and any file without a date-prefixed filename.
 
 If nothing qualifies: create nothing, open no PR, say so in one line, and end the run. One post per run, never more.
 
@@ -75,7 +75,7 @@ The §8 truth rules are absolute. Every claim comes from the blog post or the pa
 
 1. Humanizer. Invoke the `humanizer` skill with the Skill tool on the draft. Use it SUBTRACTIVELY. The guides win every conflict: keep the everyday picture, the question, the first-person sentences, the one dry aside. Do not let it add hedging, a question to the audience as the last line, or rewrite the tail. If the skill cannot be found, run LinkedIn guide §9 and blog guide §13 by hand and say in the report that the skill did not run.
 
-2. Cold-reader test. Launch a FRESH subagent with the Agent tool. Give it ONLY the post body (no title, no hashtags, no blog, no context about you or the blog) and the brief in LinkedIn guide §13.2, verbatim. The post passes only if its one-sentence summary matches your one idea, it lists no word it did not understand, it lists nothing that refers to something it was not told, and it says yes to stopping at the first line. If it fails, rewrite and run the test again with a NEW subagent (never reuse one that has seen an earlier draft). Up to four rounds. If no subagent tool exists, answer the five questions yourself in writing as that reader. If it still fails after four rounds, do not queue anything: end the run and report the last draft and the reader's answers.
+2. Cold-reader test. Launch a FRESH subagent with the Agent tool. Give it ONLY the post body (no title, no hashtags, no blog, no context about you or the blog) and the brief in LinkedIn guide §13.2, verbatim. The post passes only if its one-sentence summary matches your one idea, it lists no word it did not understand, it lists nothing that refers to something it was not told, and it says yes to stopping at the first line. If it fails, rewrite and run the test again with a NEW subagent (never reuse one that has seen an earlier draft). Up to four rounds. If no subagent tool exists, answer the five questions yourself in writing as that reader. If it still fails after four rounds, do not queue anything. Skip steps 6 and 7 and go to step 8b, which records the post as held so the next run moves on to the next post instead of retrying this one forever.
 
 3. The §12 checklist against the final text. Count words mechanically with `wc -w` on the body without the URL, hashtag and mention lines.
 
@@ -98,14 +98,30 @@ The first must exit 0 with an EMPTY `warnings` list and `chars` under 1,700; che
 
 ## 8. Open the PR, self-check, merge
 
+### 8a. The post passed
+
 `git add` only that file. Commit as `linkedin: queue companion post for <slug>`. Push and open a PR against `master` with `gh pr create` (or the GitHub MCP tools if `gh` is missing).
 
 PR body: the full post text exactly as written; the one idea you picked and what you left for the blog; `publish_after` in both `publish_tz` and UTC; the cold-reader subagent's answers from the final round (and how many rounds it took); the §12 checklist, ticked; what the humanizer pass changed; the lint output.
 
 Self-check before merging, mechanically: the PR diff adds exactly ONE new file, under `.claude/linkedin-outbox/`, and changes nothing else; the lint exits 0; the cold-reader test passed. If so, merge the PR (squash) and delete the branch. If not, leave it open, comment why, and report.
 
+### 8b. The post failed the cold-reader test four rounds running
+
+Without this, the next run picks the same oldest post, fails it again, and every newer post waits behind it. MCTS part 1 blocked the queue this way for ten runs, from 27 September to 14 October 2026.
+
+Branch `linkedin/hold-<slug>` off `origin/master`. The "Posted by the job" table is the last thing in `.claude/linkedin-ledger.md`. Append one row to it with Bash, never Edit or Write: make sure the file ends with a newline, then `printf '%s\n' '<row>' >> .claude/linkedin-ledger.md`, where the row is
+
+    | <slug> | <blog date> | - | - | <today in UTC, YYYY-MM-DD> | held: failed the cold-reader test four rounds; the last draft is in the PR that added this row |
+
+`git add` only the ledger. Commit as `linkedin: hold <slug> after four failed cold-reader rounds`. Push and open a PR against `master`. PR body: the last draft exactly as written; the one idea you picked; all four rounds' cold-reader answers; what you changed between rounds. Naren finishes held posts by hand, so give him everything he needs.
+
+Self-check before merging, mechanically: `git diff origin/master --stat` shows only `.claude/linkedin-ledger.md` with one line added; the added line is the last line of the file, starts with `| <slug> |`, and contains `held:`; no other line changed. If so, merge the PR (squash) and delete the branch. If not, leave it open, comment why, and report.
+
 Never force-push, never merge any PR other than your own from this run.
 
 ## 9. Report
 
 Finish with: the slug and title; the one idea; the outbox path; `publish_after` in local time and UTC; the PR URL and whether it merged; the full text of the post; word and character counts; whether the humanizer skill ran; the cold-reader answers and round count; both validators' output.
+
+If the post was held, say so in the first line instead, then give the slug and title, the hold PR URL and whether it merged, the last draft, and every round's cold-reader answers.

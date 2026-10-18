@@ -74,3 +74,4 @@ The publisher appends rows here; keep this table last in the file.
 | mcts-alphazero-part2 | 2026-09-27 | - | - | 2026-09-29 | skipped: Naren doesn't want a second LinkedIn post on MCTS |
 | mcts-alphazero | 2026-09-27 | - | - | 2026-10-14 | skipped: failed the cold-reader test in all ten companion runs from 09-27 to 10-14 and blocked every newer post; Naren chose to skip it |
 | voice-models-holding-a-conversation | 2026-10-11 | - | - | 2026-10-14 | skipped: Naren doesn't want a second LinkedIn post on voice models |
+| llm-benchmarks-terminal-bench | 2026-09-30 | - | - | 2026-10-18 | held: failed the cold-reader test four rounds; the last draft is in the PR that added this row |

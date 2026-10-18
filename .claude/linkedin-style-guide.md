@@ -105,7 +105,7 @@ terms beyond the names.
 
 **8. The cold-reader test (required, §13).** Before the post is queued, and again before it is
 published, a reader who has seen only the post text must be able to say in one sentence what it
-is about, and must not stop at any word. §13 says how to run it.
+is about, and nothing they stumble on may block that idea. §13 says how to run it.
 
 ---
 
@@ -504,7 +504,7 @@ replacement that went live in its place:
 **§0 first. A post that fails any of these is rewritten, not patched.**
 
 - [ ] The cold-reader test (§13) passed: the reader summarised the post correctly in one
-      sentence, stopped at no word, and found nothing that refers to something outside the post
+      sentence, would stop at the first line, and nothing they stumbled on blocks the one idea
 - [ ] One problem or motivation from the blog, and nothing else
 - [ ] The first line would make a non-technical person stop scrolling, and needs no setup
 - [ ] The everyday picture is set up from zero inside the post
@@ -547,8 +547,15 @@ hashtags) with this brief, verbatim:
 > to refer to something you were not told (a person, a thing, "the X"). (4) Would you have
 > stopped scrolling at the first line? Yes or no, and why. (5) Would you click the link?
 
-The post passes only if (1) matches the post's one idea, (2) and (3) are empty, and (4) is yes.
-Otherwise, rewrite and run the test again with a new subagent. If no subagent tool is available,
+The post passes if (1) matches the post's one idea, (4) is yes, and nothing in (2) or (3) blocks
+that idea. Ask of each listed item: if the reader skipped it or guessed wrong, would they still
+get the one idea? If yes, it is incidental (a name, a place, a word the next sentence explains, a
+detail outside the idea) and does not fail the post, though fix it when a word or two will. If
+no, the post fails. The lists do not have to be empty. Until 18 October 2026 they did, and that
+rule held all twelve drafts it saw, including a tokenizers post whose reader said "it passes"
+and put the chance of clicking at 70%.
+
+When the post fails, rewrite and run the test again with a new subagent. If no subagent tool is available,
 answer the five questions yourself as that reader, in writing, before deciding. Put the
 answers in the PR body.
 

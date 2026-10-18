@@ -2,7 +2,7 @@
 
 Two jobs share this file.
 
-The **companion job** picks the oldest post in `_posts/` whose front-matter date is on or after
+The **companion job** picks the newest post in `_posts/` whose front-matter date is on or after
 `eligible_from` and whose slug appears in neither table below nor in `.claude/linkedin-outbox/`,
 writes a LinkedIn post for it following `.claude/linkedin-style-guide.md`, and commits it to
 `.claude/linkedin-outbox/<slug>.md` with a `publish_after` time. One post per run. If the post
@@ -20,7 +20,7 @@ publish_delay_minutes: 30
 publish_tz: America/Los_Angeles
 
 `eligible_from` is what keeps the job from working through the whole archive. Set it to
-`2017-01-01` to backfill everything not listed below, one post per run, oldest first.
+`2017-01-01` to backfill everything not listed below, one post per run, newest first.
 
 `publish_delay_minutes`: the companion sets `publish_after` to its run time plus this many
 minutes. Naren chose no review window (2026-09-06): the companion fires at 17:15 UTC on blog

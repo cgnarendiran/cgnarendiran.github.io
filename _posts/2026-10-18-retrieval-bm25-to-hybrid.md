@@ -17,17 +17,17 @@ Both of them want the same drawer. Only one of them can name it.
 
 Welcome to the era of **hybrid retrieval**. This is the story of two completely different ways to find a thing, why each one fails exactly where the other works, and what it costs to run both and then referee them.
 
-Every search box you have used this week is that counter. Something cheap runs over the whole shop and comes back with a shortlist. Then something expensive runs over the shortlist. The design is about pushing as much work as possible into the part that happens before you ask.
+Every search box you have used this week is that counter. Something cheap runs over the whole shop and comes back with a shortlist, and then something expensive runs over the shortlist. The design is about pushing as much work as possible into the part that happens before you ask.
 
 ![Flow diagram: a query splitting into a BM25 lookup and a dense lookup, each producing a top-100 list, merged by fusion and then passed to a cross-encoder](/images/blog47/retrieval-pipeline.png) *Figure 1: the four stages, and the budget behind them. Everything to the left of the fusion box has to be cheap enough to run on all forty thousand drawers. Source: Author*
 
 ## What the catalogue knows
 
-Behind the counter there is a catalogue, and it is sorted by word rather than by drawer. Look up "seal" and you get a list of every entry that contains the word, with the drawer numbers printed next to it. Look up "door" and you get another list. The answer to "door seal" is what the two lists have in common.
+Behind the counter there is a catalogue, and it is sorted by word rather than by drawer. Look up "seal" and you get a list of every entry that contains the word, with the drawer numbers printed next to it. Look up "door" and you get another list. The answer to "door seal" is what the two lists have in common. The lists are kept in order, so finding that is one walk down both at once. That is why this half stays fast however big the shop gets.
 
 That is an **inverted index**, and it is the oldest idea in this post. For each word in the vocabulary, keep the list of documents containing it. The same [tokenizer](/blog/tokenizers-bpe/) question applies here too, because somebody had to decide that "door" and "doors" are the same entry and "GSK-441" is one word rather than two.
 
-Having the list is not the same as having an order, though. If four hundred entries say "seal", somebody has to decide which one goes on top. The ranking function that nearly everybody still uses to decide is **BM25**, from a 1994 paper called [Okapi at TREC-3](https://en.wikipedia.org/wiki/Okapi_BM25) by Robertson, Walker, Jones, Hancock-Beaulieu and Gatford, at City University London. BM is for best matching. The 25 is usually explained as the twenty-fifth formula they tried. I have never seen a citation for that, so treat it as the story the field tells about itself. Okapi was the name of their retrieval system. An okapi is a forest animal that looks like somebody assembled a giraffe out of spare parts, which for this post is almost too convenient.
+Having the list is not the same as having an order, though. If four hundred entries say "seal", somebody has to decide which one goes on top. The ranking function that nearly everybody still uses to decide is **BM25**, from a 1994 paper called [Okapi at TREC-3](https://en.wikipedia.org/wiki/Okapi_BM25) by Robertson, Walker, Jones, Hancock-Beaulieu and Gatford, at City University London. BM is for best matching. The 25 is said to be the twenty-fifth formula they tried, though I have never seen a citation for that. Okapi was their retrieval system. It is also a forest animal that looks like somebody assembled a giraffe out of spare parts, which for this post is almost too convenient.
 
 BM25 is three ideas sitting in one fraction, and all three are things the man behind the counter already does.
 
@@ -49,9 +49,9 @@ with $N$ the number of entries in the catalogue and $n(q_i)$ the number of them 
 
 Let's do one by hand. Say the catalogue has $N = 1000$ entries, the average entry is 12 words, and you ask for "door seal". The word "seal" is in 120 entries and "door" is in 300, so their rarity scores are 2.12 and 1.20. The rarer word is worth about 1.8 times the common one before anything else happens.
 
-Now two candidate entries. Entry A is eight words, "Door seal, front loading washing machine, rubber gasket", and says each of your words once. Entry B is a forty-word catch-all that says "seal" four times and never says "door". Running the fraction gives A a score of 3.84 and B a score of 2.55, so A wins.
+Now two candidate entries. Entry A is eight words, "Door seal, front loading washing machine, rubber gasket", and says each of your words once. Entry B is a forty-word catch-all that says "seal" four times and never says "door". Running the fraction gives A a score of 3.84 and B a score of 2.55, so A wins. These scores have no ceiling and no units. They mean something against each other, inside this one query, and nothing at all outside it.
 
-And look at what B got for its four mentions. One mention in a short entry earns 1.16. Four mentions in a long entry earn 1.21. Four times the word, four percent more credit, which is the saturation and the length penalty eating the repetition between them.
+And look at what B got for its four mentions. Set the rarity number aside and run just the fraction: one mention in a short entry comes out at 1.16, and four mentions in a long entry at 1.21. Four times the word, four percent more credit, which is the saturation and the length penalty eating the repetition between them.
 
 A real catalogue holds millions of entries rather than a thousand, and the only thing that changes is how large the rarity numbers get. This is a word count from 1994 with two constants in it. It has no idea what a seal is, it cannot be trained, and it is still the baseline that embarrasses people in 2026.
 
@@ -59,45 +59,42 @@ A real catalogue holds millions of entries rather than a thousand, and the only 
 
 Here is what the catalogue cannot do.
 
-A woman comes in and says the black ring round the washing machine door has gone hard and the water comes out at the bottom. Not one word of that is in the catalogue entry, which calls the thing a *door gasket, front-load, EPDM*. She said ring, the catalogue says gasket. She said black, the catalogue says EPDM. The lists come back empty, or worse, full of entries about doors.
+A woman comes in and says the black ring round the washing machine door has gone hard and the water comes out at the bottom. Not one word of that is in the catalogue entry, which calls the thing a *door gasket, front-load, EPDM*. She said ring, it says gasket. She said black, it says EPDM. The lists come back empty, or worse, full of entries about doors.
 
 This is the **vocabulary mismatch problem**. Two people describing the same object, pick different words for it. An index built on words has no way to know they meant the same drawer. So how do you look a thing up by what it does, when the customer cannot say what it is called? You can paper over it with a synonym list, and people did, for about thirty years. Somebody maintains that list by hand, and it is wrong in a new way every time a manufacturer renames something.
 
 ## The old hand
 
-So there is a second way to find the drawer, and it has been standing behind the counter the whole time.
-
 The man who has worked there thirty years does not look anything up. He hears "black ring, door, water on the floor" and walks to a drawer. He has heard ten thousand customers describe things badly, and he has learnt a map from the way people talk to the place things live.
 
-That is **dense retrieval**, and the map is an embedding. A neural network (the encoder) reads a piece of text and emits a single vector of a few hundred numbers. Train it so that a question and the passage answering it land close together, and you have a lookup that works on meaning instead of spelling. The version everybody cites is [Dense Passage Retrieval](https://arxiv.org/abs/2004.04906) (Karpukhin et al., 2020), which used two BERT encoders, one for questions and one for passages.
+That is **dense retrieval**, and the map is an embedding. A neural network (the encoder) reads a piece of text and emits a single vector of a few hundred numbers. Dense means every one of those numbers is doing work, as against the catalogue's **sparse** version: a slot for every word in the vocabulary, almost all of them zero. Train it so that a question and the passage answering it land close together, and you have a lookup that works on meaning instead of spelling. The version everybody cites is [Dense Passage Retrieval](https://arxiv.org/abs/2004.04906) (Karpukhin et al., 2020), which used two BERT encoders, one for questions and one for passages. Two separate towers like that are a **bi-encoder**.
 
 The training trick is cheap and worth knowing. You take a batch of question-passage pairs that belong together. Then you treat every other passage in the same batch as a wrong answer for your question. A batch of $B$ pairs hands you $B(B-1)$ negative examples for free, which is why these models are trained with the biggest batch the hardware allows. The loss is the same softmax over similarities that the [cross entropy post](/blog/cross-entropy-loss/) spent two thousand words on.
 
-One thing this buys you and one thing it costs. It buys you an index you can build years in advance, because the passage side never sees the question. It costs you the ability to compare against all forty thousand drawers, because a dot product against forty thousand vectors gets expensive fast when you are doing it on every keystroke. That second problem is the whole subject of the [HNSW post](/blog/hnsw-graph-based-vector-search/). You build a small-world graph over the vectors and walk it greedily. So you touch a few hundred of them instead of all forty thousand.
+One thing this buys you and one thing it costs. It buys you an index you can build years in advance, because the passage side never sees the question. It costs you the ability to compare against all forty thousand drawers, because that many dot products on every keystroke gets expensive fast. That second problem is the whole subject of the [HNSW post](/blog/hnsw-graph-based-vector-search/). You build a small-world graph over the vectors and walk it greedily. So you touch a few hundred of them instead of all forty thousand. That is an approximate nearest-neighbour search, approximate because the greedy walk can miss the true closest vector, and now and then it does.
 
 ## Send the old hand to a different trade
 
 DPR is very good at the thing it was trained on. On [Natural Questions](https://huggingface.co/datasets/google-research-datasets/natural_questions), a set of real Google queries with Wikipedia answers, it finds the right passage in its top 20 about 78.4% of the time against BM25's 59.1%, a gain of 19.3 points. On those queries, the word count is simply beaten.
 
-Then [BEIR](https://github.com/beir-cellar/beir) (Thakur et al., 2021) took eighteen retrieval datasets from different domains, and ran the same trained models against all of them without retraining. The results are in Figure 3 and they are not subtle.
+Then [BEIR](https://github.com/beir-cellar/beir) (Thakur et al., 2021) took eighteen retrieval datasets from different domains, and ran the same trained models against all of them without retraining. That is the **zero-shot** setting: no new examples, no fine-tuning, just the model walking into a trade it has never seen. Everything is scored with nDCG@10, a number between 0 and 1 for how much of the right material turned up in the top ten, counting the higher positions for more. The results are in Figure 3 and they are not subtle.
 
 ![Two bar charts: DPR ahead of BM25 on Natural Questions, and well behind it on TREC-COVID, Signal-1M and BioASQ](/images/blog47/beir-domain-shift.png) *Figure 3: the same model in two situations. On biomedical questions it scores 0.127 against BM25's 0.514, which is the sort of number you get from a system that has formed an opinion about words it has never seen. Source: Author*
 
-On [BioASQ](https://huggingface.co/datasets/BeIR/bioasq), a biomedical question set, BM25 scores 0.514 and DPR scores 0.127. On [TREC-COVID](https://huggingface.co/datasets/BeIR/trec-covid) it is 0.616 against 0.332. On Signal-1M, which is tweets, it is 0.388 against 0.155. Nineteen points ahead at home, four times behind on biomedical, with no change to the model at all.
+On [BioASQ](https://huggingface.co/datasets/BeIR/bioasq), a biomedical question set, BM25 scores 0.514 and DPR scores 0.127. On [TREC-COVID](https://huggingface.co/datasets/BeIR/trec-covid) it is 0.616 against 0.332. On Signal-1M, which is tweets, it is 0.388 against 0.155. Nineteen points ahead on the questions it trained for, four times behind on biomedical, with no change to the model at all. Those are two different metrics, so the halves are not strictly comparable. The same model is excellent at home and badly out of its depth away from it.
 
 The reason is the one you would guess from the shop. The old hand learnt his map from the customers who actually came in. Put him behind a counter in a trade he has never served, where the words are drug names and gene symbols he has never once heard at this counter. He will still walk confidently to a drawer. He just walks to the wrong one. The catalogue has no feel for anything, which is exactly why it does not care that the trade changed.
 
-And a part number is the pure case of this. "GSK-441" carries almost no meaning and all of its value is in being rare, so it is the easiest thing in the world for an inverted index and close to the hardest for an embedding.
 
 ## Ask both, and then argue about the answer
 
-So ask both, and merge the two lists. Why not just add the two scores together and sort? BM25 hands back scores like 14.2 and 9.8. They are unbounded sums, and they depend on how rare your words happen to be in this particular catalogue. The encoder hands back cosine similarities like 0.81 and 0.77, which live between $-1$ and $1$ and bunch up near the top. Adding 14.2 to 0.81 is adding rupees to rainfall. You can normalise each list first, by min-max or by z-score, and that works. But now the score of your third result depends on what else happened to be in the list that day.
+So ask both, and merge the two lists. Why not just add the two scores together and sort? BM25 hands back scores like 14.2 and 9.8. They are unbounded sums, and they depend on how rare your words happen to be in this particular catalogue. The encoder hands back cosine similarities like 0.81 and 0.77. Those live between $-1$ and $1$, and in practice they bunch near the top, because the encoder was trained to pull anything vaguely related together. Adding 14.2 to 0.81 is adding rupees to rainfall. You can normalise each list first, by min-max or by z-score, and that works. But now the score of your third result depends on what else happened to be in the list that day.
 
 The usual answer is to throw the scores away entirely. **Reciprocal rank fusion** looks only at the position of each document in each list. In words, a document's fused score is the sum, over the lists it appears in, of one divided by a constant plus its rank. Specifically,
 
 $$\text{RRF}(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$
 
-where $R$ is the set of ranked lists, $r(d)$ is the position of document $d$ in one of them, and $k$ is a constant that flattens the difference between the top few places. It comes from a two-page paper by [Cormack, Clarke and Büttcher](https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf) at SIGIR 2009, which beat Condorcet fusion and several learned ranking methods with one line of arithmetic.
+where $R$ is the set of ranked lists, $r(d)$ is the position of document $d$ in one of them, and $k$ flattens the difference between the top few places. It comes from a two-page paper by [Cormack, Clarke and Büttcher](https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf) at SIGIR 2009, which beat the fancier merging schemes of the day, Condorcet voting among them, with one line of arithmetic.
 
 The value of $k$ is 60. The authors fixed it during a pilot study, found it was near optimal, and never changed it. Every hybrid search stack you have ever queried runs on a constant somebody picked once, in 2009, before any of these embeddings existed.
 
@@ -111,13 +108,13 @@ Does it work? Elastic ran it on BEIR by fusing BM25 with their learned sparse en
 
 Everything so far has been the shortlist. The man still has to walk to the counter with four candidates and hold each one against the thing in your bag.
 
-That comparison is a **cross-encoder**. Instead of encoding the query and the entry separately, you glue them into one string and push them through a single model. So every word of the query can attend to every word of the entry. It is better, because attention beats a dot product. And it is unusable for search, because nothing can be precomputed. The entry is only ever read next to this one query, so a corpus of forty thousand needs forty thousand forward passes.
+That comparison is a **cross-encoder**. Instead of encoding the query and the entry separately, you glue them into one string and push them through a single model. So every word of the query can attend to every word of the entry. It is better, for the reason in that last sentence: every word looking at every other word beats one dot product between two summaries. And it is unusable for search, because nothing can be precomputed. The entry is only ever read next to this one query, so a corpus of forty thousand needs forty thousand forward passes.
 
 ![Three architecture panels: a bi-encoder with separate towers, a cross-encoder reading both at once, and ColBERT's per-word vectors with best-match arrows](/images/blog47/bi-cross-late.webp) *Figure 5: the same three boxes rearranged. The grey panels are what you can compute before the query arrives, and they are the entire reason the left-hand design is the one that touches your whole corpus. Source: Author*
 
-So you run it on fifty candidates rather than forty thousand, which is the retrieve-then-rerank pattern in Figure 1. On BEIR, BM25 followed by a cross-encoder reranker was the best configuration in the original paper, about 11% above BM25 on the average. It is also easily the slowest thing in the pipeline. Blog benchmarks for 100 candidates land around 45 ms for a small six-layer reranker and 130 ms for a large one. That is fine for a search box, and a problem if you are doing it inside a loop.
+So you run it on fifty candidates rather than forty thousand, which is the retrieve-then-rerank pattern in Figure 1. On BEIR, BM25 followed by a cross-encoder reranker was the best configuration in the original paper, about 11% above BM25 on the average. It is also easily the slowest thing in the pipeline. Blog benchmarks for 100 candidates land around 45 ms for a small six-layer reranker and 130 ms for a large one. That is fine for a search box, and a problem for an agent that retrieves a dozen times before it answers.
 
-There is a middle design. [ColBERT](https://arxiv.org/abs/2112.01488) keeps one vector per *word* of every entry instead of one per entry. At query time each query word takes its single best match, and the scores are added up. Most of the work is precomputed, and the query still sees the entry word by word. The cost arrives as storage: vanilla ColBERT needs about 154 GiB to index [MS MARCO](https://huggingface.co/datasets/microsoft/ms_marco), which is one corpus of web passages and most of somebody's laptop. ColBERTv2's compression takes that to 16 GiB at one bit per dimension. The other middle design is [SPLADE](https://arxiv.org/abs/2107.05720), which learns to write extra words into the catalogue entry. So the inverted index handles synonyms itself, and you keep the exact-match behaviour.
+There is a middle design. [ColBERT](https://arxiv.org/abs/2112.01488) keeps one vector per *word* of every entry instead of one per entry. At query time each query word takes its single best match, and the scores are added up. Most of the work is precomputed, and the query still sees the entry word by word. The cost arrives as storage: vanilla ColBERT needs about 154 GiB to index [MS MARCO](https://huggingface.co/datasets/microsoft/ms_marco), a corpus of roughly 8.8 million web passages. The text itself is a few gigabytes. So the index runs tens of times the size of the thing it indexes, and takes most of somebody's laptop. ColBERTv2's compression takes that to 16 GiB at one bit per dimension. The other middle design is [SPLADE](https://arxiv.org/abs/2107.05720), which learns to write extra words into the catalogue entry. So the inverted index handles synonyms itself, and you keep the exact-match behaviour.
 
 | Method | Matches on | Cost per query | Where it wins |
 |---|---|---|---|
@@ -131,8 +128,7 @@ There is a middle design. [ColBERT](https://arxiv.org/abs/2112.01488) keeps one 
 
 - Every retrieval-augmented generation (RAG) stack, which is now the main consumer of all of this. The ranked list goes into a model's context window rather than onto a results page.
 - Elasticsearch and OpenSearch ship RRF as a built-in query type. Vespa, Weaviate and pgvector all expose some flavour of hybrid.
-- Code search, which is almost entirely the part-number case (nobody greps for the general vibe of a function).
-- Enterprise and legal search, where the corpus looks nothing like the open web the embedding models were trained on, so BM25 keeps its job.
+- Code search, almost entirely the part-number case (nobody greps for the general vibe of a function), and enterprise and legal search, where the corpus looks nothing like the open web the embedding models trained on.
 
 ## Where things are going
 
@@ -140,21 +136,21 @@ Embedding models have got much better at the zero-shot problem since DPR, mostly
 
 Learned sparse retrieval is the quieter trend and I think the more interesting one. If the index can expand "ring" into "gasket" at write time, you get the synonym behaviour inside the data structure that was already fast and auditable. A 2026 Naver Labs paper notes that SPLADE itself has struggled to stay competitive on large multilingual benchmarks, which is a real dent in that story.
 
-And rerankers are quietly becoming the whole game, because a language model is a cross-encoder that somebody already paid for.
+And rerankers are quietly becoming the whole game. Hand a language model the query and ten candidates and ask it to order them, and you get the cross-encoder's every-word-against-every-word comparison from a model somebody else already paid to train. It is far slower than the 130 ms reranker. But if the model was going to read those passages anyway, you were buying that pass regardless.
 
 ## The drawer marked miscellaneous
 
 Every shop has one, and here is what is in mine.
 
-The benchmark numbers here are softer than they look. Reproductions of BEIR disagree with the original paper, with BM25 on TREC-COVID at 0.616 in one place and 0.656 in another. And different papers average over different subsets of the eighteen datasets. So a method "2.5% above BM25 on average" may be above or below it depending on whether you counted CQADupStack. I would not read a two-point difference between two retrievers as meaning anything at all.
+The benchmark numbers here are softer than they look. Reproductions of BEIR disagree with the original paper, with BM25 on TREC-COVID at 0.616 in one place and 0.656 in another. And different papers average over different subsets of the eighteen datasets. So a method "2.5% above BM25 on average" may be above or below it depending on which of the eighteen you counted. I would not read a two-point difference between two retrievers as meaning anything.
 
-Hybrid is also not free and not automatically better. One published comparison had an untuned hybrid at MRR 0.390 against a dense-only baseline of 0.410. It only got past the baseline after the fusion weight was tuned, which took it to 0.486. That is a vendor-adjacent benchmark over 100 questions, so treat it as a direction rather than a measurement. The structural point holds though. You run two queries instead of one, which Elastic notes costs latency because they go in sequence. And you keep two indexes in sync over the same documents.
+Hybrid is also not free and not automatically better. One published comparison had an untuned hybrid scoring below its own dense-only baseline, 0.390 against 0.410 on mean reciprocal rank, which grades a list by how far down the first right answer sits. It only got past the baseline once a weighted score combination was tuned, which took it to 0.486. Note that this is weighted fusion, not RRF, which has no weight to tune. And that is rather the point. The moment you want to favour one retriever, you are back in the business of normalising scores. It is also a vendor-adjacent benchmark over 100 questions, so treat it as a direction rather than a measurement. The structural point holds though. You run two queries instead of one, which Elastic notes costs latency because they go in sequence. And you keep two indexes in sync over the same documents.
 
 RRF throws information away on purpose, and nobody talks about what that costs. A document BM25 scored 40 and one it scored 4.1, are identical to the referee if they both came third. When one retriever is confident and the other is guessing, RRF cannot tell, because confidence is exactly the thing it deleted. And $k = 60$ was tuned in 2009 on TREC runs, against systems that were all lexical.
 
-The last one bothers me most. Almost nobody retrieves for a human reader any more. nDCG@10 is built on a model of a person reading down a list and losing interest, so it discounts position 9 heavily. But the consumer is now a language model that reads all ten, and a wrong-but-plausible passage at position 7 can do more damage to the final answer than an empty result would. We are tuning a hundred-point ranking metric for a reader who no longer exists.
+The last one bothers me most. Almost nobody retrieves for a human reader any more. nDCG@10 is built on a model of a person reading down a list and losing interest, so it discounts position 9 heavily. But the consumer is now a language model that reads all ten, and a wrong-but-plausible passage at position 7 can do more damage to the final answer than an empty result would. We are tuning a ranking metric for a reader who no longer exists.
 
-On sourcing, the usual caveat on this blog, and a real one here. arXiv and Wikimedia were both blocked from the machine I wrote this on. So every number above comes from published tables as they appear in search results and write-ups, rather than from the PDFs. The ones I would most like checked are the BioASQ pair, the 154 GiB ColBERT index, and BM25's 59.1 on Natural Questions. I got that last one by subtracting DPR's reported 19.3-point gain from 78.4.
+On sourcing, the usual caveat on this blog, and a real one here. arXiv and Wikimedia were both blocked from the machine I wrote this on. So every number above comes from published tables as they appear in search results and write-ups, rather than from the PDFs. The ones I would most like checked are the BioASQ pair, the 154 GiB ColBERT index, and BM25's 59.1 on Natural Questions. The Naver Labs claim about SPLADE is the one assertion here I could not find a link for at all. I got that last one by subtracting DPR's reported 19.3-point gain from 78.4.
 
 ## Conclusion
 

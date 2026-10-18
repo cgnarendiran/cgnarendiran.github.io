@@ -34,9 +34,9 @@ from `origin/master`, open a PR, self-check it and merge it; none pushes to `mas
   following `.claude/routine-prompts/blog-post.md` (a copy of the blog job's prompt, so keep the
   two in step), dated today at noon so it lists above part 1.
 - **LinkedIn companion job**, Sun + Wed 17:15 UTC with a retry at 18:15, about half an hour after the post is live. Reads `.claude/linkedin-ledger.md` and
-  `.claude/linkedin-style-guide.md`, writes a companion post for the oldest eligible blog post
+  `.claude/linkedin-style-guide.md`, writes a companion post for the newest eligible blog post
   not yet in the ledger or the outbox, and commits it to `.claude/linkedin-outbox/<slug>.md`
-  with a `publish_after` time thirty minutes out. The post is written for readers with no ML background, one idea,
+  with a `publish_after` time thirty minutes out (or a day after any post already queued). The post is written for readers with no ML background, one idea,
   standalone (LinkedIn guide §0), and must pass `prose_lint.py --linkedin` (which fails on jargon)
   and a cold-reader test by a fresh subagent (§13) before it is queued. A post that still fails
   after four rounds gets a `held` ledger row instead, so the next run moves on to the next post.

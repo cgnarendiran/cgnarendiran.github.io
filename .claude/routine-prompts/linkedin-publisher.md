@@ -31,7 +31,7 @@ Exit 5: nothing is due. End with a one-line report. Exit 2: an outbox file is ma
 For each due file, in turn:
 
 1. `python3 .claude/scripts/prose_lint.py --linkedin <file>` must exit 0. It fails on three or more ML jargon terms, colon labels, negation triplets and fragment runs.
-2. The cold-reader test. Launch a FRESH subagent with the Agent tool for each file. Give it ONLY the post body (no front matter, no hashtag or mention lines, no title, no blog) and the brief in LinkedIn guide §13.2, verbatim. The file passes only if the subagent's one-sentence summary is a fair summary of the post, it lists no word it did not understand, it lists nothing that refers to something it was not told, and it says yes to stopping at the first line. If no subagent tool exists, answer the five questions yourself in writing as that reader.
+2. The cold-reader test. Launch a FRESH subagent with the Agent tool for each file. Give it ONLY the post body (no front matter, no hashtag or mention lines, no title, no blog) and the brief in LinkedIn guide §13.2, verbatim. The file passes if the subagent's one-sentence summary is a fair summary of the post, it says yes to stopping at the first line, and nothing it lists under (2) or (3) blocks the post's idea. An item blocks the idea only if a reader who skipped it or guessed wrong would miss the idea (guide §13.2); names, places and words the next sentence explains do not, and the lists do not have to be empty. If no subagent tool exists, answer the five questions yourself in writing as that reader.
 
 A file that passes both is cleared. A file that fails either is HELD: do not publish it, do not edit it, do not delete it. It stays in the outbox, still due, and every later run checks it again until Naren fixes or deletes it.
 

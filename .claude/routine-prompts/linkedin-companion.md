@@ -4,9 +4,9 @@ Routine `trig_01QB94MCpCYwCoebXsH2Ttxo`. Paste everything below the line.
 
 ---
 
-LinkedIn companion job for Naren (cgnarendiran). Write one LinkedIn post that promotes the oldest eligible entry on https://cgnarendiran.github.io that is not yet on LinkedIn, and commit it to the repo's outbox through a PR that you MERGE YOURSELF. A separate publisher job posts it to LinkedIn later; you never post anything. Work autonomously; nobody is watching and nobody will review this before it runs. Do not ask clarifying questions and do not wait for approval.
+LinkedIn companion job for Naren (cgnarendiran). Write one LinkedIn post that promotes the newest eligible entry on https://cgnarendiran.github.io that is not yet on LinkedIn, and commit it to the repo's outbox through a PR that you MERGE YOURSELF. A separate publisher job posts it to LinkedIn later; you never post anything. Work autonomously; nobody is watching and nobody will review this before it runs. Do not ask clarifying questions and do not wait for approval.
 
-This job fires twice on blog days, 17:15 and 18:15 UTC, an hour and two hours after the blog job starts. The second fire is a retry: if the first already queued the post, the second finds the outbox file and ends.
+This job fires twice on blog days, 17:15 and 18:15 UTC, an hour and two hours after the blog job starts. The second fire is a retry, not a second post: if you are running between 18:00 and 19:00 UTC and `git log origin/master --since="$(date -u +%Y-%m-%d)T00:00:00Z" --format=%s` shows a `linkedin: queue companion post for` or `linkedin: hold ` commit from today, the 17:15 fire already did its job, so end the run in one line. At any other time (a manual run, or a retry after a 17:15 fire that queued nothing), carry on.
 
 You have a checkout of https://github.com/cgnarendiran/cgnarendiran.github.io and GitHub access through the environment's connection. Do NOT expect any token in this prompt.
 
@@ -46,9 +46,9 @@ If the LinkedIn guide has no "## 0." section, or the guide, the ledger, or the p
 
 `git fetch origin && git checkout -B work origin/master`, so you are reading what is actually published.
 
-Parse the ledger's settings block: `eligible_from`, `publish_delay_minutes`, `publish_tz`. Then walk `_posts/YYYY-MM-DD-<slug>.md` oldest first and take the first file where (a) the front-matter `date` is on or after `eligible_from`, (b) `<slug>` appears in NEITHER ledger table (a `skipped` or `held` row counts), and (c) `.claude/linkedin-outbox/<slug>.md` does not exist. Exact slug match. Ignore `_posts/temp.md` and any file without a date-prefixed filename.
+Parse the ledger's settings block: `eligible_from`, `publish_delay_minutes`, `publish_tz`. Then walk `_posts/YYYY-MM-DD-<slug>.md` NEWEST first (front-matter `date` descending, then filename descending) and take the first file where (a) the front-matter `date` is on or after `eligible_from`, (b) `<slug>` appears in NEITHER ledger table (a `skipped` or `held` row counts), and (c) `.claude/linkedin-outbox/<slug>.md` does not exist. Exact slug match. Ignore `_posts/temp.md` and any file without a date-prefixed filename.
 
-If nothing qualifies: create nothing, open no PR, say so in one line, and end the run. One post per run, never more.
+Newest first, so a new post reaches LinkedIn on its blog day; an older unposted one is picked only when every newer one is posted, skipped, held or queued. If nothing qualifies: create nothing, open no PR, say so in one line, and end the run. One post per run, never more.
 
 ## 3. Confirm it is deployed (through GitHub, not the site)
 
@@ -75,7 +75,7 @@ The §8 truth rules are absolute. Every claim comes from the blog post or the pa
 
 1. Humanizer. Invoke the `humanizer` skill with the Skill tool on the draft. Use it SUBTRACTIVELY. The guides win every conflict: keep the everyday picture, the question, the first-person sentences, the one dry aside. Do not let it add hedging, a question to the audience as the last line, or rewrite the tail. If the skill cannot be found, run LinkedIn guide §9 and blog guide §13 by hand and say in the report that the skill did not run.
 
-2. Cold-reader test. Launch a FRESH subagent with the Agent tool. Give it ONLY the post body (no title, no hashtags, no blog, no context about you or the blog) and the brief in LinkedIn guide §13.2, verbatim. The post passes only if its one-sentence summary matches your one idea, it lists no word it did not understand, it lists nothing that refers to something it was not told, and it says yes to stopping at the first line. If it fails, rewrite and run the test again with a NEW subagent (never reuse one that has seen an earlier draft). Up to four rounds. If no subagent tool exists, answer the five questions yourself in writing as that reader. If it still fails after four rounds, do not queue anything. Skip steps 6 and 7 and go to step 8b, which records the post as held so the next run moves on to the next post instead of retrying this one forever.
+2. Cold-reader test. Launch a FRESH subagent with the Agent tool. Give it ONLY the post body (no title, no hashtags, no blog, no context about you or the blog) and the brief in LinkedIn guide §13.2, verbatim. The post passes if its one-sentence summary matches your one idea, it says yes to stopping at the first line, and nothing it lists under (2) or (3) blocks that idea. An item blocks the idea only if a reader who skipped it or guessed wrong would miss the idea (guide §13.2); names, places and words the next sentence explains do not. Fix incidental items when a word or two will, but do not spend a round on them, and do not hold a post because its lists are not empty. If it fails, rewrite and run the test again with a NEW subagent (never reuse one that has seen an earlier draft). Up to four rounds. If no subagent tool exists, answer the five questions yourself in writing as that reader. If it still fails after four rounds, do not queue anything. Skip steps 6 and 7 and go to step 8b, which records the post as held so the next run moves on to the next post instead of retrying this one forever.
 
 3. The §12 checklist against the final text. Count words mechanically with `wc -w` on the body without the URL, hashtag and mention lines.
 
@@ -83,7 +83,7 @@ Keep drafts in the scratchpad directory, not in the repo.
 
 ## 6. Compute publish_after
 
-Naren wants no review window. `publish_after` is the current time plus `publish_delay_minutes` from the ledger settings (use 30 if the key is missing), as an ISO-8601 timestamp WITH the `publish_tz` offset. Get it from the system: `TZ=America/Los_Angeles date -d '+30 minutes' +%Y-%m-%dT%H:%M:%S%:z`.
+Naren wants no review window. `publish_after` is the current time plus `publish_delay_minutes` from the ledger settings (use 30 if the key is missing), as an ISO-8601 timestamp WITH the `publish_tz` offset. Get it from the system: `TZ=America/Los_Angeles date -d '+30 minutes' +%Y-%m-%dT%H:%M:%S%:z`. Two posts must never go out on the same evening, so if `.claude/linkedin-outbox/` already holds a file, use instead whichever is later: that time, or 24 hours after the latest `publish_after` in the outbox (compute it with `python3` and `datetime.fromisoformat`).
 
 ## 7. Write the outbox file (Bash only)
 
@@ -108,7 +108,7 @@ Self-check before merging, mechanically: the PR diff adds exactly ONE new file, 
 
 ### 8b. The post failed the cold-reader test four rounds running
 
-Without this, the next run picks the same oldest post, fails it again, and every newer post waits behind it. MCTS part 1 blocked the queue this way for ten runs, from 27 September to 14 October 2026.
+Without this, the next run picks the same post, fails it again, and every other post waits behind it. MCTS part 1 blocked the queue this way for ten runs, from 27 September to 14 October 2026.
 
 Branch `linkedin/hold-<slug>` off `origin/master`. The "Posted by the job" table is the last thing in `.claude/linkedin-ledger.md`. Append one row to it with Bash, never Edit or Write: make sure the file ends with a newline, then `printf '%s\n' '<row>' >> .claude/linkedin-ledger.md`, where the row is
 

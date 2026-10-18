@@ -63,8 +63,10 @@ Outbox files wait until the token is refreshed; nothing is lost.
 ## Timing
 
 - The companion job fires at 17:15 UTC on blog days (retry 18:15), about half an hour after the
-  post is live, and commits `.claude/linkedin-outbox/<slug>.md` with `publish_after` set to its
-  run time plus `publish_delay_minutes` (30).
+  post is live. It takes the newest post not yet on LinkedIn and commits
+  `.claude/linkedin-outbox/<slug>.md` with `publish_after` set to its run time plus
+  `publish_delay_minutes` (30), or 24 hours after any post already in the outbox, so two posts
+  never land on the same evening. The 18:15 fire only runs if the 17:15 one queued nothing.
 - The publisher fires Monday to Friday at 03:30 and 04:30 UTC (cron `30 3,4 * * 1-5` since
   2026-09-13) and posts every file whose time has passed, so a Sunday or Wednesday post lands
   that evening, Pacific time. There is no day-long review window, by Naren's choice; the window

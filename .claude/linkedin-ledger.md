@@ -76,3 +76,4 @@ The publisher appends rows here; keep this table last in the file.
 | voice-models-holding-a-conversation | 2026-10-11 | - | - | 2026-10-14 | skipped: Naren doesn't want a second LinkedIn post on voice models |
 | llm-benchmarks-terminal-bench | 2026-09-30 | - | - | 2026-10-18 | held: failed the cold-reader test four rounds; the last draft is in the PR that added this row |
 | tokenizers-bpe | 2026-10-04 | urn:li:share:7517793146554970112 | 2026-10-19T03:45Z | 2026-10-19 | manual via LinkedIn API |
+| retrieval-bm25-to-hybrid | 2026-10-18 | urn:li:share:7518154493738258433 | 2026-10-20T03:41Z | 2026-10-20 | blog-companion via LinkedIn API |

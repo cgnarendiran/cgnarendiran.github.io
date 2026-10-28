@@ -7,7 +7,7 @@ description: "A model holds about two bits of fact per parameter, and anything i
 tags: [llms, information-theory, synthetic-data, transformers, nlp]
 ---
 
-*On the cover: a placeholder, drawn rather than found. Wikimedia Commons was blocked from the machine that wrote this post, so the photograph this wants, a family round a cassette player mid-argument about who sang what, has not been fetched yet. Source: Author.*
+*On the cover: a placeholder, drawn rather than found. Wikimedia Commons was unreachable from the machine that built this post, so the photograph this wants, a family round a cassette player arguing about who sang what, has not been fetched. Source: Author.*
 
 There is one at every wedding. The uncle who knows every film song ever recorded: the year, the singer, which actress it was shot on, and whether the version you are humming is the film one or the cassette one.
 
@@ -35,11 +35,11 @@ That is the finding in [Physics of Language Models: Part 3.1, Knowledge Storage 
 
 So the problem is not the question format, because the format is clearly learnt. The facts are in there too, since it can recite them on demand. They are sitting in a shape that a question cannot reach.
 
-I want you to sit with how strange that is for a second. The model will produce the string "Anya Briar Forger was born on October 2nd, 1996" if you give it the run-up, and it cannot answer "when was Anya Briar Forger born". Nothing about the information changed between those two requests. Only the order in which it was asked for.
+I want you to sit with how strange that is. The model will produce the string "Anya Briar Forger was born on October 2nd, 1996" if you give it the run-up, and it cannot answer "when was Anya Briar Forger born". Nothing about the information changed between those two requests. Only the order in which it was asked for.
 
 ## Where the fact actually sits
 
-To find out where it went, the authors use a **linear probe**. You take the model's internal vector at one chosen token, fit a plain linear classifier on top of that vector alone, and see whether an attribute can be read straight off it. If a simple classifier can get the birth city out of the vector, then the birth city is sitting right there in a usable form. If it cannot, the information is either absent or smeared into a shape that only the rest of the network can undo.
+To find out where it went, the authors use a **linear probe**. You take the model's internal vector at one chosen token, fit a plain linear classifier on top of that vector alone, and see whether an attribute can be read straight off it. If a simple classifier can get the birth city out of that vector, the birth city is sitting right there in a usable form. If it cannot, the information is either absent or smeared into a shape only the rest of the network can undo.
 
 The answer is clean, and it is the most useful thing in these three papers. In the model that can answer questions, a person's attributes are linearly readable from the hidden vector sitting on **the tokens of their name**. In the model that cannot, the same information is spread thinly across every token of the biography: a little on "works", a little on "in", a little on the full stop at the end.
 
@@ -56,7 +56,7 @@ So the fix for a model is to do deliberately what the radio did by accident. Fou
 3. Use the person's full name in every sentence instead of "he" or "she".
 4. Mix question-answer pairs for *some* of the people into pretraining, rather than saving all of them for a fine-tuning stage later.
 
-And here is the ablation, which is the part I would put on the first slide. Everything is held fixed: the same facts, the same architecture, and the same amount of training. One run sees each person's biography in a single fixed wording. The other sees it in several. The first memorises every word and answers nothing, the second answers. Both runs read the same number of tokens. The only difference was how many wordings the facts arrived in.
+And here is the ablation, which is the part I would put on the first slide. Everything is held fixed: the same facts, the same architecture, and the same amount of training. One run sees each person's biography in a single fixed wording. The other sees it in several. The first memorises every word and answers nothing, the second answers. The only difference was how many wordings the facts arrived in.
 
 These things are magpies. Give a model one copy of a sentence and it will learn the sentence, the comma and the typo, and almost nothing about the world the sentence was describing.
 
@@ -69,7 +69,7 @@ Say you have fixed extraction, so the uncle can now answer questions about a son
 3. **Comparison.** "Which came first, this one or that one?" Also shaky.
 4. **Inverse search.** "Which song has the line about the broken bangles?" Or the game itself: somebody ends on *ma*, and you have to produce a song starting with *ma*. This is the flat one.
 
-The shakiness in jobs two and three has a cause worth knowing. They work when the model writes out the intermediate fact before committing to an answer, which is a chain of thought. But asking for the reasoning in the prompt is not enough. The reasoning has to have been in the training data as well, in the same shape. A model pretrained on bare statements and then asked nicely to think step by step does not recover much. The uncle gets the comparison right only if he is the kind of person who mutters it out loud first. That one was during my college years, so about '94. The other came after my sister's wedding, so '98.
+The shakiness in jobs two and three has a cause worth knowing. They work when the model writes out the intermediate fact before committing to an answer, which is a chain of thought. But asking for the reasoning in the prompt is not enough. The reasoning has to have been in the training data as well, in the same shape. The uncle gets the comparison right only if he is the kind of person who mutters it out loud first. That one was during my college years, so about '94. The other came after my sister's wedding, so '98.
 
 Inverse search is the one that does not bend. Accuracy stays near zero whatever you do to the prompt, and the revised version of the paper reproduced it on Llama and Mistral shapes too. If the training data only ever says "Anya Briar Forger works in Princeton", then "who works in Princeton" is a question about a direction the model has never once been pushed in.
 
@@ -120,13 +120,13 @@ The ceiling comes with conditions, and the conditions are the interesting part.
 | Weights to int4 | about 0.7 bits per parameter | roughly two thirds of the facts gone |
 | Source name prepended to the text | higher | the model works out which domains to trust |
 
-The int4 row is the one to take to work on Monday. We talked about [quantization](/blog/quantization-edge-inference/) as a story about outliers and activation ranges, with perplexity holding up while the numbers got smaller. This is a different lens on the same cliff. At four bits the weights can still do the language, and part of what they can no longer do is remember. So if you shrink a model and it goes vague about dates and names before it goes wrong about grammar, that is this result arriving in production.
+The int4 row is the one to take to work on Monday. We talked about [quantization](/blog/quantization-edge-inference/) as a story about outliers and activation ranges, with perplexity holding up while the numbers got smaller. This is a different lens on the same cliff. At four bits the weights can still do the language, and part of what they can no longer do is remember. So a shrunk model goes vague about dates and names before it goes wrong about grammar.
 
 The last row is the junk-data story, and the uncle explains it best. His head also holds every detergent jingle from 1994, which is a fact I am sorry to report. Those cost him the same storage the songs do. What saves him is that he knows which is which, because a jingle arrives labelled by thirty seconds of television either side of it. The paper's version is to prepend the source, something like `wikipedia.org`, to each piece of training text. Capacity goes up, and the model sorts out for itself which domains are worth the room.
 
 I should flag one gap. The paper also measures what low-quality data costs you. But I have seen that result summarised three different ways with three different multipliers, so I am quoting the fix rather than a number I cannot stand behind.
 
-Run the 2 bits out to a model you have actually used and it gets strange. A 7B model is 14 billion bits, or 1.75 gigabytes of fact. The authors reckon that beats English Wikipedia and the textbooks put together, which I think is generous. Even at face value, the photo folder on your phone is bigger than everything a 7B model knows about the world.
+Run the 2 bits out to a model you have actually used. A 7B model is 14 billion bits, or 1.75 gigabytes of fact. The authors reckon that beats English Wikipedia and the textbooks put together, which I think is generous. Even at face value, the photo folder on your phone is bigger than everything a 7B model knows about the world.
 
 ## Where this shows up
 
@@ -138,19 +138,19 @@ Run the 2 bits out to a model you have actually used and it gets strange. A 7B m
 
 - **Capacity measured per domain rather than per model.** Nobody ships a model to hold a hundred thousand fake biographies. The useful version of this number is how many bits of medicine, or Tamil, or tax law a given size can hold, and that is a harder experiment than the one that has been run.
 - **Quantization-aware training, if you care about facts.** The authors suggest it directly. If you want a good int4 model, the four bits have to be there during training rather than applied afterwards.
-- **A fight over the unit.** Counting knowledge as (person, attribute, value) triples is what makes the measurement possible at all. Whether that is what a model mostly holds is the open question, and the answer decides whether 2 bits is a law or an artefact.
+- **Editing a fact instead of retraining for one.** If an attribute really does sit on the name tokens, you can go in and change it there, which is what the model-editing line of work has been trying since 2022. Whether an edit sticks, or only paints over one phrasing of the question, is the thing to watch.
 
 ## The wind tunnel is not the weather
 
 Everything above was measured on invented people, by models between millions and hundreds of millions of parameters. The line is clean inside that box. Extending it to a 70B model trained on the open internet is an extrapolation, and the paper is honest that it is one.
 
-The 2 bits also assumes conditions no real corpus has ever met: facts that are clean, deduplicated, roughly uniform, and seen a thousand times each. The web is the opposite of that. It is a long tail where most things appear once, badly, in a forum post from 2011. So 2 bits a parameter is a ceiling reached in a laboratory, and not a budget you can book against.
+The 2 bits also assumes conditions no real corpus has ever met: facts that are clean, deduplicated, roughly uniform, and seen a thousand times each. The web is a long tail where most things appear once, badly, in a forum post from 2011. So 2 bits a parameter is a ceiling reached in a laboratory, and not a budget you can book against.
 
-Then there is the definition. Bits of knowledge are counted against a distribution the authors designed themselves, so the constant is partly a property of their own encoding choices. Choose differently and the same models would give you a different constant. What survives that is the shape of the finding, which is that capacity tracks parameter count linearly and architecture hardly matters. The number 2 stands on shakier ground than the straight line does.
+Then there is the definition. Bits of knowledge are counted against a distribution the authors designed themselves, so the constant is partly a property of their own encoding choices. What survives that is the shape of the finding, which is that capacity tracks parameter count linearly and architecture hardly matters. The number 2 stands on shakier ground than the straight line does.
 
 And the triple is a narrow idea of knowing. Most of what a model does for you is not a (person, attribute, value) lookup. Summarising a long email thread and writing a polite refusal both need almost no facts and a great deal of something else, and they run on the same parameters this law is counting. The capacity result says nothing about how much of that fits, or whether it is competing for the same room.
 
-The inverse-search result needs a boundary drawn around it too. It is a claim about knowledge picked up in pretraining. It is not a claim that models cannot answer backwards questions at all, because with the text in front of them they can, which is the entire premise of the retrieval stack.
+The inverse-search result needs a boundary drawn around it too. It is a claim about knowledge picked up in pretraining, not a claim that models cannot answer backwards questions at all. With the text in front of them they can, which is the entire premise of the retrieval stack.
 
 ## Conclusion
 

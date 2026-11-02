@@ -79,3 +79,4 @@ The publisher appends rows here; keep this table last in the file.
 | retrieval-bm25-to-hybrid | 2026-10-18 | urn:li:share:7518154493738258433 | 2026-10-20T03:41Z | 2026-10-20 | blog-companion via LinkedIn API |
 | gaussian-splatting | 2026-10-14 | urn:li:share:7518879805300203521 | 2026-10-22T03:43Z | 2026-10-22 | blog-companion via LinkedIn API |
 | voice-models-sound-to-tokens | 2026-10-11 | urn:li:share:7521416060827394048 | 2026-10-29T03:42Z | 2026-10-29 | blog-companion via LinkedIn API |
+| test-time-compute | 2026-10-07 | urn:li:share:7522865608804315136 | 2026-11-02T03:42Z | 2026-11-02 | blog-companion via LinkedIn API |

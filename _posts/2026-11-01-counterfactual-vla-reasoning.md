@@ -2,12 +2,12 @@
 layout: post
 title:  "VLA Reasoning - Your Witness"
 date:   2026-11-01
-image:  images/blog50/cover.png
+image:  images/blog50/cover.jpg
 description: "A driving model explains itself beautifully. Change one thing in the scene and the explanation does not move, but the steering does."
 tags: [vision-language-action, autonomous-vehicles, ai-safety, multimodal, robotics]
 ---
 
-*On the cover: the same junction twice, once with a pedestrian and once without, and the same sentence underneath both. Source: Author.*
+*On the cover: Richard Pigott under cross-examination at the Parnell Commission, 1889. His account of the letters was fluent, until he was asked to write the word "hesitancy" and spelled it the way the forger had. [Public domain](https://commons.wikimedia.org/wiki/File:Thomas_Walter_Wilson_-_Sitting_in_the_Parnell%27s_Commission%CB%90_Pigott_under_cross-examination,_1889.jpg), via Wikimedia Commons.*
 
 In [the VLA post](/blog/vla-pixels-to-tokens/) back in January we gave the language model hands, and then we put it in a car. The last thing that post said about driving was about structured causal reasoning, the kind where the model writes down why it is braking before it brakes. That was the field's bet on getting the benefit of grounding without burning the latency budget.
 

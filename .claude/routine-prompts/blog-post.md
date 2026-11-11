@@ -85,7 +85,7 @@ If the style guide or the queue is missing, STOP, open nothing, and report it.
 
 # 2. Pick the topic AND its date
 
-Walk the Queue table top to bottom. Take the first row whose `Post file` slug does not already appear in `_posts/`. If every queued slug exists, write nothing, open no PR, say so, and end the run. Never invent a topic.
+Walk the Queue table top to bottom. Take the first row whose `Post file` slug does not already appear in `_posts/` AND has no open pull request from the branch `post/<slug>`. Check that before you research anything: `gh pr list --repo cgnarendiran/cgnarendiran.github.io --state open --head post/<slug>`, or the GitHub MCP `list_pull_requests` with `head` set to `cgnarendiran:post/<slug>`. A row with an open PR is waiting on Naren, not on you, so skip it. From 21 October to 8 November 2026 the job kept re-picking the row behind an open PR (#92), wrote whole drafts, and threw them away. If every queued row is either published or has an open PR, write nothing, open no PR, say so, and end the run. Never invent a topic.
 
 **Date:** if that row has a value in the `Date` column, use it for BOTH the front-matter `date:` and the `_posts/YYYY-MM-DD-<slug>.md` filename. If the column is empty, use the day you are running. The dates exist to backfill a gap in the archive and are deliberate - do not "correct" a queue date to today, and do not invent one for a row that has none. A backdated post must not cite anything published after its date; mention later work undated in "where things are going" or leave it out.
 

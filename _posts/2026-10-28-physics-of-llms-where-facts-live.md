@@ -2,12 +2,12 @@
 layout: post
 title:  "Where a Fact Lives - Two Bits a Parameter"
 date:   2026-10-28
-image:  images/blog49/cover.png
+image:  images/blog49/cover.jpg
 description: "A model holds about two bits of fact per parameter, and anything it read only once gets memorised in a shape no question can reach."
 tags: [llms, information-theory, synthetic-data, transformers, nlp]
 ---
 
-*On the cover: a placeholder, drawn rather than found. Wikimedia Commons was unreachable from the machine that built this post, so the photograph this wants, a family round a cassette player arguing about who sang what, is missing. Source: Author.*
+*On the cover: the sleeve of a mix tape from the early nineties, every song written down with its singer next to it. The uncle kept the songs and lost the sleeve. Photo by [antony_mayfield](https://commons.wikimedia.org/wiki/File:Mix_tape_sleeve_notes.jpg), CC BY 2.0.*
 
 There is one at every wedding. The uncle who knows every film song ever recorded: the year, the singer, and whether the version you are humming is the film one or the cassette one.
 

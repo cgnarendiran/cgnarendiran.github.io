@@ -7,7 +7,7 @@ description: "A page costs a model about ten times fewer tokens as a picture of 
 tags: [document-understanding, multimodal, deepseek, efficient-inference, vision-language-models]
 ---
 
-*On the cover: a microfiche, seven rows of fourteen frames, ninety-eight newspaper pages photographed onto one card at twenty-four to one. Drawn rather than found, because Wikimedia Commons is blocked from the machine I write these on. Source: Author.*
+*On the cover: a real microfiche, a research cruise's data tables photographed at twenty-four to one, fourteen pages to a row. Hold it up to the window and you get grey smudges; put it under a lamp and a lens and every page is still there. Photo by [Hannes Grobe](https://commons.wikimedia.org/wiki/File:Mikrofiche-hudson_hg.jpg), CC BY 3.0.*
 
 Somebody hands you a sheet of film the size of a postcard. On it, in seven rows of fourteen, sit ninety-eight pages of a newspaper, each photographed and shrunk to about four millimetres across. A whole Tuesday is in your hand and it weighs nothing.
 

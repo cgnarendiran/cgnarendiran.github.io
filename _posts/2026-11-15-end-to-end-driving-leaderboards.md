@@ -9,7 +9,7 @@ tags: [autonomous-vehicles, imitation-learning, vision-language-action, simulati
 
 *On the cover: the floor of a driving-school car, with one extra brake pedal on the passenger side. Placeholder drawn by the author, because Wikimedia Commons could not be reached from the machine this was written on. Source: Author*
 
-In 2023 a driving model called UniAD won the best paper award at CVPR, the biggest computer vision conference of the year. It reads six cameras, finds the cars and lanes, predicts where everybody is going, and plans its own path, all in one network. That same year, a team at Baidu beat it on the same benchmark with a small MLP that never looks at a single camera frame. On that benchmark's table, it is more than three times closer to the human driver than UniAD was.
+In 2023 a driving model called UniAD won the best paper award at CVPR, the biggest computer vision conference of the year. It reads six cameras, finds the cars and lanes, predicts where everybody is going, and plans its own path, all in one network. That same year, a team at Baidu beat it on the same benchmark with a small MLP (a plain stack of fully connected layers) that never looks at a single camera frame. Its planned paths landed more than three times closer to what the human driver actually did.
 
 The [VLA post](/blog/vla-pixels-to-tokens/) said in one line that driving had moved to "closed-loop benchmarks" because the old metric "turned out to be gameable". This post is that line, written out properly.
 
@@ -17,11 +17,11 @@ Welcome to the era of **end-to-end driving**. This is the story of how you grade
 
 ## Photon in, control out
 
-A self-driving car used to be a pipeline of separate programs: find the objects, predict where they move, plan a path, turn the path into steering. **End-to-end** means you replace the pipeline with one network trained on one goal: camera pixels go in, and the car's future path comes out.
+A self-driving car used to be a pipeline of separate programs: find the objects, predict where they move, plan a path, steer. **End-to-end** means you replace the pipeline with one network trained on one goal: camera pixels go in, and the car's future path comes out.
 
 The car itself is the **ego** vehicle, so "ego status" means the car's own speed, acceleration, heading and recent path. I want you to remember that word, because it does a lot of damage later.
 
-Now think about a motor driving school in any Indian town. It has a white Maruti Alto with a big red **L** board on the roof, and an instructor in the passenger seat who has taught four thousand people to drive. The car has one modification. There is a second brake pedal on his side of the floor (the intervention), and his right foot never moves far from it.
+Now think about a motor driving school in any Indian town. It has a white Maruti Alto with a big red **L** board on the roof, and an instructor in the passenger seat who has taught four thousand people to drive. The car has one modification. There is a second brake pedal on his side of the floor (for an intervention, in the field's word), and his right foot never moves far from it.
 
 He has two ways of finding out whether a learner is ready.
 
@@ -39,7 +39,7 @@ $$\text{L2}(t) = \frac{1}{N}\sum_{i=1}^{N} \big\Vert \hat{p}_i(t) - p_i(t) \big\
 
 where $N$ is the number of paused clips, $\hat{p}_i(t)$ is the model's predicted position $t$ seconds after clip $i$, and $p_i(t)$ is where the recorded car really was. Papers average $t = 1, 2, 3$ seconds into one number in metres, next to a collision rate: how often the planned path runs through a box another car occupied in the recording.
 
-It is a lovely test to run. You don't need a simulator or a car, nobody can get hurt, and you can score the whole dataset over lunch.
+It is a lovely test. Nobody can get hurt, and you can score the whole dataset over lunch.
 
 ## The learner who watched the speedometer
 
@@ -47,7 +47,7 @@ Here is what went wrong with it.
 
 Most of those 20-second clips are a car going roughly straight at a roughly constant speed. So a learner who ignores the windscreen, looks at the speedometer in the corner and says "keep doing what you were doing", is right most of the time. He will be wrong at the turn, but the quiz is mostly not turns.
 
-[AD-MLP](https://arxiv.org/abs/2305.10430) (Zhai et al., Baidu, 2023) is that learner. It is a small multi-layer perceptron that reads only the ego status (past path, speed, acceleration, heading) and outputs the next three seconds. It never sees a camera image, a LiDAR scan or a map. Here is how it did against the camera-based models, from the table in the [AD-MLP repository](https://github.com/E2E-AD/AD-MLP):
+[AD-MLP](https://arxiv.org/abs/2305.10430) (Zhai et al., Baidu, 2023) is that learner. It is a small multi-layer perceptron that reads only the ego status (past path, speed, acceleration, heading) and outputs the next three seconds. Here is how it did against the camera-based models, from the table in the [AD-MLP repository](https://github.com/E2E-AD/AD-MLP). The other rows were all scored the same way, by the [VAD](https://arxiv.org/abs/2303.12077) authors; lower is better in both columns:
 
 | Model | Looks at the road? | Avg L2 (m) | Avg collision (%) |
 |---|---|---|---|
@@ -55,11 +55,11 @@ Most of those 20-second clips are a car going roughly straight at a roughly cons
 | VAD-Base | yes, six cameras | 0.37 | 0.14 |
 | AD-MLP | no | 0.29 | 0.19 |
 
-Twenty-nine centimetres, about the length of a school ruler, from a model that has never seen a road. It loses on collisions to VAD, because it cannot see the other cars. But on the headline number it wins.
+Twenty-nine centimetres, about the length of a school ruler, from a model that has never seen a road. It loses on collisions to VAD because it cannot see other cars. But on the headline number it wins.
 
-![UniAD's chain of camera, tracking, mapping, motion and occupancy blocks above AD-MLP's three-box ego-state pipeline](/images/blog52/uniad-vs-admlp.png) *Figure 1: what each model gets to read. [UniAD](https://arxiv.org/abs/2212.10156) passes learned queries down a chain of stages to its planner. AD-MLP reads the corner of the dashcam frame. Source: Author*
+![UniAD's chain of camera, tracking, mapping, motion and occupancy blocks above AD-MLP's three-box ego-state pipeline](/images/blog52/uniad-vs-admlp.png) *Figure 1: what each model gets to read. [UniAD](https://arxiv.org/abs/2212.10156) passes learned queries down a chain of stages to its planner. AD-MLP only gets the numbers in the corner of the dashcam frame. Source: Author*
 
-The follow-up made it worse. [Is Ego Status All You Need for Open-Loop End-to-End Autonomous Driving?](https://arxiv.org/abs/2312.03031) (Li et al., NVIDIA, CVPR 2024) built a deliberately simple camera planner, BEV-Planner, and ran it twice. Without ego status it scored an average L2 of 0.55 m and a collision rate of 0.59%. Give it the speedometer and it dropped to 0.35 m and 0.34%. Their conclusion was that camera models on this benchmark lean on ego status for most of their score, and they asked the community, quite politely, to stop trusting it.
+The follow-up made it worse. [Is Ego Status All You Need for Open-Loop End-to-End Autonomous Driving?](https://arxiv.org/abs/2312.03031) (Li et al., NVIDIA, CVPR 2024) built a deliberately simple camera planner, BEV-Planner, and ran it twice. Without ego status it scored an average L2 of 0.55 m and a collision rate of 0.59%. Give it the speedometer and it dropped to 0.35 m and 0.34%. Their conclusion was that camera models on this benchmark lean heavily on ego status, and they asked the community, quite politely, to stop trusting it.
 
 If you think about it, this is not a bug in any one model. A planner trained to match the logged path will use whatever predicts the logged path best. On a dataset of mostly straight roads, the speedometer predicts it better than six cameras do, and gradient descent is not sentimental about cameras that cost a lot of money.
 
@@ -67,9 +67,9 @@ If you think about it, this is not a bug in any one model. A planner trained to 
 
 So why doesn't the quiz notice that the speedometer-reader cannot actually drive? Because the quiz never lets his mistakes add up.
 
-Let's do one by hand. Say the learner has a tiny habit: he always steers one degree to the left of where he should. The car is doing 10 m/s, which is 36 km/h, a normal speed for a town road. Sideways, one degree at 10 m/s is $10 \times \sin(1°) \approx 0.175$ metres every second.
+Let's do one by hand. Say the learner has a tiny habit: he always steers one degree to the left of where he should. The car is doing 10 m/s (36 km/h, normal for a town road). Sideways, one degree at 10 m/s is $10 \times \sin(1°) \approx 0.175$ metres every second.
 
-On the dashcam quiz, every question starts on the instructor's line. So his error is 0.17 m at one second, 0.35 m at two and 0.52 m at three. That averages to 0.35 m, which is about what VAD scores. On paper he is one of the best drivers in the class.
+On the dashcam quiz, every question starts on the instructor's line. So his error is 0.175 m at one second, 0.35 m at two and 0.52 m at three. That averages to 0.35 m, which is about what VAD scores. On paper he is one of the best drivers in the class.
 
 Now give him the car. A town lane is about 3.5 m wide and an Alto is about 1.5 m wide, so he has roughly a metre of room on each side. Nobody resets him to the centre this time. The error keeps growing at 0.175 m every second, and he touches the lane line after $1.0 / 0.175 \approx 5.7$ seconds. The instructor's foot goes down on the second brake somewhere around second five.
 
@@ -103,34 +103,34 @@ specifically,
 
 $$\text{DS} = R \times \prod_{j} p_j^{\,n_j}$$
 
-where $R$ is the fraction of the route completed, $n_j$ is how many times you committed fault $j$, and $p_j$ is the penalty for that fault. CARLA's penalties are 0.50 for hitting a pedestrian, 0.60 for another vehicle, 0.65 for a static object, 0.70 for running a red light and 0.80 for a stop sign. So by the arithmetic, running two red lights ($0.7 \times 0.7 = 0.49$) costs you slightly more than hitting a pedestrian. I am sure there was a meeting about this, and I am sure nobody came out of it happy. **Success rate** is simpler: the share of routes finished with no faults at all.
+where $R$ is the percentage of the route completed (so the score is out of 100), $n_j$ is how many times you committed fault $j$, and $p_j$ is the penalty for that fault. CARLA's penalties are 0.50 for hitting a pedestrian, 0.60 for another vehicle, 0.65 for a static object, 0.70 for running a red light and 0.80 for a stop sign. So by the arithmetic, running two red lights ($0.7 \times 0.7 = 0.49$) costs you slightly more than hitting a pedestrian. I am sure there was a meeting about this, and nobody came out of it happy. **Success rate** is simpler: the share of routes finished with no faults at all.
 
-The same learners on the road, from the Bench2Drive README:
+The same learners on the road, from the Bench2Drive README. Bench2Drive retrained every one of them on its own CARLA data, and the simulator hands AD-MLP its speed and heading:
 
 | Model | Driving score | Success rate (%) | Verdict |
 |---|---|---|---|
 | AD-MLP | 35.39 | 0.00 | best on the quiz, never once finishes a route cleanly |
 | [VAD](https://arxiv.org/abs/2303.12077) | 38.65 | 17.27 | the quiz liked it, the road roughly agrees |
-| UniAD | 38.69 | 19.09 | worst of the three on the quiz, best of the three here |
+| UniAD | 38.69 | 19.09 | worst of the three on the quiz, level with VAD here |
 | [TCP](https://arxiv.org/abs/2206.08129) | 51.44 | 26.36 | copies the simulator's expert driver, including its internal features |
 
-AD-MLP still scores 35 because it gets part of the way along most routes, but zero of its 220 routes are clean. On the quiz it beat UniAD by 0.74 m. On the road, UniAD finishes about one route in five and AD-MLP finishes none, and that flip is the main result of this post.
+AD-MLP still scores 35 because it gets part of the way along most routes, but zero of its 220 routes are clean. On the quiz it beat UniAD by 0.74 m. On the road, UniAD and VAD finish about one route in six and AD-MLP finishes none. The quiz's winner comes last, and that is the main result of this post.
 
 ![Two bar charts: AD-MLP shortest on L2 and zero on success rate, UniAD longest on L2 and highest on success](/images/blog52/ranking-flip.png) *Figure 4: the same three models, quizzed and then driven. The ranking turns upside down. The two tests use different data, so compare the order, not the numbers. Source: Author*
 
-**NOTE:** Bench2Drive's numbers move between versions (the [model zoo](https://github.com/Thinklab-SJTU/Bench2DriveZoo) has UniAD at 45.81 and 16.36%), but the order of the three holds in both.
+**NOTE:** Bench2Drive's numbers move between versions (the [model zoo](https://github.com/Thinklab-SJTU/Bench2DriveZoo) has UniAD at 45.81 and 16.36%, VAD at 42.35 and 15.00%), but AD-MLP is last in both.
 
 ## The rule-follower who wins the road test
 
 In 2023 [nuPlan](https://www.nuplan.org/), a big planning benchmark built from 1,200 hours of real driving logs, ran a challenge with both kinds of test. Dauner et al. entered [PDM-Closed](https://arxiv.org/abs/2306.07962), which is barely learned at all. It follows the lane centreline at a few speeds picked by a textbook car-following rule (IDM, the [Intelligent Driver Model](https://en.wikipedia.org/wiki/Intelligent_driver_model)). It simulates each option forward a few seconds, and keeps the one that scores best on not crashing and making progress.
 
-That is the instructor's own advice written as code: "stay in the middle and keep a gap". On nuPlan's closed-loop score it gets about 93, against about 76 for plain IDM. On the open-loop score it gets about 42, which is terrible, because it doesn't try to copy the human, it tries not to crash. Their hybrid version came first out of 25 teams. So it is AD-MLP the other way round: bad at copying the human, good at driving.
+That is the instructor's own advice written as code: "stay in the middle and keep a gap". On nuPlan's closed-loop score it gets about 93, against about 76 for plain IDM. On the open-loop score it gets about 42 out of 100, which is terrible, because it doesn't try to copy the human, it tries not to crash. A hybrid version, with a small learned model added for the open-loop half, came first out of 25 teams. So it is AD-MLP the other way round: bad at copying the human, good at driving.
 
 ## Four seconds of road
 
 A full simulator is slow and renders a cartoon town, so the field built something in between. [NAVSIM](https://github.com/autonomousvision/navsim) (Dauner et al., NeurIPS 2024) takes real camera frames from real drives, lets the model plan four seconds ahead, and then rolls that plan forward against the recording. The other cars do not react (they replay what they did on the day), which is why it is called non-reactive. The instructor lets go for four seconds, then takes the wheel back.
 
-Its score, the **PDM score** (PDMS), multiplies the two things you must never do, and averages the things you should do:
+Its score, the **PDM score** (PDMS), multiplies the two things you must never do, and averages the things you should do (reported out of 100):
 
 $$\text{PDMS} = \text{NC} \times \text{DAC} \times \frac{5\,\text{TTC} + 5\,\text{EP} + 2\,\text{C}}{12}$$
 
@@ -138,39 +138,39 @@ where NC is no at-fault collision, DAC is staying on the road, TTC checks the ti
 
 Does four seconds of road predict the full road test? A May 2026 paper, [Do Open-Loop Metrics Predict Closed-Loop Driving?](https://arxiv.org/abs/2605.00066) (Wang et al.), took every method that had reported both a NAVSIM score and a Bench2Drive score, and checked:
 
-1. The old displacement error (the quiz score) had a rank correlation of $-0.36$ with closed-loop driving score, with a p-value of 0.43. So it predicts nothing.
+1. The old displacement error (the quiz score) had a rank correlation of $-0.36$ with closed-loop driving score, with a p-value of 0.43. That is weak and could easily be chance.
 2. The PDM score had a rank correlation of 0.90, which is strong, but with clear ranking inversions.
-3. The best single part of PDMS was ego progress (0.83), well ahead of the collision term. Methods that played it safe ranked well on NAVSIM and then timed out on Bench2Drive for driving too slowly.
+3. The best single part of PDMS was ego progress (0.83), well ahead of the collision term. Some methods that played it safe got a good overall PDMS, and then timed out on Bench2Drive for driving too slowly.
 
 So the four-second test is a decent predictor of the road test, and the thing it measures best is whether you actually get on with it. Which is also the first thing a driving instructor shouts from the passenger seat.
 
 ## A learner who talks while driving
 
-The newest learners narrate. [Alpamayo-R1](https://arxiv.org/abs/2511.00088) (NVIDIA, 2025) is a 10B vision-language-action model that writes a short **chain of causation** before it plans: "cyclist pulling out on the left, so I slow down and give way". Then a separate action expert (flow matching, the same trick from the [Flux post](/blog/flux-models-next-gen-image-generation-part2/)) turns that into 64 waypoints over 6.4 seconds.
+The newest learners narrate. [Alpamayo-R1](https://arxiv.org/abs/2511.00088) (NVIDIA, 2025) is a 10B vision-language-action model that writes a short **chain of causation** before it plans: "cyclist pulling out on the left, so I slow down and give way". Then an action expert (flow matching, as in the [Flux post](/blog/flux-models-next-gen-image-generation-part2/)) turns that into 64 waypoints over 6.4 seconds.
 
-![Alpamayo-R1 pipeline boxes above a bar splitting 99 ms into four parts, with reasoning decode taking 70 ms](/images/blog52/alpamayo-r1-budget.png) *Figure 5: Alpamayo-R1 and its latency budget on the car. Orange is the model explaining itself. Breakdown as reported in write-ups of the paper. Source: Author*
+![Alpamayo-R1 pipeline boxes above a bar splitting 99 ms into four parts, with reasoning decode taking 70 ms](/images/blog52/alpamayo-r1-budget.png) *Figure 5: Alpamayo-R1 and its latency budget on the car. Orange is the model explaining itself. Breakdown from secondary write-ups, not the paper. Source: Author*
 
 NVIDIA reports up to 12% better open-loop planning on hard cases than without the reasoning. But the claims they lead with are closed-loop, in their AlpaSim simulator: 35% fewer drives leaving the road and 25% fewer close encounters. They also report road tests in a real car at 99 ms per decision, of which roughly 70 ms is the model writing out its reasons. That closed-loop result comes from the vendor's own simulator, on 75 scenarios, against the vendor's own baseline.
 
 ## Where you meet this
 
-- **Most end-to-end papers since 2024** report NAVSIM or Bench2Drive next to, or instead of, nuScenes L2. Bench2Drive's README asks people to stop using nuScenes open-loop planning entirely.
-- **Driving VLAs** like Waymo's [EMMA](https://arxiv.org/abs/2410.23262) and Li Auto's DriveVLM are end-to-end planners too, graded the same way.
-- **Anything that acts.** A robot arm and a web agent both have a quiz and a road test, which is the [benchmarks post](/blog/llm-benchmarks-terminal-bench/) from another angle. Driving got there first, and it has the 0% to prove it.
+- **Most end-to-end papers since 2024** report NAVSIM or Bench2Drive instead of, or next to, nuScenes L2.
+- **Driving VLAs** like Waymo's [EMMA](https://arxiv.org/abs/2410.23262) are end-to-end planners too.
+- **Anything that acts.** A robot arm and a web agent both have a quiz and a road test (see the [benchmarks post](/blog/llm-benchmarks-terminal-bench/)). Driving got there first, and it has the 0% to prove it.
 
 ## Where things are going
 
 NAVSIM v2's [pseudo-simulation](https://github.com/autonomousvision/navsim) adds synthetic views near the model's planned path, so the model sees the road from where it went rather than where the human went. The authors claim it tracks closed-loop results at a sixth of the compute. Rendering that road is the job of a [Gaussian splat](/blog/gaussian-splatting/) or a [world model](/blog/world-models-learned-simulators/).
 
-The other trend is reinforcement learning on top of imitation. If closed loop is the honest test, you might as well train in it. Papers like [DIVER](https://arxiv.org/abs/2507.04049) already fine-tune a cloned planner with rewards from the simulator, the way the [GRPO post](/blog/grpo-rlvr/) fine-tuned a language model against an answer key.
+The other trend is training in closed loop too. Papers like [DIVER](https://arxiv.org/abs/2507.04049) already fine-tune a cloned planner with rewards from the simulator, the way the [GRPO post](/blog/grpo-rlvr/) fine-tuned a language model against an answer key.
 
 ## What the second brake pedal doesn't catch
 
-CARLA's town is a cartoon, and its other drivers are scripted to be polite. Nobody in CARLA parks a handcart in the left lane or comes the wrong way down a one-way street at night. And Bench2Drive's top entry (LEAD) is already at 95.59 driving score and 87% success. So the road test may saturate before anyone has checked it against real roads.
+CARLA's town is a cartoon, and its other drivers are scripted to be polite. Nobody in CARLA parks a handcart in the left lane or comes the wrong way down a one-way street at night. And Bench2Drive's top entry (LEAD) is already at 95.59 driving score and 87% success. So the road test may saturate (everyone near full marks, nothing left to rank) before anyone has checked it against real roads.
 
-Then there is the size of the evidence. The correlation study that blessed the PDM score had complete paired data for 8 methods. One more method could move a rank correlation on 8 points a lot. And its strongest finding, that progress predicts success better than safety, says the road test rewards getting on with it. That is fine for a CARLA route with a timer, and less obviously what you want from a car with a child in the back seat.
+Then there is the size of the evidence. The correlation study behind the PDM score had paired data for only 8 methods, and one more could move a rank correlation a lot. And its strongest finding, that progress predicts success better than safety, says the road test rewards getting on with it. That is fine for a CARLA route with a timer, and less obviously what you want from a car with a child in the back seat.
 
-The non-reactive middle rung has its own blind spot. In NAVSIM the other cars replay the recording, so if your model brakes hard, the car behind you drives straight through you without noticing. And if your model creeps forward to signal that it wants to merge, nobody lets it in. Anyone who has merged onto a Bengaluru ring road knows that is most of the job.
+The non-reactive middle rung has its own blind spot. In NAVSIM the other cars replay the recording. So if your model creeps forward to signal that it wants to merge, nobody lets it in. Anyone who has merged onto a Bengaluru ring road knows that is most of the job.
 
 And the real closed-loop test, a car on a public road with a safety driver's foot over a second brake, is what nobody publishes in a comparable form. Companies report miles per intervention from their own fleets. Alpamayo-R1's road tests are described, and not scored against anyone else's. So the test with real traffic in it has no leaderboard at all.
 
@@ -178,7 +178,7 @@ And the real closed-loop test, a car on a public road with a safety driver's foo
 
 The dashcam quiz asked a fair question, and in 2023 one of the best answers came from a network with no eyes. It read the speedometer on a dataset of mostly straight roads, and nobody ever let its mistakes add up.
 
-The fix is old and obvious to anyone who has taught a teenager to drive: let go of the wheel and watch. Bench2Drive does it in a simulator and NAVSIM does it for four seconds of real footage, and the ranking flips the moment you do. What a learned planner hasn't shown yet is a clear win over a centreline-follower running a car-following rule from 2000.
+The fix is old and obvious to anyone who has taught a teenager to drive: let go of the wheel and watch. Bench2Drive does it in a simulator and NAVSIM does it for four seconds of real footage, and the quiz's favourite drops to last the moment you do. And in 2023, on nuPlan, a centreline-follower running a car-following rule from 2000 beat every learned planner on the road test.
 
 My bet is that the next two years of driving papers are about the simulator more than the model. Whoever renders the most believable road from where the learner ended up, gets to run the test that counts.
 

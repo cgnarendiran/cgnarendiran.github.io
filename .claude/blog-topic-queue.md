@@ -5,8 +5,9 @@ whose `Post file` does not already exist in `_posts/` on `master`. Reorder rows 
 priority. Delete a row to drop it. Add rows at the bottom (or wherever you want them) to extend
 the queue.
 
-Post numbering: latest published is **blog47** (retrieval, BM25 to hybrid). The next post takes
-`images/blog48/`, then 49, and so on. The job derives the number from `ls images | grep blog`,
+Post numbering: latest published is **blog50** (counterfactual VLA reasoning). `images/blog48/` and
+`images/blog49/` are reserved by two open PRs (#92 and #95), which is why 50 went out before them.
+The next post takes `images/blog51/`, then 52, and so on. The job derives the number from `ls images | grep blog`,
 not from this table, so a manual post in between will not break it.
 
 **Publish date.** If a Queue row has a date in the `Date` column, the job uses it for both the
@@ -43,6 +44,7 @@ force a rewrite.
 | 45 | Voice models part 2 — holding a conversation: cascaded ASR → LLM → TTS vs end-to-end, half-duplex (VAD, endpointing, semantic VAD, barge-in), full-duplex (Moshi's two streams, backchannels, overlap, silence as input), echo cancellation, and voice data caveats (scarce two-channel data like Fisher, overlap labelling, accents and noise, consent and cloning, synthetic dialogue) | `voice-models-holding-a-conversation` | 2026-10-11 | Voice models, part 2 of 2. Dated noon so it lists above part 1 |
 | 46 | Gaussian splatting — a scene stored as three million soft ellipsoids, rendered by projecting, depth-sorting and alpha-blending them, with densification and pruning doing the real work | `gaussian-splatting` | 2026-10-14 | Standalone, visual |
 | 47 | Retrieval — BM25 from the inverted index up (IDF, saturation, length normalisation), dense bi-encoders and the zero-shot domain-shift failure, reciprocal rank fusion, and cross-encoder / ColBERT / SPLADE reranking | `retrieval-bm25-to-hybrid` | 2026-10-18 | Pairs with the HNSW post |
+| 50 | Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2512.24426](https://arxiv.org/abs/2512.24426)) — plausible vs faithful explanations, the intervention test and its four outcomes, Alpamayo-R1 scored at 42.5% fidelity and 14.3% silent failures, and why blur is the wrong perturbation | `counterfactual-vla-reasoning` | 2026-11-01 | Follows VLA |
 
 ---
 
@@ -52,12 +54,17 @@ force a rewrite.
 |---|-------|------------------|------|--------|----------------------|
 | 1 | DeepSeek OCR and optical context compression ([2510.18234](https://arxiv.org/abs/2510.18234)) | `deepseek-ocr-optical-compression` | | Standalone, paper explainer | A photograph of a page is smaller than the page |
 | 2 | Physics of language models: where a fact lives and why it is lossy | `physics-of-llms-where-facts-live` | | Standalone, follows the LoRA post | A library with no catalogue, only a floor plan |
-| 3 | Is your driving model lying? Counterfactual tests for VLA reasoning ([2605.17268](https://arxiv.org/abs/2605.17268), [2607.16938](https://arxiv.org/abs/2607.16938), [2512.24426](https://arxiv.org/abs/2512.24426)) | `counterfactual-vla-reasoning` | | Follows VLA | The witness who describes the crime perfectly and points at the wrong suspect |
-| 4 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
-| 5 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
+| 3 | Diffusion language models: writing a sentence like a sculptor (find the Sept 2026 survey of the 169 Jun-Aug papers) | `diffusion-language-models` | | Is Autoregression All You Really Need? Follows the Flux posts | Rough block first, details last: the whole paragraph appears at once and sharpens |
+| 4 | End-to-end driving: photon in, control out, and why the leaderboards disagree ([2605.00066](https://arxiv.org/abs/2605.00066), Alpamayo-R1 [2511.00088](https://arxiv.org/abs/2511.00088)) | `end-to-end-driving-leaderboards` | | Follows VLA and row 15 | A driving test where the examiner never touches the wheel (open loop) versus one where he does (closed loop) |
 
 No queue row carries a date any more, so every remaining topic publishes on the day it runs. The
 backfill that spread JEPA and LeJEPA across June and July is done.
+
+**Queue rows 1 and 2 are already written and waiting in open PRs** (#92 DeepSeek-OCR, #95 physics of
+language models). Both are blocked on check 7 alone: the cover is a drawn placeholder because the
+cloud sandbox cannot reach Wikimedia Commons. Their slugs will not appear in `_posts/` on `master`
+until those PRs merge, so a run that walks this table top to bottom will keep re-selecting them.
+Fetch a cover locally for each, push it to the PR's branch, and merge.
 
 ---
 
